@@ -1,0 +1,1 @@
+../../../TDFAPILogger/TDFAPILoggerExample/TDFAPILoggerExample/Classes/TDFALResponseModel.h
