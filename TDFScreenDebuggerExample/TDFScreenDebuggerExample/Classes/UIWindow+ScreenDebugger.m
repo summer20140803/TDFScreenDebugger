@@ -16,7 +16,7 @@
     
     [super motionBegan:motion withEvent:event];
     
-    if ([TDFSDManager manager].debuggerHidden) {
+    if ([TDFSDManager manager].screenDebuggerWindow.hidden) {
         [[TDFSDManager manager] showDebugger];
     } else {
         [[TDFSDManager manager] hideDebugger];

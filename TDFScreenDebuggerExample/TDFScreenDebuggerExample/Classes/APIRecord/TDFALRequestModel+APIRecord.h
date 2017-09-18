@@ -8,8 +8,9 @@
 
 #import <TDFAPILogger/TDFAPILogger.h>
 #import "TDFSDAPIRecordCharacterizationProtocol.h"
+#import "TDFSDMessageRemindProtocol.h"
 
-@interface TDFALRequestModel (APIRecord) <TDFSDAPIRecordCharacterizationProtocol>
+@interface TDFALRequestModel (APIRecord) <TDFSDAPIRecordCharacterizationProtocol, TDFSDMessageRemindProtocol>
 
 
 

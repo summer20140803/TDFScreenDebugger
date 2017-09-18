@@ -8,10 +8,11 @@
 
 #import "TDFSDFullScreenConsoleController.h"
 #import <Masonry/Masonry.h>
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface TDFSDFullScreenConsoleController ()
 
-@property (nonatomic, strong) UIView *container;
+@property (nonatomic, strong, readwrite) UIView *container;
 @property (nonatomic, strong) UIVisualEffectView *effectView;
 @property (nonatomic, strong) UILabel *consoleTitleLabel;
 @property (nonatomic, strong) __kindof UIView *contentView;
@@ -38,9 +39,9 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [UIView animateWithDuration:1 delay:0 usingSpringWithDamping:0.6 initialSpringVelocity:20 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve animations:^{
-        self.container.alpha = 1;
-    } completion:nil];
+//    [UIView animateWithDuration:1 delay:0 usingSpringWithDamping:0.6 initialSpringVelocity:20 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve animations:^{
+//        self.container.alpha = 1;
+//    } completion:nil];
 }
 
 #pragma mark - getter
@@ -48,7 +49,7 @@
     if (!_container) {
         _container = [[UIView alloc] init];
         [_container setBackgroundColor:[UIColor colorWithRed:2/255.f green:31/255.f blue:40/255.f alpha:0.7]];
-        _container.alpha = 0;
+        _container.alpha = 1;
     }
     return _container;
 }
@@ -68,7 +69,7 @@
         _consoleTitleLabel.textAlignment = NSTextAlignmentCenter;
         _consoleTitleLabel.numberOfLines = 1;
         _consoleTitleLabel.textColor = [UIColor whiteColor];
-        _consoleTitleLabel.font = [UIFont fontWithName:@"PingFang SC" size:24];
+        _consoleTitleLabel.font = [UIFont fontWithName:@"PingFang SC" size:18];
         _consoleTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         _consoleTitleLabel.text = [(TDFSDFullScreenConsoleController<TDFSDFullScreenConsoleControllerInheritProtocol> *)self titleForFullScreenConsole];
     }
@@ -103,15 +104,15 @@
         make.edges.equalTo(self.view);
     }];
     [self.consoleTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.and.right.equalTo(self.container);
-        make.top.equalTo(self.container).with.offset(30);
-        make.height.equalTo(@44);
+        make.left.equalTo(self.container).with.offset(22);
+        make.top.equalTo(self.container).with.offset(11);
+        make.height.equalTo(@40);
     }];
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.consoleTitleLabel.mas_bottom).with.offset(20);
-        make.left.equalTo(self.container).with.offset(28);
-        make.right.equalTo(self.container).with.offset(-28);
-        make.bottom.equalTo(self.container).with.offset(-20);
+        make.top.equalTo(self.consoleTitleLabel.mas_bottom).with.offset(6);
+        make.left.equalTo(self.container).with.offset(6);
+        make.right.equalTo(self.container).with.offset(-6);
+        make.bottom.equalTo(self.container).with.offset(-6);
     }];
 }
 

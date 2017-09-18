@@ -11,6 +11,7 @@
 
 @implementation TDFALResponseModel (APIRecord)
 
+#pragma mark - TDFSDAPIRecordCharacterizationProtocol
 - (NSAttributedString *)outputCharacterizationString {
     NSMutableAttributedString *mutableString = [[NSMutableAttributedString alloc] initWithString:self.selfDescription];
     NSRange allRange = NSMakeRange(0, self.selfDescription.length);
@@ -20,7 +21,7 @@
     } else if (self.error) {
         color = [UIColor redColor];
     }
-    [mutableString addAttributes:@{NSFontAttributeName:[UIFont fontWithName:@"PingFang SC" size:12], NSForegroundColorAttributeName:color} range:allRange];
+    [mutableString addAttributes:@{NSFontAttributeName:[UIFont fontWithName:@"PingFang SC" size:11], NSForegroundColorAttributeName:color} range:allRange];
     return [mutableString copy];
 }
 

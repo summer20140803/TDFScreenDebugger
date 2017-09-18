@@ -12,6 +12,9 @@
 @interface TDFSDAPIRecorder : NSObject
 
 @property (nonatomic, strong, readonly) NSArray<__kindof TDFALBaseModel *> *descriptionModels;
+@property (nonatomic, strong, readonly) NSArray<TDFALRequestModel *> *requestDesModels;
+@property (nonatomic, strong, readonly) NSArray<TDFALResponseModel *> *responseDesModels;
+
 
 + (instancetype)sharedInstance;
 

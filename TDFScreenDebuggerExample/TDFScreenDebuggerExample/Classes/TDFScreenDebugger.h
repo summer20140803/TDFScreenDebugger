@@ -1,13 +1,13 @@
 //
 //  TDFScreenDebugger.h
-//  TDFScreenDebuggerExample
+//  Pods
 //
-//  Created by 开不了口的猫 on 2017/9/14.
-//  Copyright © 2017年 TDF. All rights reserved.
+//  Created by 开不了口的猫 on 2017/9/17.
+//
 //
 
-#import <Foundation/Foundation.h>
+#ifndef TDFScreenDebugger_h
+#define TDFScreenDebugger_h
 
-@interface TDFScreenDebugger : NSObject
 
-@end
+#endif /* TDFScreenDebugger_h */

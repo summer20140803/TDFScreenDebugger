@@ -9,11 +9,70 @@
 #import "TDFSDThumbnailView.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
+#import "TDFSDPersistenceSetting.h"
+
+@interface TDFSDMessageRemindBaseViewModel : NSObject
+
+@property (nonatomic,   weak) UILabel *messageRemindLabelReference;
+@property (nonatomic, strong) RACDisposable *disposable;
+
+- (void)addSpecificMessageRemindObserve;
+- (void)disposeObserve;
+
+@end
+
+@implementation TDFSDMessageRemindBaseViewModel
+
+- (void)addSpecificMessageRemindObserve {
+    NSAssert(NO,
+             @"should override this method by subclass which inherit `TDFSDMessageRemindBaseViewModel` class");
+}
+
+- (void)disposeObserve {
+    if (self.disposable && ![self.disposable isDisposed]) {
+        [self.disposable dispose];
+    }
+}
+
+@end
+
+#import "TDFSDAPIRecorder.h"
+#import "TDFALRequestModel+APIRecord.h"
+
+@interface TDFSDMessageRemindALViewModel : TDFSDMessageRemindBaseViewModel
+
+@end
+
+@implementation TDFSDMessageRemindALViewModel
+
+- (void)addSpecificMessageRemindObserve {
+    @weakify(self)
+    self.disposable = \
+    [RACObserve([TDFSDAPIRecorder sharedInstance], requestDesModels) subscribeNext:^(NSArray<TDFALRequestModel *> * _Nullable requestDescriptions) {
+        
+        NSUInteger unreadCount = [[[requestDescriptions.rac_sequence
+        filter:^BOOL(TDFALRequestModel * _Nullable requestDesModel) {
+            return !requestDesModel.messageIsRead;
+        }]
+        array] count];
+        
+        @strongify(self)
+        if (unreadCount <= 99) {
+            self.messageRemindLabelReference.text = @(unreadCount).stringValue;
+        } else {
+            self.messageRemindLabelReference.text = @"99+";
+        }
+    }];
+}
+
+@end
+
 
 @interface TDFSDThumbnailView ()
 
 @property (nonatomic, strong) UIImageView *thumbnailIconView;
-@property (nonatomic, strong) UILabel     *unreadTaskCountLabel;
+@property (nonatomic, strong) UILabel     *unreadMessageRemindLabel;
+@property (nonatomic, strong) __kindof TDFSDMessageRemindBaseViewModel *viewModel;
 
 @end
 
@@ -26,8 +85,8 @@
         [self layoutPageSubviews];
         [self addTapGesture];
         [self addLongPressGesture];
-        [self addTextObserver];
-        _unreadTaskCountLabel.text = @"99+";
+        [self addMessageRemindTextObserve];
+        [self addThumbnailMessageRemindTypeObserve];
     }
     return self;
 }
@@ -42,19 +101,19 @@
     return _thumbnailIconView;
 }
 
-- (UILabel *)unreadTaskCountLabel {
-    if (!_unreadTaskCountLabel) {
-        _unreadTaskCountLabel = [[UILabel alloc] init];
-        [_unreadTaskCountLabel setBackgroundColor:[UIColor colorWithRed:241/255.f green:56/255.f blue:56/255.f alpha:1]];
-        _unreadTaskCountLabel.textAlignment = NSTextAlignmentCenter;
-        _unreadTaskCountLabel.numberOfLines = 1;
-        _unreadTaskCountLabel.textColor = [UIColor whiteColor];
-        _unreadTaskCountLabel.font = [UIFont boldSystemFontOfSize:11];
-        _unreadTaskCountLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-        _unreadTaskCountLabel.layer.cornerRadius = 7;
-        _unreadTaskCountLabel.layer.masksToBounds = YES;
+- (UILabel *)unreadMessageRemindLabel {
+    if (!_unreadMessageRemindLabel) {
+        _unreadMessageRemindLabel = [[UILabel alloc] init];
+        [_unreadMessageRemindLabel setBackgroundColor:[UIColor colorWithRed:241/255.f green:56/255.f blue:56/255.f alpha:1]];
+        _unreadMessageRemindLabel.textAlignment = NSTextAlignmentCenter;
+        _unreadMessageRemindLabel.numberOfLines = 1;
+        _unreadMessageRemindLabel.textColor = [UIColor whiteColor];
+        _unreadMessageRemindLabel.font = [UIFont boldSystemFontOfSize:11];
+        _unreadMessageRemindLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        _unreadMessageRemindLabel.layer.cornerRadius = 7;
+        _unreadMessageRemindLabel.layer.masksToBounds = YES;
     }
-    return _unreadTaskCountLabel;
+    return _unreadMessageRemindLabel;
 }
 
 #pragma mark - event
@@ -78,12 +137,12 @@
 #pragma mark - private
 - (void)layoutPageSubviews {
     [self addSubview:self.thumbnailIconView];
-    [self addSubview:self.unreadTaskCountLabel];
+    [self addSubview:self.unreadMessageRemindLabel];
     [self.thumbnailIconView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self);
     }];
-    [self.unreadTaskCountLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.mas_right).with.offset(-2);
+    [self.unreadMessageRemindLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.mas_right).with.offset(-12);
         make.centerY.equalTo(self.mas_top).with.offset(3);
         make.height.equalTo(@14);
         make.width.greaterThanOrEqualTo(@14);
@@ -95,6 +154,7 @@
     @weakify(self)
     [tapGesture.rac_gestureSignal subscribeNext:^(__kindof UIGestureRecognizer * _Nullable x) {
         @strongify(self)
+        self.unreadMessageRemindLabel.text = @"";
         !self.tapProxy ?: [self.tapProxy sendNext:nil];
     }];
     [self addGestureRecognizer:tapGesture];
@@ -112,20 +172,43 @@
     [self addGestureRecognizer:longPressGesture];
 }
 
-- (void)addTextObserver {
-    [RACObserve(self.unreadTaskCountLabel, text) subscribeNext:^(NSString * _Nullable newText) {
-        if (newText && newText.length) {
-            self.unreadTaskCountLabel.hidden = NO;
-            CGSize fitSize = [self.unreadTaskCountLabel sizeThatFits:CGSizeZero];
-            CGFloat fitWidth = fitSize.width < 14 ? 14 : fitSize.width + 4;
-            [self.unreadTaskCountLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+- (void)addMessageRemindTextObserve {
+    @weakify(self)
+    [RACObserve(self.unreadMessageRemindLabel, text) subscribeNext:^(NSString * _Nullable newText) {
+        @strongify(self)
+        
+        if (newText && newText.length && ![newText isEqualToString:@"0"]) {
+            self.unreadMessageRemindLabel.hidden = NO;
+            CGSize fitSize = [self.unreadMessageRemindLabel sizeThatFits:CGSizeZero];
+            CGFloat fitWidth = fitSize.width + 4 < 14 ? 14 : fitSize.width + 4;
+            [self.unreadMessageRemindLabel mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.width.equalTo(@(fitWidth));
             }];
         } else {
-            self.unreadTaskCountLabel.hidden = YES;
+            self.unreadMessageRemindLabel.hidden = YES;
         }
     }];
 }
 
+- (void)addThumbnailMessageRemindTypeObserve {
+    @weakify(self)
+    [RACObserve([TDFSDPersistenceSetting sharedInstance], messageRemindType) subscribeNext:^(NSNumber *  _Nullable messageRemindType) {
+        @strongify(self)
+        
+        if (self.viewModel) {
+            [self.viewModel disposeObserve];
+        }
+        
+        switch ([messageRemindType unsignedIntegerValue]) {
+            case SDMessageRemindTypeAPIRecord: {
+                self.viewModel = [[TDFSDMessageRemindALViewModel alloc] init];
+            }break;
+        }
+        
+        self.viewModel.messageRemindLabelReference = self.unreadMessageRemindLabel;
+        [self.viewModel addSpecificMessageRemindObserve];
+    }];
+}
 
 @end
+

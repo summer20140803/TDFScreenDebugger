@@ -7,10 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TDFSDWindow.h"
 
 @interface TDFSDManager : NSObject
 
-@property (nonatomic, assign, readonly) BOOL debuggerHidden;
+@property (nonatomic, strong, readonly) TDFSDWindow *screenDebuggerWindow;
 
 + (instancetype)manager;
 

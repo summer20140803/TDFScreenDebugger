@@ -7,13 +7,11 @@
 //
 
 #import "TDFSDManager.h"
-#import "TDFSDWindow.h"
 #import "TDFSDViewController.h"
 
 @interface TDFSDManager () <TDFSDWindowDelegate>
 
-@property (nonatomic, assign, readwrite) BOOL debuggerHidden;
-@property (nonatomic, strong) TDFSDWindow *screenDebuggerWindow;
+@property (nonatomic, strong, readwrite) TDFSDWindow *screenDebuggerWindow;
 @property (nonatomic, strong) TDFSDViewController *screenDebuggerController;
 
 @end
@@ -31,7 +29,6 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        self.debuggerHidden = YES;
         // open system setting to support shake events
         [UIApplication sharedApplication].applicationSupportsShakeToEdit = YES;
     }
@@ -40,12 +37,10 @@
 
 - (void)showDebugger {
     self.screenDebuggerWindow.hidden = NO;
-    self.debuggerHidden = NO;
 }
 
 - (void)hideDebugger {
     self.screenDebuggerWindow.hidden = YES;
-    self.debuggerHidden = YES;
 }
 
 #pragma mark - getter

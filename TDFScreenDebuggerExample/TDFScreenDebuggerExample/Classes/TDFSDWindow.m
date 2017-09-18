@@ -15,8 +15,8 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor clearColor];
-        // make the level higher than the window created by login assistant
-        self.windowLevel = UIWindowLevelStatusBar + 101;
+        // make the level higher than alerts presented by system
+        self.windowLevel = UIWindowLevelAlert + 101;
     }
     return self;
 }
