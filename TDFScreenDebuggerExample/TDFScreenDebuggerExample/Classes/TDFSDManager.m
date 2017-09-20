@@ -11,6 +11,10 @@
 
 @interface TDFSDManager () <TDFSDWindowDelegate>
 
+// this window is use for store app's origin window and we operate it in the future if need
+@property (nonatomic, strong) UIWindow *originWindow;
+@property (nonatomic, assign) BOOL sd_canBecomeKeyWindow;
+
 @property (nonatomic, strong, readwrite) TDFSDWindow *screenDebuggerWindow;
 @property (nonatomic, strong) TDFSDViewController *screenDebuggerController;
 
@@ -29,25 +33,59 @@
 
 - (instancetype)init {
     if (self = [super init]) {
+
+        self.sd_canBecomeKeyWindow = NO;
+        
         // open system setting to support shake events
         [UIApplication sharedApplication].applicationSupportsShakeToEdit = YES;
     }
     return self;
 }
 
+#pragma mark - interface methods
 - (void)showDebugger {
     self.screenDebuggerWindow.hidden = NO;
 }
 
 - (void)hideDebugger {
+    if (self.sd_canBecomeKeyWindow) {
+        [self revokeApply];
+    }
     self.screenDebuggerWindow.hidden = YES;
+}
+
+- (void)applyForAcceptKeyInput {
+    
+    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+    
+    if (keyWindow != self.screenDebuggerWindow) {
+        
+        self.originWindow = keyWindow;
+        [keyWindow resignFirstResponder];
+        
+        self.sd_canBecomeKeyWindow = YES;
+        [self.screenDebuggerWindow makeKeyWindow];
+    }
+}
+
+- (void)revokeApply {
+    
+    UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
+    
+    if (keyWindow == self.screenDebuggerWindow) {
+        
+        [keyWindow resignFirstResponder];
+        
+        self.sd_canBecomeKeyWindow = NO;
+        [self.originWindow makeKeyWindow];
+    }
 }
 
 #pragma mark - getter
 - (TDFSDWindow *)screenDebuggerWindow {
     if (!_screenDebuggerWindow) {
         _screenDebuggerWindow = [[TDFSDWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-        _screenDebuggerWindow.touchEventDelegate = self;
+        _screenDebuggerWindow.sd_delegate = self;
         _screenDebuggerWindow.rootViewController = self.screenDebuggerController;
     }
     return _screenDebuggerWindow;
@@ -64,6 +102,10 @@
 - (BOOL)window:(TDFSDWindow *)window shouldHandleTouchEventWithTouchPoint:(CGPoint)touchPoint {
     // deliver to controller and let it do check logic
     return [self.screenDebuggerController shouldHandleTouchWithTouchPoint:touchPoint];
+}
+
+- (BOOL)canBecomeKeyWindow:(TDFSDWindow *)window {
+    return self.sd_canBecomeKeyWindow;
 }
 
 @end

@@ -21,5 +21,6 @@ s.resources =  "TDFScreenDebuggerExample/TDFScreenDebuggerExample/Resource/**/*.
 s.dependency 'TDFAPILogger'
 s.dependency 'Masonry'
 s.dependency 'ReactiveObjC'
+s.dependency 'ICTextView'
 
 end

@@ -7,9 +7,9 @@
 //
 
 #import "TDFSDThumbnailView.h"
+#import "TDFSDPersistenceSetting.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
-#import "TDFSDPersistenceSetting.h"
 
 @interface TDFSDMessageRemindBaseViewModel : NSObject
 
@@ -155,7 +155,7 @@
     [tapGesture.rac_gestureSignal subscribeNext:^(__kindof UIGestureRecognizer * _Nullable x) {
         @strongify(self)
         self.unreadMessageRemindLabel.text = @"";
-        !self.tapProxy ?: [self.tapProxy sendNext:nil];
+        !self.tapProxy ?: [self.tapProxy sendNext:x];
     }];
     [self addGestureRecognizer:tapGesture];
 }
@@ -167,7 +167,7 @@
     [longPressGesture.rac_gestureSignal
     subscribeNext:^(__kindof UIGestureRecognizer * _Nullable x) {
         @strongify(self)
-        !self.longPressProxy ?: [self.longPressProxy sendNext:nil];
+        !self.longPressProxy ?: [self.longPressProxy sendNext:x];
     }];
     [self addGestureRecognizer:longPressGesture];
 }

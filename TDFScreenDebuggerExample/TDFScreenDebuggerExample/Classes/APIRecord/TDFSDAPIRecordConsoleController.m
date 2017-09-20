@@ -8,14 +8,18 @@
 
 #import "TDFSDAPIRecordConsoleController.h"
 #import "TDFSDAPIRecorder.h"
+#import "TDFALRequestModel+APIRecord.h"
+#import "TDFSDSearchBar.h"
+#import "TDFSDManager.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
-#import "TDFALRequestModel+APIRecord.h"
+#import "TDFSDTextView.h"
 
-@interface TDFSDAPIRecordConsoleController () <TDFSDFullScreenConsoleControllerInheritProtocol>
+@interface TDFSDAPIRecordConsoleController () <TDFSDFullScreenConsoleControllerInheritProtocol, UISearchBarDelegate>
 
-@property (nonatomic, strong) UITextView *apiOutputView;
-@property (nonatomic, strong) UIButton *clearButton;
+@property (nonatomic, strong) UIView *apiRecordContainer;
+@property (nonatomic, strong) TDFSDTextView *apiOutputView;
+@property (nonatomic, strong) TDFSDSearchBar *searchBar;
 @property (nonatomic, strong) UIActivityIndicatorView *loadingView;
 
 @end
@@ -27,6 +31,7 @@
     [super viewDidLoad];
     [self layoutPageSubviews];
     [self addAPIRecordPortObserve];
+    [self addKeyboardObserve];
     [self.loadingView startAnimating];
 }
 
@@ -34,7 +39,7 @@
     [super viewDidAppear:animated];
     
     // if too large text content presented in UITextView, it will get stuck during `viewDidLoad`
-    // so I decide to put fetch text and presentation operation code in `viewDidAppear`
+    // so finally I decide to put fetch text and presentation operation code in `viewDidAppear`
     [self fetchAlreadyExistRecord];
 }
 
@@ -44,24 +49,73 @@
 }
 
 - (UIView *)contentViewForFullScreenConsole {
-    return self.apiOutputView;
+    return self.apiRecordContainer;
+}
+
+- (NSArray<TDFSDFunctionMenuItem *> *)functionMenuItemsForFullScreenConsole {
+    if (!self.menuItems) {
+        @weakify(self)
+        return @[
+                 [TDFSDFunctionMenuItem itemWithImage:[UIImage imageNamed:@"icon_screenDebugger_search"]
+                 actionHandler:^(TDFSDFunctionMenuItem *item) {
+                     // self->strong menuItems->strong item->self
+                     @strongify(self)
+                     [self relayoutSearchBar];
+                 }],
+                 [TDFSDFunctionMenuItem itemWithImage:[UIImage imageNamed:@"icon_screenDebugger_trash"]
+                 actionHandler:^(TDFSDFunctionMenuItem *item) {
+                     [[TDFSDAPIRecorder sharedInstance] clearAllRecords];
+                 }]
+               ];
+    }
+    return self.menuItems;
+}
+
+#pragma mark - UISearchBarDelegate
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    [self searchNextMatch];
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [self searchNextMatch];
 }
 
 #pragma mark - getter
-- (UITextView *)apiOutputView {
+- (UIView *)apiRecordContainer {
+    if (!_apiRecordContainer) {
+        _apiRecordContainer = [[UIView alloc] init];
+        _apiRecordContainer.backgroundColor = [UIColor clearColor];
+        _apiRecordContainer.userInteractionEnabled = YES;
+        _apiRecordContainer.clipsToBounds = YES;
+    }
+    return _apiRecordContainer;
+}
+
+- (TDFSDTextView *)apiOutputView {
     if (!_apiOutputView) {
-        _apiOutputView = [[UITextView alloc] init];
-        _apiOutputView.backgroundColor = [UIColor clearColor];
-        _apiOutputView.editable = NO;
-        _apiOutputView.selectable = YES;
-        _apiOutputView.indicatorStyle = UIScrollViewIndicatorStyleBlack;
-        _apiOutputView.allowsEditingTextAttributes = YES;
-        _apiOutputView.showsVerticalScrollIndicator = YES;
-        _apiOutputView.showsHorizontalScrollIndicator = NO;
-        // avoid the system auto scroll
-        _apiOutputView.layoutManager.allowsNonContiguousLayout = NO;
+        _apiOutputView = [[TDFSDTextView alloc] init];
     }
     return _apiOutputView;
+}
+
+- (TDFSDSearchBar *)searchBar {
+    if (!_searchBar) {
+        _searchBar = [[TDFSDSearchBar alloc] init];
+        _searchBar.hitTestView = self.apiOutputView;
+        _searchBar.delegate = self;
+        _searchBar.previousProxy = [RACSubject subject];
+        _searchBar.nextProxy = [RACSubject subject];
+        @weakify(self)
+        [_searchBar.previousProxy subscribeNext:^(id  _Nullable x) {
+            @strongify(self)
+            [self searchPreviousMatch];
+        }];
+        [_searchBar.nextProxy subscribeNext:^(id  _Nullable x) {
+            @strongify(self)
+            [self searchNextMatch];
+        }];
+    }
+    return _searchBar;
 }
 
 - (UIActivityIndicatorView *)loadingView {
@@ -71,35 +125,96 @@
     return _loadingView;
 }
 
-- (UIButton *)clearButton {
-    if (!_clearButton) {
-        _clearButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_clearButton setBackgroundColor:[UIColor clearColor]];
-        _clearButton.titleLabel.textAlignment = NSTextAlignmentCenter;
-        _clearButton.titleLabel.font = [UIFont fontWithName:@"PingFang SC" size:15];
-        [_clearButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_clearButton setTitle:@"Clear" forState:UIControlStateNormal];
-        _clearButton.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
-            [[TDFSDAPIRecorder sharedInstance] clearAllRecords];
-            return [RACSignal empty];
-        }];
-    }
-    return _clearButton;
-}
-
 #pragma mark - private
 - (void)layoutPageSubviews {
+    
+    [self.apiRecordContainer addSubview:self.searchBar];
+    [self.apiRecordContainer addSubview:self.apiOutputView];
     [self.container addSubview:self.loadingView];
-    [self.container addSubview:self.clearButton];
+    
+    [self.searchBar mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.apiRecordContainer).with.offset(-40);
+        make.left.and.right.equalTo(self.apiRecordContainer);
+        make.height.equalTo(@28);
+    }];
+    [self.apiOutputView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.and.bottom.equalTo(self.apiRecordContainer);
+        make.top.equalTo(self.searchBar.mas_bottom).with.offset(12);
+    }];
     [self.loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.center.equalTo(self.apiOutputView);
+        make.center.equalTo(self.apiRecordContainer);
         make.width.and.height.equalTo(@44);
     }];
-    [self.clearButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.container).with.offset(-11);
-        make.top.equalTo(self.container).with.offset(11);
-        make.width.equalTo(@60);
-        make.height.equalTo(@40);
+}
+
+- (void)addKeyboardObserve {
+    @weakify(self)
+    [[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardWillChangeFrameNotification object:nil]
+    subscribeNext:^(NSNotification * _Nullable notification) {
+        @strongify(self)
+        CGRect kbFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+        CGFloat contentInsetsHeight = self.view.bounds.size.height - kbFrame.origin.y;
+        if (contentInsetsHeight) {
+            contentInsetsHeight -= kSDSearchBarInputAccessoryHeight;
+        }
+        
+        UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+        contentInsets.bottom = contentInsetsHeight;
+        
+        self.apiOutputView.contentInset = contentInsets;
+        self.apiOutputView.scrollIndicatorInsets = contentInsets;
+        
+        if (!contentInsetsHeight) {
+            [self.searchBar.accessoryDelayCommand execute:@(NO)];
+        }
+    }];
+    [[[NSNotificationCenter defaultCenter] rac_addObserverForName:UIKeyboardDidChangeFrameNotification object:nil]
+    subscribeNext:^(NSNotification * _Nullable notification) {
+        @strongify(self)
+        CGRect kbFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+        CGFloat contentInsetsHeight = self.view.bounds.size.height - kbFrame.origin.y;
+        
+        if (contentInsetsHeight) {
+            [self.searchBar.accessoryDelayCommand execute:@(YES)];
+        }
+    }];
+}
+
+- (void)relayoutSearchBar {
+    [self.apiOutputView.superview layoutIfNeeded];
+    [self animateSearchBarDisplay:!self.apiOutputView.frame.origin.y];
+}
+
+- (void)animateSearchBarDisplay:(BOOL)shouldDisplay {
+    
+    if (!shouldDisplay) {
+        [self.searchBar resignFirstResponder];
+    }
+    
+    UIViewAnimationOptions animationOptions = UIViewAnimationOptionLayoutSubviews |
+                                              UIViewAnimationOptionBeginFromCurrentState |
+                                              UIViewAnimationOptionAllowAnimatedContent;
+    
+    animationOptions |= shouldDisplay ? UIViewAnimationOptionCurveEaseOut : UIViewAnimationOptionCurveEaseIn;
+    
+    [UIView animateWithDuration:0.3 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0
+        options:animationOptions
+        animations:^{
+            if (shouldDisplay) {
+                [self.searchBar mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.equalTo(self.apiRecordContainer);
+                }];
+            } else {
+                [self.searchBar mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.equalTo(self.apiRecordContainer).with.offset(-40);
+                }];
+            }
+            [self.searchBar.superview layoutIfNeeded];
+        }
+        completion:^(BOOL finished) {
+            if (finished && shouldDisplay) {
+                [self.searchBar becomeFirstResponder];
+            }
     }];
 }
 
@@ -153,5 +268,27 @@
     }];
 }
 
+- (void)searchNextMatch {
+    [self searchKeywordsWithDirection:ICTextViewSearchDirectionForward];
+}
+
+- (void)searchPreviousMatch {
+    [self searchKeywordsWithDirection:ICTextViewSearchDirectionBackward];
+}
+
+- (void)searchKeywordsWithDirection:(ICTextViewSearchDirection)direction {
+    NSString *keywords = self.searchBar.text;
+    if (keywords.length) {
+        [self.apiOutputView scrollToMatch:keywords searchDirection:direction];
+    } else {
+        [self.apiOutputView resetSearch];
+    }
+    [self updateSearchMatchStatistics];
+}
+
+- (void)updateSearchMatchStatistics {
+    self.searchBar.currentSearchIndex = self.apiOutputView.indexOfFoundString != NSNotFound ? self.apiOutputView.indexOfFoundString + 1 : 0;
+    self.searchBar.searchResultTotalCount = self.apiOutputView.numberOfMatches != NSNotFound ? self.apiOutputView.numberOfMatches : 0;
+}
 
 @end

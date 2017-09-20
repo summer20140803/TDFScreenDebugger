@@ -18,4 +18,7 @@
 - (void)showDebugger;
 - (void)hideDebugger;
 
+- (void)applyForAcceptKeyInput;
+- (void)revokeApply;
+
 @end

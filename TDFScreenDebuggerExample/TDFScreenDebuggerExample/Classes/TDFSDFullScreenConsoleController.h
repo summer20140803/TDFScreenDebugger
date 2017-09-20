@@ -16,23 +16,20 @@
 - (__kindof UIView *)contentViewForFullScreenConsole;
 
 @optional
-- (NSArray<TDFSDFunctionMenuItem *> *)fuctionMenuItemsForFullScreenConsole;
+- (NSArray<TDFSDFunctionMenuItem *> *)functionMenuItemsForFullScreenConsole;
 
 @end
 
 @interface TDFSDFullScreenConsoleController : UIViewController
 
 @property (nonatomic, strong, readonly) UIView *container;
+@property (nonatomic, strong, readonly) NSArray<TDFSDFunctionMenuItem *> *menuItems;
 
 @end
 
 
-@interface TDFSDFunctionMenuItem : NSObject
+@interface TDFSDFunctionMenuItem : UIButton
 
-@property (nonatomic, copy, readonly) NSString *title;
-@property (nonatomic, copy) void (^actionHandler)(TDFSDFunctionMenuItem *item);
-
-+ (instancetype)itemWithTitle:(NSString *)title image:(UIImage *)image;
-+ (instancetype)itemWithTitle:(NSString *)title image:(UIImage *)image actionHandler:(void (^)(TDFSDFunctionMenuItem *item))actionHandler;
++ (instancetype)itemWithImage:(UIImage *)image actionHandler:(void (^)(TDFSDFunctionMenuItem *item))actionHandler;
 
 @end

@@ -7,10 +7,10 @@
 //
 
 #import "TDFSDAPIRecorder.h"
-#import <ReactiveObjC/ReactiveObjC.h>
 #import "TDFSDManager.h"
 #import "TDFSDAPIRecordConsoleController.h"
 #import "TDFALRequestModel+APIRecord.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 
 @interface TDFSDAPIRecorder ()

@@ -23,11 +23,11 @@
 
 #if DEBUG
 - (BOOL)_canBecomeKeyWindow {
-    return NO;
+    return [self.sd_delegate canBecomeKeyWindow:self];
 }
 
 - (BOOL)_canAffectStatusBarAppearance {
-    return NO;
+    return [self isKeyWindow];
 }
 #endif
 
@@ -35,7 +35,7 @@
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
     BOOL pointInside = NO;
     // notify delegate to handle touchEvent logic
-    if ([self.touchEventDelegate window:self shouldHandleTouchEventWithTouchPoint:point]) {
+    if ([self.sd_delegate window:self shouldHandleTouchEventWithTouchPoint:point]) {
         pointInside = [super pointInside:point withEvent:event];
     }
     // if return YES, it confirms that the window will handle this event

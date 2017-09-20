@@ -12,11 +12,12 @@
 @protocol TDFSDWindowDelegate <NSObject>
 
 - (BOOL)window:(TDFSDWindow *)window shouldHandleTouchEventWithTouchPoint:(CGPoint)touchPoint;
+- (BOOL)canBecomeKeyWindow:(TDFSDWindow *)window;
 
 @end
 
 @interface TDFSDWindow : UIWindow
 
-@property (nonatomic, weak) id<TDFSDWindowDelegate> touchEventDelegate;
+@property (nonatomic, weak) id<TDFSDWindowDelegate> sd_delegate;
 
 @end

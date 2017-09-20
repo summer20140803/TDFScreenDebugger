@@ -7,6 +7,7 @@
 //
 
 #import "TDFSDFullScreenConsoleController.h"
+#import "TDFSDManager.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
 
@@ -14,10 +15,20 @@
 
 @property (nonatomic, strong, readwrite) UIView *container;
 @property (nonatomic, strong) UIVisualEffectView *effectView;
+
 @property (nonatomic, strong) UILabel *consoleTitleLabel;
 @property (nonatomic, strong) __kindof UIView *contentView;
 
+@property (nonatomic, strong) UIScrollView *menuTool;
+// menuToolLayoutContainer is convenient and correct for layouting menuItems in menuTool(scrollView)
+// https://spin.atomicobject.com/2014/03/05/uiscrollview-autolayout-ios/
+@property (nonatomic, strong) UIView *menuToolLayoutContainer;
+@property (nonatomic, strong, readwrite) NSArray<TDFSDFunctionMenuItem *> *menuItems;
+
 @end
+
+static const CGFloat kSDTopToolMenuItemLength = 20.f;
+static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
 
 @implementation TDFSDFullScreenConsoleController
 
@@ -34,14 +45,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view setBackgroundColor:[UIColor clearColor]];
+    [self fsbase_fetchMenuItems];
     [self fsbase_layoutPageSubviews];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-//    [UIView animateWithDuration:1 delay:0 usingSpringWithDamping:0.6 initialSpringVelocity:20 options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionTransitionCrossDissolve animations:^{
-//        self.container.alpha = 1;
-//    } completion:nil];
+    // apply to become keywindow for `TDFSDWindow` instance
+    [[TDFSDManager manager] applyForAcceptKeyInput];
+}
+
+- (void)dealloc {
+    // let `TDFSDWindow` instance gives up becoming keywindow
+    [[TDFSDManager manager] revokeApply];
 }
 
 #pragma mark - getter
@@ -66,14 +82,33 @@
     if (!_consoleTitleLabel) {
         _consoleTitleLabel = [[UILabel alloc] init];
         [_consoleTitleLabel setBackgroundColor:[UIColor clearColor]];
-        _consoleTitleLabel.textAlignment = NSTextAlignmentCenter;
+        _consoleTitleLabel.textAlignment = NSTextAlignmentLeft;
         _consoleTitleLabel.numberOfLines = 1;
         _consoleTitleLabel.textColor = [UIColor whiteColor];
-        _consoleTitleLabel.font = [UIFont fontWithName:@"PingFang SC" size:18];
+        _consoleTitleLabel.font = [UIFont fontWithName:@"PingFang SC" size:17];
         _consoleTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         _consoleTitleLabel.text = [(TDFSDFullScreenConsoleController<TDFSDFullScreenConsoleControllerInheritProtocol> *)self titleForFullScreenConsole];
     }
     return _consoleTitleLabel;
+}
+
+- (UIScrollView *)menuTool {
+    if (!_menuTool) {
+        _menuTool = [[UIScrollView alloc] init];
+        _menuTool.backgroundColor = [UIColor clearColor];
+        _menuTool.scrollEnabled = YES;
+        _menuTool.showsVerticalScrollIndicator = NO;
+        _menuTool.showsHorizontalScrollIndicator = NO;
+    }
+    return _menuTool;
+}
+
+- (UIView *)menuToolLayoutContainer {
+    if (!_menuToolLayoutContainer) {
+        _menuToolLayoutContainer = [[UIView alloc] init];
+        _menuToolLayoutContainer.backgroundColor = [UIColor clearColor];
+    }
+    return _menuToolLayoutContainer;
 }
 
 - (UIView *)contentView {
@@ -86,16 +121,28 @@
 #pragma mark - event
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
+    [self.view endEditing:YES];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - private
+- (void)fsbase_fetchMenuItems {
+    if ([self respondsToSelector:@selector(functionMenuItemsForFullScreenConsole)]) {
+       NSArray<TDFSDFunctionMenuItem *> *items = [(TDFSDFullScreenConsoleController<TDFSDFullScreenConsoleControllerInheritProtocol> *)self functionMenuItemsForFullScreenConsole];
+        self.menuItems = items ?: @[];
+    } else {
+        self.menuItems = @[];
+    }
+}
+
 - (void)fsbase_layoutPageSubviews {
     
     [self.view addSubview:self.effectView];
     [self.view addSubview:self.container];
     [self.container addSubview:self.consoleTitleLabel];
+    [self.container addSubview:self.menuTool];
     [self.container addSubview:self.contentView];
+    [self.menuTool addSubview:self.menuToolLayoutContainer];
     
     [self.container mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -104,17 +151,63 @@
         make.edges.equalTo(self.view);
     }];
     [self.consoleTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.container).with.offset(22);
+        make.left.equalTo(self.container).with.offset(20);
         make.top.equalTo(self.container).with.offset(11);
-        make.height.equalTo(@40);
+        make.height.equalTo(@36);
+    }];
+    [self.menuTool mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.consoleTitleLabel.mas_right).with.offset(30);
+        make.right.equalTo(self.container).with.offset(-16);
+        make.top.equalTo(self.container).with.offset(11);
+        make.height.equalTo(@36);
     }];
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.consoleTitleLabel.mas_bottom).with.offset(6);
         make.left.equalTo(self.container).with.offset(6);
         make.right.equalTo(self.container).with.offset(-6);
-        make.bottom.equalTo(self.container).with.offset(-6);
+        make.bottom.equalTo(self.container).with.offset(0);
+    }];
+    
+    [self.menuTool.superview layoutIfNeeded];
+    
+    CGFloat contentWidth = self.menuItems.count * kSDTopToolMenuItemLength + (self.menuItems.count-1) * kSDTopToolMenuItemMargin;
+    CGFloat containerWidth = contentWidth > self.menuTool.bounds.size.width ? contentWidth : self.menuTool.bounds.size.width;
+    
+    // must set the complete layout constraints for vertical and horizontal direction
+    // http://adad184.com/2015/12/01/scrollview-under-autolayout/
+    [self.menuToolLayoutContainer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.menuTool);
+        make.height.equalTo(self.menuTool);
+        make.width.equalTo(@(containerWidth));
+    }];
+    
+    [self.menuItems enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TDFSDFunctionMenuItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [self.menuToolLayoutContainer addSubview:obj];
+        [obj mas_makeConstraints:^(MASConstraintMaker *make) {
+            CGFloat rightMargin = (self.menuItems.count-idx-1) * (kSDTopToolMenuItemMargin+kSDTopToolMenuItemLength);
+            make.right.equalTo(self.menuToolLayoutContainer).with.offset(-rightMargin);
+            make.centerY.equalTo(self.menuTool);
+            make.width.and.height.equalTo(@(kSDTopToolMenuItemLength));
+        }];
     }];
 }
 
+@end
+
+
+@implementation TDFSDFunctionMenuItem
+
++ (instancetype)itemWithImage:(UIImage *)image actionHandler:(void (^)(TDFSDFunctionMenuItem *))actionHandler {
+    TDFSDFunctionMenuItem *item = [TDFSDFunctionMenuItem buttonWithType:UIButtonTypeCustom];
+    [item setBackgroundColor:[UIColor clearColor]];
+    [item setBackgroundImage:image forState:UIControlStateNormal];
+    @weakify(item)
+    item.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
+        @strongify(item)
+        !actionHandler ?: actionHandler(item);
+        return [RACSignal empty];
+    }];
+    return item;
+}
 
 @end
