@@ -9,11 +9,12 @@
 #import "TDFSDViewController.h"
 #import "TDFSDThumbnailView.h"
 #import "TDFSDAPIRecordConsoleController.h"
-#import "TDFSDOverallSettingController.h"
+#import "TDFSDDebuggerCenterController.h"
+#import "TDFSDTransitionAnimator.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
 
-@interface TDFSDViewController ()
+@interface TDFSDViewController () <UIViewControllerTransitioningDelegate>
 
 @property (nonatomic, strong) TDFSDThumbnailView *thumbnailView;
 
@@ -49,19 +50,28 @@
         [_thumbnailView.tapProxy subscribeNext:^(id  _Nullable x) {
             @strongify(self)
             TDFSDAPIRecordConsoleController *console = [[TDFSDAPIRecordConsoleController alloc] init];
-            console.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-            [self presentViewController:console animated:NO completion:nil];
+            console.transitioningDelegate = self;
+            [self presentViewController:console animated:YES completion:nil];
         }];
         [_thumbnailView.longPressProxy subscribeNext:^(id  _Nullable x) {
             @strongify(self)
             if (!self.presentedViewController) {
-                TDFSDOverallSettingController *setting = [[TDFSDOverallSettingController alloc] init];
-                setting.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-                [self presentViewController:setting animated:YES completion:nil];
+                TDFSDDebuggerCenterController *center = [[TDFSDDebuggerCenterController alloc] init];
+                center.transitioningDelegate = self;
+                [self presentViewController:center animated:YES completion:nil];
             }
         }];
     }
     return _thumbnailView;
+}
+
+#pragma mark - UIViewControllerTransitioningDelegate
+- (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source {
+    return [TDFSDTransitionAnimator new];
+}
+
+- (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed {
+    return [TDFSDTransitionAnimator new];
 }
 
 #pragma mark - private

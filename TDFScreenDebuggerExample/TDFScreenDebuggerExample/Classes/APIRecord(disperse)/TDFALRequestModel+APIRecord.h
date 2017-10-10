@@ -12,6 +12,4 @@
 
 @interface TDFALRequestModel (APIRecord) <TDFSDAPIRecordCharacterizationProtocol, TDFSDMessageRemindProtocol>
 
-
-
 @end

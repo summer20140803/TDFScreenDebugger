@@ -7,14 +7,17 @@
 //
 
 #import <Foundation/Foundation.h>
+@class TDFSDFunctionModel;
 
-typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
-    SDMessageRemindTypeAPIRecord   = 0,
+typedef NS_ENUM(NSUInteger, TDFSDMessageRemindType) {
+    TDFSDMessageRemindTypeAPIRecord   = 0,
+    TDFSDMessageRemindTypeSystemLog   = 1,
 };
 
 @interface TDFSDPersistenceSetting : NSObject
 
-@property (nonatomic, assign) SDMessageRemindType messageRemindType;
+@property (nonatomic, assign) TDFSDMessageRemindType messageRemindType;
+@property (nonatomic, strong, readonly) NSArray<TDFSDFunctionModel *> *functionList;
 
 + (instancetype)sharedInstance;
 

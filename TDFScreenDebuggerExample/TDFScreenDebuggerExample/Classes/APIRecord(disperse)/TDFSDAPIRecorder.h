@@ -15,7 +15,6 @@
 @property (nonatomic, strong, readonly) NSArray<TDFALRequestModel *> *requestDesModels;
 @property (nonatomic, strong, readonly) NSArray<TDFALResponseModel *> *responseDesModels;
 
-
 + (instancetype)sharedInstance;
 
 - (void)clearAllRecords;

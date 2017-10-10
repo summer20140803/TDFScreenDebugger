@@ -8,6 +8,7 @@
 
 #import "TDFSDThumbnailView.h"
 #import "TDFSDPersistenceSetting.h"
+#import "TDFScreenDebuggerDefine.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
 
@@ -18,6 +19,7 @@
 
 - (void)addSpecificMessageRemindObserve;
 - (void)disposeObserve;
+- (void)forceAllRead;
 
 @end
 
@@ -26,6 +28,10 @@
 - (void)addSpecificMessageRemindObserve {
     NSAssert(NO,
              @"should override this method by subclass which inherit `TDFSDMessageRemindBaseViewModel` class");
+}
+
+- (void)forceAllRead {
+    self.messageRemindLabelReference.text = @"";
 }
 
 - (void)disposeObserve {
@@ -38,12 +44,11 @@
 
 #import "TDFSDAPIRecorder.h"
 #import "TDFALRequestModel+APIRecord.h"
-
-@interface TDFSDMessageRemindALViewModel : TDFSDMessageRemindBaseViewModel
+@interface TDFSDMessageRemindARViewModel : TDFSDMessageRemindBaseViewModel
 
 @end
 
-@implementation TDFSDMessageRemindALViewModel
+@implementation TDFSDMessageRemindARViewModel
 
 - (void)addSpecificMessageRemindObserve {
     @weakify(self)
@@ -57,10 +62,44 @@
         array] count];
         
         @strongify(self)
-        if (unreadCount <= 99) {
+        if (unreadCount && unreadCount <= 99) {
             self.messageRemindLabelReference.text = @(unreadCount).stringValue;
-        } else {
+        } else if(unreadCount > 99) {
             self.messageRemindLabelReference.text = @"99+";
+        } else {
+            self.messageRemindLabelReference.text = @"";
+        }
+    }];
+}
+
+@end
+
+#import "TDFSDLVLogManager.h"
+#import "TDFSDLVLogModel.h"
+@interface TDFSDMessageRemindLVViewModel : TDFSDMessageRemindBaseViewModel
+
+@end
+
+@implementation TDFSDMessageRemindLVViewModel
+
+- (void)addSpecificMessageRemindObserve {
+    @weakify(self)
+    self.disposable = \
+    [RACObserve([TDFSDLVLogManager manager], logs) subscribeNext:^(NSArray<TDFSDLVLogModel *> * _Nullable logModel) {
+        
+        NSUInteger unreadCount = [[[logModel.rac_sequence
+        filter:^BOOL(TDFALRequestModel * _Nullable requestDesModel) {
+            return !requestDesModel.messageIsRead;
+        }]
+        array] count];
+        
+        @strongify(self)
+        if (unreadCount && unreadCount <= 99) {
+            self.messageRemindLabelReference.text = @(unreadCount).stringValue;
+        } else if(unreadCount > 99) {
+            self.messageRemindLabelReference.text = @"99+";
+        } else {
+            self.messageRemindLabelReference.text = @"";
         }
     }];
 }
@@ -87,33 +126,9 @@
         [self addLongPressGesture];
         [self addMessageRemindTextObserve];
         [self addThumbnailMessageRemindTypeObserve];
+        [self addAllReadNoticationObserve];
     }
     return self;
-}
-
-#pragma mark - getter
-- (UIImageView *)thumbnailIconView {
-    if (!_thumbnailIconView) {
-        UIImage *thumbnailIcon = [UIImage imageNamed:@"icon_screenDebugger_thumbnail"];
-        _thumbnailIconView = [[UIImageView alloc] initWithImage:thumbnailIcon];
-        _thumbnailIconView.contentMode = UIViewContentModeScaleToFill;
-    }
-    return _thumbnailIconView;
-}
-
-- (UILabel *)unreadMessageRemindLabel {
-    if (!_unreadMessageRemindLabel) {
-        _unreadMessageRemindLabel = [[UILabel alloc] init];
-        [_unreadMessageRemindLabel setBackgroundColor:[UIColor colorWithRed:241/255.f green:56/255.f blue:56/255.f alpha:1]];
-        _unreadMessageRemindLabel.textAlignment = NSTextAlignmentCenter;
-        _unreadMessageRemindLabel.numberOfLines = 1;
-        _unreadMessageRemindLabel.textColor = [UIColor whiteColor];
-        _unreadMessageRemindLabel.font = [UIFont boldSystemFontOfSize:11];
-        _unreadMessageRemindLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-        _unreadMessageRemindLabel.layer.cornerRadius = 7;
-        _unreadMessageRemindLabel.layer.masksToBounds = YES;
-    }
-    return _unreadMessageRemindLabel;
 }
 
 #pragma mark - event
@@ -154,7 +169,7 @@
     @weakify(self)
     [tapGesture.rac_gestureSignal subscribeNext:^(__kindof UIGestureRecognizer * _Nullable x) {
         @strongify(self)
-        self.unreadMessageRemindLabel.text = @"";
+        [self.viewModel forceAllRead];
         !self.tapProxy ?: [self.tapProxy sendNext:x];
     }];
     [self addGestureRecognizer:tapGesture];
@@ -200,14 +215,54 @@
         }
         
         switch ([messageRemindType unsignedIntegerValue]) {
-            case SDMessageRemindTypeAPIRecord: {
-                self.viewModel = [[TDFSDMessageRemindALViewModel alloc] init];
+            case TDFSDMessageRemindTypeAPIRecord: {
+                self.viewModel = [[TDFSDMessageRemindARViewModel alloc] init];
+            }break;
+            case TDFSDMessageRemindTypeSystemLog: {
+                self.viewModel = [[TDFSDMessageRemindLVViewModel alloc] init];
             }break;
         }
         
         self.viewModel.messageRemindLabelReference = self.unreadMessageRemindLabel;
         [self.viewModel addSpecificMessageRemindObserve];
     }];
+}
+
+- (void)addAllReadNoticationObserve {
+    [[[NSNotificationCenter defaultCenter] rac_addObserverForName:TDFSDRemindMessageAllReadNotificationName object:nil]
+    subscribeNext:^(NSNotification * _Nullable x) {
+        SDAllReadNotificationContentType type = [x.object unsignedIntegerValue];
+        
+        // if all-read content type hit the messageRemindType setted by user or default, invoke `forceAllRead` to clear label text
+        if (type == (SDAllReadNotificationContentType)[TDFSDPersistenceSetting sharedInstance].messageRemindType) {
+            [self.viewModel forceAllRead];
+        }
+    }];
+}
+
+#pragma mark - getter
+- (UIImageView *)thumbnailIconView {
+    if (!_thumbnailIconView) {
+        UIImage *thumbnailIcon = [UIImage imageNamed:@"icon_screenDebugger_thumbnail"];
+        _thumbnailIconView = [[UIImageView alloc] initWithImage:thumbnailIcon];
+        _thumbnailIconView.contentMode = UIViewContentModeScaleToFill;
+    }
+    return _thumbnailIconView;
+}
+
+- (UILabel *)unreadMessageRemindLabel {
+    if (!_unreadMessageRemindLabel) {
+        _unreadMessageRemindLabel = [[UILabel alloc] init];
+        [_unreadMessageRemindLabel setBackgroundColor:[UIColor colorWithRed:241/255.f green:56/255.f blue:56/255.f alpha:1]];
+        _unreadMessageRemindLabel.textAlignment = NSTextAlignmentCenter;
+        _unreadMessageRemindLabel.numberOfLines = 1;
+        _unreadMessageRemindLabel.textColor = [UIColor whiteColor];
+        _unreadMessageRemindLabel.font = [UIFont boldSystemFontOfSize:11];
+        _unreadMessageRemindLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        _unreadMessageRemindLabel.layer.cornerRadius = 7;
+        _unreadMessageRemindLabel.layer.masksToBounds = YES;
+    }
+    return _unreadMessageRemindLabel;
 }
 
 @end

@@ -25,8 +25,8 @@
         self.circularSearch = YES;
         self.scrollPosition = ICTextViewScrollPositionMiddle;
         self.searchOptions = NSRegularExpressionCaseInsensitive;
-        self.primaryHighlightColor = [UIColor colorWithRed:255/255.f green:249/255.f blue:196/255.f alpha:0.6];
-        self.secondaryHighlightColor = [UIColor colorWithRed: 255/255.f green:249/255.f blue:196/255.f alpha:0.2];
+        self.primaryHighlightColor = [UIColor colorWithRed:178/255.f green:235/255.f blue:242/255.f alpha:0.35];
+        self.secondaryHighlightColor = [UIColor colorWithRed: 178/255.f green:235/255.f blue:242/255.f alpha:0.15];
     }
     return self;
 }

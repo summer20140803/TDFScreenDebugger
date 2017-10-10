@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TDFScreenDebuggerDefine.h"
 
 @class TDFSDFunctionMenuItem;
 @protocol TDFSDFullScreenConsoleControllerInheritProtocol <NSObject>
@@ -20,10 +21,14 @@
 
 @end
 
-@interface TDFSDFullScreenConsoleController : UIViewController
+CF_EXPORT const CGFloat kSDFullScreenContentViewEdgeMargin;
+
+@interface TDFSDFullScreenConsoleController : UIViewController <UIViewControllerTransitioningDelegate>
 
 @property (nonatomic, strong, readonly) UIView *container;
 @property (nonatomic, strong, readonly) NSArray<TDFSDFunctionMenuItem *> *menuItems;
+
+- (void)sendClearRemindLabelTextRequestWithContentType:(SDAllReadNotificationContentType)contentType;
 
 @end
 

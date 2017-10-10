@@ -8,8 +8,10 @@
 
 #import "TDFSDFullScreenConsoleController.h"
 #import "TDFSDManager.h"
+#import "TDFSDTransitionAnimator.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
+
 
 @interface TDFSDFullScreenConsoleController ()
 
@@ -26,6 +28,8 @@
 @property (nonatomic, strong, readwrite) NSArray<TDFSDFunctionMenuItem *> *menuItems;
 
 @end
+
+const CGFloat kSDFullScreenContentViewEdgeMargin  = 6.f;
 
 static const CGFloat kSDTopToolMenuItemLength = 20.f;
 static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
@@ -60,6 +64,11 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     [[TDFSDManager manager] revokeApply];
 }
 
+#pragma mark - interface methods
+- (void)sendClearRemindLabelTextRequestWithContentType:(SDAllReadNotificationContentType)contentType {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDFSDRemindMessageAllReadNotificationName object:@(contentType)];
+}
+
 #pragma mark - getter
 - (UIView *)container {
     if (!_container) {
@@ -85,7 +94,7 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
         _consoleTitleLabel.textAlignment = NSTextAlignmentLeft;
         _consoleTitleLabel.numberOfLines = 1;
         _consoleTitleLabel.textColor = [UIColor whiteColor];
-        _consoleTitleLabel.font = [UIFont fontWithName:@"PingFang SC" size:17];
+        _consoleTitleLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:18];
         _consoleTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         _consoleTitleLabel.text = [(TDFSDFullScreenConsoleController<TDFSDFullScreenConsoleControllerInheritProtocol> *)self titleForFullScreenConsole];
     }
@@ -120,9 +129,17 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
 
 #pragma mark - event
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [super touchesBegan:touches withEvent:event];
     [self.view endEditing:YES];
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - UIViewControllerTransitioningDelegate
+- (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source {
+    return [TDFSDTransitionAnimator new];
+}
+
+- (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed {
+    return [TDFSDTransitionAnimator new];
 }
 
 #pragma mark - private
@@ -140,9 +157,7 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     [self.view addSubview:self.effectView];
     [self.view addSubview:self.container];
     [self.container addSubview:self.consoleTitleLabel];
-    [self.container addSubview:self.menuTool];
     [self.container addSubview:self.contentView];
-    [self.menuTool addSubview:self.menuToolLayoutContainer];
     
     [self.container mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
@@ -155,41 +170,50 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
         make.top.equalTo(self.container).with.offset(11);
         make.height.equalTo(@36);
     }];
-    [self.menuTool mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.consoleTitleLabel.mas_right).with.offset(30);
-        make.right.equalTo(self.container).with.offset(-16);
-        make.top.equalTo(self.container).with.offset(11);
-        make.height.equalTo(@36);
-    }];
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.consoleTitleLabel.mas_bottom).with.offset(6);
-        make.left.equalTo(self.container).with.offset(6);
-        make.right.equalTo(self.container).with.offset(-6);
+        make.left.equalTo(self.container).with.offset(kSDFullScreenContentViewEdgeMargin);
+        make.right.equalTo(self.container).with.offset(-kSDFullScreenContentViewEdgeMargin);
         make.bottom.equalTo(self.container).with.offset(0);
     }];
     
-    [self.menuTool.superview layoutIfNeeded];
-    
-    CGFloat contentWidth = self.menuItems.count * kSDTopToolMenuItemLength + (self.menuItems.count-1) * kSDTopToolMenuItemMargin;
-    CGFloat containerWidth = contentWidth > self.menuTool.bounds.size.width ? contentWidth : self.menuTool.bounds.size.width;
-    
-    // must set the complete layout constraints for vertical and horizontal direction
-    // http://adad184.com/2015/12/01/scrollview-under-autolayout/
-    [self.menuToolLayoutContainer mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.menuTool);
-        make.height.equalTo(self.menuTool);
-        make.width.equalTo(@(containerWidth));
-    }];
-    
-    [self.menuItems enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TDFSDFunctionMenuItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        [self.menuToolLayoutContainer addSubview:obj];
-        [obj mas_makeConstraints:^(MASConstraintMaker *make) {
-            CGFloat rightMargin = (self.menuItems.count-idx-1) * (kSDTopToolMenuItemMargin+kSDTopToolMenuItemLength);
-            make.right.equalTo(self.menuToolLayoutContainer).with.offset(-rightMargin);
-            make.centerY.equalTo(self.menuTool);
-            make.width.and.height.equalTo(@(kSDTopToolMenuItemLength));
+    // In order to avoid the following warning system, so we should judge items count setted by `TDFSDFullScreenConsoleControllerInheritProtocol` method
+    // This NSLayoutConstraint is being configured with a constant that exceeds internal limits.  A smaller value will be substituted, but this problem should be fixed. Break on BOOL _NSLayoutConstraintNumberExceedsLimit() to debug.  This will be logged only once.  This may break in the future.
+    if (self.menuItems.count) {
+        
+        [self.container addSubview:self.menuTool];
+        [self.menuTool addSubview:self.menuToolLayoutContainer];
+        
+        [self.menuTool mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.consoleTitleLabel.mas_right).with.offset(30);
+            make.right.equalTo(self.container).with.offset(-16);
+            make.top.equalTo(self.container).with.offset(11);
+            make.height.equalTo(@36);
         }];
-    }];
+        
+        [self.menuTool.superview layoutIfNeeded];
+        
+        CGFloat contentWidth = self.menuItems.count * kSDTopToolMenuItemLength + (self.menuItems.count-1) * kSDTopToolMenuItemMargin;
+        CGFloat containerWidth = contentWidth > self.menuTool.bounds.size.width ? contentWidth : self.menuTool.bounds.size.width;
+        
+        // must set the complete layout constraints for vertical and horizontal direction
+        // http://adad184.com/2015/12/01/scrollview-under-autolayout/
+        [self.menuToolLayoutContainer mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self.menuTool);
+            make.height.equalTo(self.menuTool);
+            make.width.equalTo(@(containerWidth));
+        }];
+        
+        [self.menuItems enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(TDFSDFunctionMenuItem * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [self.menuToolLayoutContainer addSubview:obj];
+            [obj mas_makeConstraints:^(MASConstraintMaker *make) {
+                CGFloat rightMargin = (self.menuItems.count-idx-1) * (kSDTopToolMenuItemMargin+kSDTopToolMenuItemLength);
+                make.right.equalTo(self.menuToolLayoutContainer).with.offset(-rightMargin);
+                make.centerY.equalTo(self.menuTool);
+                make.width.and.height.equalTo(@(kSDTopToolMenuItemLength));
+            }];
+        }];
+    }
 }
 
 @end

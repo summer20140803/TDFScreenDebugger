@@ -10,10 +10,9 @@
 #import "TDFSDAPIRecorder.h"
 #import "TDFALRequestModel+APIRecord.h"
 #import "TDFSDSearchBar.h"
-#import "TDFSDManager.h"
+#import "TDFSDTextView.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
-#import "TDFSDTextView.h"
 
 @interface TDFSDAPIRecordConsoleController () <TDFSDFullScreenConsoleControllerInheritProtocol, UISearchBarDelegate>
 
@@ -41,6 +40,14 @@
     // if too large text content presented in UITextView, it will get stuck during `viewDidLoad`
     // so finally I decide to put fetch text and presentation operation code in `viewDidAppear`
     [self fetchAlreadyExistRecord];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    
+    // textview loading large api-records sometimes consumes too much memory even lead to come up memory performance crysis
+    // if happened, we will clear all the current record to save memory problems
+    [[TDFSDAPIRecorder sharedInstance] clearAllRecords];
 }
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
@@ -78,51 +85,6 @@
 
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
     [self searchNextMatch];
-}
-
-#pragma mark - getter
-- (UIView *)apiRecordContainer {
-    if (!_apiRecordContainer) {
-        _apiRecordContainer = [[UIView alloc] init];
-        _apiRecordContainer.backgroundColor = [UIColor clearColor];
-        _apiRecordContainer.userInteractionEnabled = YES;
-        _apiRecordContainer.clipsToBounds = YES;
-    }
-    return _apiRecordContainer;
-}
-
-- (TDFSDTextView *)apiOutputView {
-    if (!_apiOutputView) {
-        _apiOutputView = [[TDFSDTextView alloc] init];
-    }
-    return _apiOutputView;
-}
-
-- (TDFSDSearchBar *)searchBar {
-    if (!_searchBar) {
-        _searchBar = [[TDFSDSearchBar alloc] init];
-        _searchBar.hitTestView = self.apiOutputView;
-        _searchBar.delegate = self;
-        _searchBar.previousProxy = [RACSubject subject];
-        _searchBar.nextProxy = [RACSubject subject];
-        @weakify(self)
-        [_searchBar.previousProxy subscribeNext:^(id  _Nullable x) {
-            @strongify(self)
-            [self searchPreviousMatch];
-        }];
-        [_searchBar.nextProxy subscribeNext:^(id  _Nullable x) {
-            @strongify(self)
-            [self searchNextMatch];
-        }];
-    }
-    return _searchBar;
-}
-
-- (UIActivityIndicatorView *)loadingView {
-    if (!_loadingView) {
-        _loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    }
-    return _loadingView;
 }
 
 #pragma mark - private
@@ -224,6 +186,11 @@
     map:^id _Nullable(NSArray<__kindof TDFALBaseModel<TDFSDAPIRecordCharacterizationProtocol> *> *descriptionModels) {
         return [[descriptionModels.rac_sequence
                map:^id _Nullable(__kindof TDFALBaseModel<TDFSDAPIRecordCharacterizationProtocol> * _Nullable descriptionModel) {
+                   
+                   // mark `TDFALRequestModel` instances messageRead to YES
+                   if ([descriptionModel isKindOfClass:[TDFALRequestModel class]]) {
+                       [(TDFALRequestModel *)descriptionModel setMessageRead:YES];
+                   }
                    return descriptionModel.outputCharacterizationString;
                }]
                foldLeftWithStart:[[NSMutableAttributedString alloc] initWithString:@""]
@@ -248,13 +215,15 @@
     subscribeNext:^(id  _Nullable x) {
         @strongify(self)
         [self.apiOutputView scrollRangeToVisible:NSMakeRange(self.apiOutputView.attributedText.length, 1)];
+        [self sendClearRemindLabelTextRequestWithContentType:SDAllReadNotificationContentTypeAPIRecord];
     }];
 }
 
 - (void)fetchAlreadyExistRecord {
     self.apiOutputView.attributedText = [[[TDFSDAPIRecorder sharedInstance].descriptionModels.rac_sequence
     map:^id _Nullable(__kindof TDFALBaseModel<TDFSDAPIRecordCharacterizationProtocol> * _Nullable descriptionModel) {
-        // mark all-read `TDFALRequestModel` instances messageRead to YES
+        
+        // mark `TDFALRequestModel` instances messageRead to YES
         if ([descriptionModel isKindOfClass:[TDFALRequestModel class]]) {
             [(TDFALRequestModel *)descriptionModel setMessageRead:YES];
         }
@@ -289,6 +258,51 @@
 - (void)updateSearchMatchStatistics {
     self.searchBar.currentSearchIndex = self.apiOutputView.indexOfFoundString != NSNotFound ? self.apiOutputView.indexOfFoundString + 1 : 0;
     self.searchBar.searchResultTotalCount = self.apiOutputView.numberOfMatches != NSNotFound ? self.apiOutputView.numberOfMatches : 0;
+}
+
+#pragma mark - getter
+- (UIView *)apiRecordContainer {
+    if (!_apiRecordContainer) {
+        _apiRecordContainer = [[UIView alloc] init];
+        _apiRecordContainer.backgroundColor = [UIColor clearColor];
+        _apiRecordContainer.userInteractionEnabled = YES;
+        _apiRecordContainer.clipsToBounds = YES;
+    }
+    return _apiRecordContainer;
+}
+
+- (TDFSDTextView *)apiOutputView {
+    if (!_apiOutputView) {
+        _apiOutputView = [[TDFSDTextView alloc] init];
+    }
+    return _apiOutputView;
+}
+
+- (TDFSDSearchBar *)searchBar {
+    if (!_searchBar) {
+        _searchBar = [[TDFSDSearchBar alloc] init];
+        _searchBar.hitTestView = self.apiOutputView;
+        _searchBar.delegate = self;
+        _searchBar.previousProxy = [RACSubject subject];
+        _searchBar.nextProxy = [RACSubject subject];
+        @weakify(self)
+        [_searchBar.previousProxy subscribeNext:^(id  _Nullable x) {
+            @strongify(self)
+            [self searchPreviousMatch];
+        }];
+        [_searchBar.nextProxy subscribeNext:^(id  _Nullable x) {
+            @strongify(self)
+            [self searchNextMatch];
+        }];
+    }
+    return _searchBar;
+}
+
+- (UIActivityIndicatorView *)loadingView {
+    if (!_loadingView) {
+        _loadingView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+    }
+    return _loadingView;
 }
 
 @end

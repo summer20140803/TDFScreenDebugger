@@ -25,7 +25,7 @@
 }
 
 - (UIView *)contentViewForFullScreenConsole {
-    return nil;
+    return [[UIView alloc] init];
 }
 
 @end
