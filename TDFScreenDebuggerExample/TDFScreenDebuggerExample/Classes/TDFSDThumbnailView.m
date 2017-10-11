@@ -215,10 +215,10 @@
         }
         
         switch ([messageRemindType unsignedIntegerValue]) {
-            case TDFSDMessageRemindTypeAPIRecord: {
+            case SDMessageRemindTypeAPIRecord: {
                 self.viewModel = [[TDFSDMessageRemindARViewModel alloc] init];
             }break;
-            case TDFSDMessageRemindTypeSystemLog: {
+            case SDMessageRemindTypeSystemLog: {
                 self.viewModel = [[TDFSDMessageRemindLVViewModel alloc] init];
             }break;
         }

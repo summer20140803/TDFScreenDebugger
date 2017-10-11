@@ -117,7 +117,7 @@
         CGRect kbFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
         CGFloat contentInsetsHeight = self.view.bounds.size.height - kbFrame.origin.y;
         if (contentInsetsHeight) {
-            contentInsetsHeight -= kSDSearchBarInputAccessoryHeight;
+            contentInsetsHeight -= SDSearchBarInputAccessoryHeight;
         }
         
         UIEdgeInsets contentInsets = UIEdgeInsetsZero;
@@ -181,7 +181,7 @@
 }
 
 - (void)addAPIRecordPortObserve {
-    RAC(self.apiOutputView, attributedText) = [[RACObserve([TDFSDAPIRecorder sharedInstance], descriptionModels)
+    RAC(self.apiOutputView, attributedText) = [[[RACObserve([TDFSDAPIRecorder sharedInstance], descriptionModels)
     skip:1]
     map:^id _Nullable(NSArray<__kindof TDFALBaseModel<TDFSDAPIRecordCharacterizationProtocol> *> *descriptionModels) {
         return [[descriptionModels.rac_sequence
@@ -199,7 +199,8 @@
                            [accumulator appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]],
                            accumulator);
                }];
-    }];
+    }]
+    deliverOnMainThread];
     
     @weakify(self)
     [[[[[RACObserve(self.apiOutputView, attributedText)

@@ -29,7 +29,7 @@
 
 @end
 
-const CGFloat kSDFullScreenContentViewEdgeMargin  = 6.f;
+const CGFloat SDFullScreenContentViewEdgeMargin  = 6.f;
 
 static const CGFloat kSDTopToolMenuItemLength = 20.f;
 static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
@@ -172,8 +172,8 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     }];
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.consoleTitleLabel.mas_bottom).with.offset(6);
-        make.left.equalTo(self.container).with.offset(kSDFullScreenContentViewEdgeMargin);
-        make.right.equalTo(self.container).with.offset(-kSDFullScreenContentViewEdgeMargin);
+        make.left.equalTo(self.container).with.offset(SDFullScreenContentViewEdgeMargin);
+        make.right.equalTo(self.container).with.offset(-SDFullScreenContentViewEdgeMargin);
         make.bottom.equalTo(self.container).with.offset(0);
     }];
     

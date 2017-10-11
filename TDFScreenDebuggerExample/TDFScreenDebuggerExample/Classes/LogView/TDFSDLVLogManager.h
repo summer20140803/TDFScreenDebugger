@@ -8,6 +8,7 @@
 #import <Foundation/Foundation.h>
 @class TDFSDLVLogModel;
 
+
 @interface TDFSDLVLogManager : NSObject
 
 @property (nonatomic, strong, readonly) NSArray<TDFSDLVLogModel *> *logs;
@@ -16,7 +17,6 @@
 
 - (void)clearCurrentSystemLogs;
 
-// in order to improve performance
 - (void)thaw;
 - (void)freeze;
 

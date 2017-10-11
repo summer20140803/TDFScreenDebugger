@@ -116,7 +116,7 @@
          CGRect kbFrame = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
          CGFloat contentInsetsHeight = self.view.bounds.size.height - kbFrame.origin.y;
          if (contentInsetsHeight) {
-             contentInsetsHeight -= kSDSearchBarInputAccessoryHeight;
+             contentInsetsHeight -= SDSearchBarInputAccessoryHeight;
          }
          
          UIEdgeInsets contentInsets = UIEdgeInsetsZero;
@@ -180,7 +180,7 @@
 }
 
 - (void)addSystemLogPortObserve {
-    RAC(self.logOutputView, attributedText) = [[RACObserve([TDFSDLVLogManager manager], logs)
+    RAC(self.logOutputView, attributedText) = [[[RACObserve([TDFSDLVLogManager manager], logs)
     skip:1]
     map:^id _Nullable(NSArray<TDFSDLVLogModel *> * _Nullable logModels) {
         return [[logModels.rac_sequence
@@ -197,7 +197,8 @@
                     return ([accumulator appendAttributedString:value],
                             accumulator);
                 }];
-    }];
+    }]
+    deliverOnMainThread];
     
     @weakify(self)
     [[[[[RACObserve(self.logOutputView, attributedText)

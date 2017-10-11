@@ -170,7 +170,7 @@
 
 @end
 
-const CGFloat kSDSearchBarInputAccessoryHeight  = 130.f;
+const CGFloat SDSearchBarInputAccessoryHeight  = 130.f;
 
 @implementation TDFSDSearchBar
 
@@ -182,7 +182,7 @@ const CGFloat kSDSearchBarInputAccessoryHeight  = 130.f;
         self.placeholder = @"enter keywords to search";
         self.translucent = YES;
         self.tintColor = [UIColor lightTextColor];
-        [self.inputAccessoryContainer setFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, kSDSearchBarInputAccessoryHeight)];
+        [self.inputAccessoryContainer setFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, SDSearchBarInputAccessoryHeight)];
         self.inputAccessoryView = self.inputAccessoryContainer;
         @weakify(self)
         self.accessoryDelayCommand = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(NSNumber * _Nullable input) {

@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <ReactiveObjC/ReactiveObjC.h>
 
-CF_EXPORT const CGFloat kSDSearchBarInputAccessoryHeight;
+CF_EXPORT const CGFloat SDSearchBarInputAccessoryHeight;
 
 @interface TDFSDSearchBar : UISearchBar
 

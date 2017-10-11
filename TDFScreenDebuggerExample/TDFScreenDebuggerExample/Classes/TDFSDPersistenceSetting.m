@@ -16,7 +16,9 @@
     static dispatch_once_t once = 0;
     dispatch_once(&once, ^{
         setting = [[self alloc] init];
-        setting.messageRemindType = TDFSDMessageRemindTypeSystemLog;
+        setting.messageRemindType = SDMessageRemindTypeSystemLog;
+        setting.allowMonitorSystemLogFlag = YES;
+        setting.limitSizeOfSingleSystemLogMessageData = 1024 * 10;
     });
     return setting;
 }

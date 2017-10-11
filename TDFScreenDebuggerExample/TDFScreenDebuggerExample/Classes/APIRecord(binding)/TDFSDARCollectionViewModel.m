@@ -27,7 +27,7 @@
 - (CGFloat)cellWidth {
     if (_cellWidth == 0) {
         CGFloat itemCollectionEdgeMargin = 8;
-        _cellWidth = [UIScreen mainScreen].bounds.size.width - 2 * kSDFullScreenContentViewEdgeMargin - itemCollectionEdgeMargin * 2;
+        _cellWidth = [UIScreen mainScreen].bounds.size.width - 2 * SDFullScreenContentViewEdgeMargin - itemCollectionEdgeMargin * 2;
     }
     return _cellWidth;
 }
