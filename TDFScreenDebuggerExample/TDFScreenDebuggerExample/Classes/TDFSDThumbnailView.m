@@ -74,7 +74,7 @@
 
 @end
 
-#import "TDFSDLVLogManager.h"
+#import "TDFSDLogViewer.h"
 #import "TDFSDLVLogModel.h"
 @interface TDFSDMessageRemindLVViewModel : TDFSDMessageRemindBaseViewModel
 
@@ -85,7 +85,7 @@
 - (void)addSpecificMessageRemindObserve {
     @weakify(self)
     self.disposable = \
-    [RACObserve([TDFSDLVLogManager manager], logs) subscribeNext:^(NSArray<TDFSDLVLogModel *> * _Nullable logModel) {
+    [RACObserve([TDFSDLogViewer sharedInstance], logs) subscribeNext:^(NSArray<TDFSDLVLogModel *> * _Nullable logModel) {
         
         NSUInteger unreadCount = [[[logModel.rac_sequence
         filter:^BOOL(TDFALRequestModel * _Nullable requestDesModel) {
@@ -229,7 +229,7 @@
 }
 
 - (void)addAllReadNoticationObserve {
-    [[[NSNotificationCenter defaultCenter] rac_addObserverForName:TDFSDRemindMessageAllReadNotificationName object:nil]
+    [[[NSNotificationCenter defaultCenter] rac_addObserverForName:SD_REMIND_MESSAGE_ALL_READ_NOTIFICATION_NAME object:nil]
     subscribeNext:^(NSNotification * _Nullable x) {
         SDAllReadNotificationContentType type = [x.object unsignedIntegerValue];
         

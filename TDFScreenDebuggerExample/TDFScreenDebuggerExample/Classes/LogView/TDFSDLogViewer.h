@@ -6,18 +6,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TDFSDFunctionIOControlProtocol.h"
 @class TDFSDLVLogModel;
 
 
-@interface TDFSDLVLogManager : NSObject
+@interface TDFSDLogViewer : NSObject <TDFSDFunctionIOControlProtocol>
 
 @property (nonatomic, strong, readonly) NSArray<TDFSDLVLogModel *> *logs;
 
-+ (instancetype)manager;
++ (instancetype)sharedInstance;
 
 - (void)clearCurrentSystemLogs;
-
-- (void)thaw;
-- (void)freeze;
 
 @end

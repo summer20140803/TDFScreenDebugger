@@ -13,9 +13,9 @@
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
 
-typedef NS_ENUM(NSUInteger, kTDFSDARCurrentContentType) {
-    kTDFSDARCurrentContentTypeRequest     =  0,
-    kTDFSDARCurrentContentTypeResponse    =  1
+typedef NS_ENUM(NSUInteger, kSDARCurrentContentType) {
+    kSDARCurrentContentTypeRequest     =  0,
+    kSDARCurrentContentTypeResponse    =  1
 };
 
 @interface TDFSDAPIRecordBindingDetailController () <TDFSDFullScreenConsoleControllerInheritProtocol>
@@ -24,7 +24,7 @@ typedef NS_ENUM(NSUInteger, kTDFSDARCurrentContentType) {
 @property (nonatomic, strong) UISegmentedControl *segmentedControl;
 @property (nonatomic, strong) TDFALResponseModel *resp;
 @property (nonatomic, strong) TDFSDTextView *bindingContentView;
-@property (nonatomic, assign) kTDFSDARCurrentContentType contentType;
+@property (nonatomic, assign) kSDARCurrentContentType contentType;
 
 @end
 
@@ -34,7 +34,7 @@ typedef NS_ENUM(NSUInteger, kTDFSDARCurrentContentType) {
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self layoutPageSubviews];
-    self.contentType = kTDFSDARCurrentContentTypeRequest;
+    self.contentType = kSDARCurrentContentTypeRequest;
 }
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
@@ -65,13 +65,13 @@ typedef NS_ENUM(NSUInteger, kTDFSDARCurrentContentType) {
 }
 
 #pragma mark - getter & setter
-- (void)setContentType:(kTDFSDARCurrentContentType)contentType {
+- (void)setContentType:(kSDARCurrentContentType)contentType {
     _contentType = contentType;
     switch (contentType) {
-        case kTDFSDARCurrentContentTypeRequest: {
+        case kSDARCurrentContentTypeRequest: {
             self.bindingContentView.text = self.req.selfDescription;
         } break;
-        case kTDFSDARCurrentContentTypeResponse: {
+        case kSDARCurrentContentTypeResponse: {
             self.bindingContentView.text = self.resp ? self.resp.selfDescription : @"The response from the server has not been received yet";
         } break;
     }
@@ -137,7 +137,7 @@ typedef NS_ENUM(NSUInteger, kTDFSDARCurrentContentType) {
         [[refreshControl rac_signalForControlEvents:UIControlEventValueChanged]
         subscribeNext:^(__kindof UIRefreshControl * _Nullable x) {
             @strongify(self)
-            kTDFSDARCurrentContentType currentContentType = self.contentType;
+            kSDARCurrentContentType currentContentType = self.contentType;
             self.contentType = currentContentType;
         }];
         

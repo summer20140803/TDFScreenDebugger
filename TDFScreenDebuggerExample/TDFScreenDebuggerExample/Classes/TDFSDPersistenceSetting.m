@@ -17,6 +17,8 @@
     dispatch_once(&once, ^{
         setting = [[self alloc] init];
         setting.messageRemindType = SDMessageRemindTypeSystemLog;
+        setting.allowCatchAPIRecordFlag = YES;
+        setting.allowCrashCaptureFlag = YES;
         setting.allowMonitorSystemLogFlag = YES;
         setting.limitSizeOfSingleSystemLogMessageData = 1024 * 10;
     });

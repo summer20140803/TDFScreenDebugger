@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TDFSDFunctionIOControlProtocol.h"
 #import <TDFAPILogger/TDFAPILogger.h>
 
-@interface TDFSDAPIRecorder : NSObject
+@interface TDFSDAPIRecorder : NSObject <TDFSDFunctionIOControlProtocol>
 
 @property (nonatomic, strong, readonly) NSArray<__kindof TDFALBaseModel *> *descriptionModels;
 @property (nonatomic, strong, readonly) NSArray<TDFALRequestModel *> *requestDesModels;

@@ -1,18 +1,19 @@
 //
-//  TDFSDLVLogManager.m
+//  TDFSDLogViewer.m
 //  TDFScreenDebugger
 //
 //  Created by 开不了口的猫 on 2017/10/5.
 //
 
-#import "TDFSDLVLogManager.h"
+#import "TDFSDLogViewer.h"
 #import "TDFSDLVLogModel.h"
 #import "TDFSDPersistenceSetting.h"
+#import "TDFScreenDebuggerDefine.h"
 #import <asl.h>
 #import <notify.h>
 #import <notify_keys.h>
 
-@interface TDFSDLVLogManager ()
+@interface TDFSDLogViewer ()
 
 @property (nonatomic, strong, readwrite) NSArray<TDFSDLVLogModel *> *logs;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
@@ -22,26 +23,26 @@
 
 @end
 
-@implementation TDFSDLVLogManager
+@implementation TDFSDLogViewer
 
 #pragma mark - life cycle
 
 #if DEBUG
-__attribute__((constructor(101)))
-static void sd_setupSystemLogMonitoring(void) {
-    if ([[TDFSDPersistenceSetting sharedInstance] allowMonitorSystemLogFlag]) {
-        [[TDFSDLVLogManager manager] thaw];
-    }
-}
+SD_CONSTRUCTOR_METHOD_DECLARE \
+    (SD_CONSTRUCTOR_METHOD_PRIORITY_LOG_VIEW, {
+        if ([[TDFSDPersistenceSetting sharedInstance] allowMonitorSystemLogFlag]) {
+            [[TDFSDLogViewer sharedInstance] thaw];
+        }
+    })
 #endif
 
-+ (instancetype)manager {
-    static TDFSDLVLogManager *manager = nil;
++ (instancetype)sharedInstance {
+    static TDFSDLogViewer *sharedInstance = nil;
     static dispatch_once_t once = 0;
     dispatch_once(&once, ^{
-        manager = [[self alloc] init];
+        sharedInstance = [[self alloc] init];
     });
-    return manager;
+    return sharedInstance;
 }
 
 - (instancetype)init {
@@ -52,13 +53,7 @@ static void sd_setupSystemLogMonitoring(void) {
 }
 
 - (void)dealloc {
-    if (self.source_t) {
-        dispatch_cancel(self.source_t);
-    }
-    if (self.notifyToken) {
-        self.notifyToken = 0;
-        notify_cancel(self.notifyToken);
-    }
+    [self freeze];
 }
 
 #pragma mark - interface methods
@@ -66,6 +61,7 @@ static void sd_setupSystemLogMonitoring(void) {
     self.logs = @[];
 }
 
+#pragma mark - TDFSDFunctionIOControlProtocol
 - (void)thaw {
     [self setPortToMonitorAppleLogs];
 }
@@ -90,6 +86,10 @@ static void sd_setupSystemLogMonitoring(void) {
         // https://stackoverflow.com/questions/40272910/read-logs-using-the-new-swift-os-log-api
         // in a word, os_log can not let us query system logs like asl
         // for the above reason, so we decide to use GCD to put log stream into pipe and then monitor them
+        if (self.source_t) {
+            dispatch_cancel(self.source_t);
+        }
+        
         int fd = STDERR_FILENO;
         int origianlFD = fd;
         int originalStdHandle = dup(fd); // save the original for reset

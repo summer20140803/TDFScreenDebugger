@@ -8,7 +8,7 @@
 #import "TDFSDLogViewController.h"
 #import "TDFSDSearchBar.h"
 #import "TDFSDTextView.h"
-#import "TDFSDLVLogManager.h"
+#import "TDFSDLogViewer.h"
 #import "TDFSDLVLogModel.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
@@ -46,7 +46,7 @@
     
     // textview loading large log-text sometimes consumes too much memory even lead to come up memory performance crysis
     // if happened, we will clear all the current record to save memory problems
-    [[TDFSDLVLogManager manager] clearCurrentSystemLogs];
+    [[TDFSDLogViewer sharedInstance] clearCurrentSystemLogs];
 }
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
@@ -70,7 +70,7 @@
                                         }],
                  [TDFSDFunctionMenuItem itemWithImage:[UIImage imageNamed:@"icon_screenDebugger_trash"]
                                         actionHandler:^(TDFSDFunctionMenuItem *item) {
-                                            [[TDFSDLVLogManager manager] clearCurrentSystemLogs];
+                                            [[TDFSDLogViewer sharedInstance] clearCurrentSystemLogs];
                                         }]
                  ];
     }
@@ -180,7 +180,7 @@
 }
 
 - (void)addSystemLogPortObserve {
-    RAC(self.logOutputView, attributedText) = [[[RACObserve([TDFSDLVLogManager manager], logs)
+    RAC(self.logOutputView, attributedText) = [[[RACObserve([TDFSDLogViewer sharedInstance], logs)
     skip:1]
     map:^id _Nullable(NSArray<TDFSDLVLogModel *> * _Nullable logModels) {
         return [[logModels.rac_sequence
@@ -220,7 +220,7 @@
 
 - (void)fetchSystemLogs {
     self.logOutputView.attributedText = \
-    [[[[TDFSDLVLogManager manager] logs].rac_sequence
+    [[[[TDFSDLogViewer sharedInstance] logs].rac_sequence
     map:^id _Nullable(TDFSDLVLogModel * _Nullable value) {
         return ({
             NSMutableAttributedString *mas = [[NSMutableAttributedString alloc] initWithString:value.description];

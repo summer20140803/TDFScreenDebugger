@@ -26,14 +26,30 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
 //==========================
 
 /**
- default is SDMessageRemindTypeAPIRecord
+ a setting which decides the type of the remind number. default is SDMessageRemindTypeAPIRecord
  */
 @property (nonatomic, assign) SDMessageRemindType messageRemindType;
 
 /**
- a flag to tell the log viewr Whether should monitor system logs. default is YES
+ a flag to tell the log viewer Whether should catch API records. default is YES
+ */
+@property (nonatomic, assign) BOOL allowCatchAPIRecordFlag;
+
+/**
+ a flag to tell the log viewer Whether should monitor system logs. default is YES
  */
 @property (nonatomic, assign) BOOL allowMonitorSystemLogFlag;
+
+/**
+ a flag to tell the crash captor Whether should capture crash. default is YES
+ */
+@property (nonatomic, assign) BOOL allowCrashCaptureFlag;
+
+/**
+ a flag to tell the crash captor Whether need cache crash-log to local file,
+ cached file can be look over again in history-list. default is YES
+ */
+@property (nonatomic, assign) BOOL needCacheCrashLogToSandBox;
 
 /**
  when log viewr receives a system log message data, we create buffer according to given max-size,

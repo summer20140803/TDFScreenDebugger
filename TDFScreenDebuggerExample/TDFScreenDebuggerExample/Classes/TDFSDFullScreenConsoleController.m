@@ -66,7 +66,7 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
 
 #pragma mark - interface methods
 - (void)sendClearRemindLabelTextRequestWithContentType:(SDAllReadNotificationContentType)contentType {
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDFSDRemindMessageAllReadNotificationName object:@(contentType)];
+    [[NSNotificationCenter defaultCenter] postNotificationName:SD_REMIND_MESSAGE_ALL_READ_NOTIFICATION_NAME object:@(contentType)];
 }
 
 #pragma mark - getter

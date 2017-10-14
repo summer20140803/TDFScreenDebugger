@@ -8,6 +8,8 @@
 
 #import "TDFSDAPIRecorder.h"
 #import "TDFSDManager.h"
+#import "TDFSDPersistenceSetting.h"
+#import "TDFScreenDebuggerDefine.h"
 #import "TDFSDAPIRecordConsoleController.h"
 #import "TDFALRequestModel+APIRecord.h"
 #import <ReactiveObjC/ReactiveObjC.h>
@@ -24,18 +26,15 @@
 @implementation TDFSDAPIRecorder
 
 #pragma mark - life cycle
-+ (void)load {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        TDFSDAPIRecorder *recorder = [TDFSDAPIRecorder sharedInstance];
-        [TDFAPILogger sharedInstance].requestLogReporter = ^(TDFALRequestModel *requestLogDescription) {
-            [recorder storeDescription:requestLogDescription];
-        };
-        [TDFAPILogger sharedInstance].responseLogReporter = ^(TDFALResponseModel *responseLogDescription) {
-            [recorder storeDescription:responseLogDescription];
-        };
-    });
-}
+
+#if DEBUG
+SD_CONSTRUCTOR_METHOD_DECLARE \
+(SD_CONSTRUCTOR_METHOD_PRIORITY_API_RECORD, {
+    if ([[TDFSDPersistenceSetting sharedInstance] allowCatchAPIRecordFlag]) {
+        [[TDFSDAPIRecorder sharedInstance] thaw];
+    }
+})
+#endif
 
 + (instancetype)sharedInstance {
     static TDFSDAPIRecorder *recorder = nil;
@@ -55,11 +54,31 @@
     return self;
 }
 
+- (void)dealloc {
+    [self freeze];
+}
+
 #pragma mark - interface methods
 - (void)clearAllRecords {
     self.descriptionModels = @[];
     self.requestDesModels = @[];
     self.responseDesModels = @[];
+}
+
+#pragma mark - TDFSDFunctionIOControlProtocol
+- (void)thaw {
+    TDFSDAPIRecorder *recorder = [TDFSDAPIRecorder sharedInstance];
+    [TDFAPILogger sharedInstance].requestLogReporter = ^(TDFALRequestModel *requestLogDescription) {
+        [recorder storeDescription:requestLogDescription];
+    };
+    [TDFAPILogger sharedInstance].responseLogReporter = ^(TDFALResponseModel *responseLogDescription) {
+        [recorder storeDescription:responseLogDescription];
+    };
+}
+
+- (void)freeze {
+    [TDFAPILogger sharedInstance].requestLogReporter = NULL;
+    [TDFAPILogger sharedInstance].responseLogReporter = NULL;
 }
 
 #pragma mark - private

@@ -10,6 +10,7 @@
 
 @protocol TDFSDMessageRemindProtocol <NSObject>
 
+@required
 - (BOOL)messageIsRead;
 - (void)setMessageRead:(BOOL)messageRead;
 

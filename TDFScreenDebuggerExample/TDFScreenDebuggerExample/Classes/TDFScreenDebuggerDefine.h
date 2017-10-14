@@ -10,18 +10,55 @@
 #define TDFScreenDebuggerDefine_h
 
 
+//========================
+//  SDK LOCAL CACHE FILE
+//========================
+#define SD_LOCAL_CACHE_ROOT_FILE_FOLDER_NAME      @"screen_debugger_local_cache"
+#define SD_CRASH_CAPTOR_CACHE_FILE_FOLDER_NAME    @"crash_log"
+#define SD_CRASH_CAPTOR_CACHE_FILE_PATH  \
+({  \
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];  \
+    [df setDateFormat:@"yyyy-MM-dd HH:mm:ss"];  \
+    NSString *timeStr = [df stringFromDate:[NSDate dateWithTimeIntervalSinceNow:0]];  \
+    NSString *documentPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];  \
+    NSString *rootFolderPath = [documentPath stringByAppendingPathComponent:SD_LOCAL_CACHE_ROOT_FILE_FOLDER_NAME];  \
+    NSString *crashLogFolderPath = [rootFolderPath stringByAppendingPathComponent:SD_CRASH_CAPTOR_CACHE_FILE_FOLDER_NAME];  \
+    NSString *crashLogCachePath = [crashLogFolderPath stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.log", timeStr]];  \
+    crashLogCachePath;  \
+});
+
+
+//========================
+//   CONSTRUCTOR METHOD
+//========================
+#define SD_CONSTRUCTOR_METHOD_PRIORITY_CRASH_CAPTURE   101
+#define SD_CONSTRUCTOR_METHOD_PRIORITY_LOG_VIEW        102
+#define SD_CONSTRUCTOR_METHOD_PRIORITY_API_RECORD      103
+
+#define SD_CONSTRUCTOR_METHOD_DECLARE(PRIORITY, ...)  \
+__attribute__((constructor(PRIORITY)))  \
+static void sd_contructor_method##PRIORITY (void) {  \
+    static dispatch_once_t onceToken;  \
+    dispatch_once(&onceToken, ^{  \
+        __VA_ARGS__  \
+    });  \
+}
+
 //============================
 //   REMIND MESSAGE DEFINES
 //============================
-
 typedef NS_ENUM(NSUInteger, SDAllReadNotificationContentType) {
     SDAllReadNotificationContentTypeAPIRecord   =  0,
     SDAllReadNotificationContentTypeSystemLog   =  1,
 };
 
-#define TDFSDRemindMessageAllReadNotificationName  @"tdf_sd_remind_message_all_read_notification_name"
+#define SD_REMIND_MESSAGE_ALL_READ_NOTIFICATION_NAME  @"sd_remind_message_all_read_notification_name"
 
-
+//==========================
+//   CRASH EXCEPTION TYPE
+//==========================
+#define SD_CRASH_EXCEPTION_TYPE_SIGNAL   @"mach_signal_exception"
+#define SD_CRASH_EXCEPTION_TYPE_OC       @"oc_exception"
 
 
 #endif /* TDFScreenDebuggerDefine_h */
