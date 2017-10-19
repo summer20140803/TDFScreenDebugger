@@ -47,7 +47,7 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
 
 /**
  a flag to tell the crash captor Whether need cache crash-log to local file,
- cached file can be look over again in history-list. default is YES
+ cached file can be look over again in history-list. default is NO
  */
 @property (nonatomic, assign) BOOL needCacheCrashLogToSandBox;
 

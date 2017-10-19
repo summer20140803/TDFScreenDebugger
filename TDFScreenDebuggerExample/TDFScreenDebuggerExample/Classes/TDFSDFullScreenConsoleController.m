@@ -69,64 +69,6 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     [[NSNotificationCenter defaultCenter] postNotificationName:SD_REMIND_MESSAGE_ALL_READ_NOTIFICATION_NAME object:@(contentType)];
 }
 
-#pragma mark - getter
-- (UIView *)container {
-    if (!_container) {
-        _container = [[UIView alloc] init];
-        [_container setBackgroundColor:[UIColor colorWithRed:2/255.f green:31/255.f blue:40/255.f alpha:0.7]];
-        _container.alpha = 1;
-    }
-    return _container;
-}
-
-- (UIVisualEffectView *)effectView {
-    if (!_effectView) {
-        UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-        _effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
-    }
-    return _effectView;
-}
-
-- (UILabel *)consoleTitleLabel {
-    if (!_consoleTitleLabel) {
-        _consoleTitleLabel = [[UILabel alloc] init];
-        [_consoleTitleLabel setBackgroundColor:[UIColor clearColor]];
-        _consoleTitleLabel.textAlignment = NSTextAlignmentLeft;
-        _consoleTitleLabel.numberOfLines = 1;
-        _consoleTitleLabel.textColor = [UIColor whiteColor];
-        _consoleTitleLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:18];
-        _consoleTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-        _consoleTitleLabel.text = [(TDFSDFullScreenConsoleController<TDFSDFullScreenConsoleControllerInheritProtocol> *)self titleForFullScreenConsole];
-    }
-    return _consoleTitleLabel;
-}
-
-- (UIScrollView *)menuTool {
-    if (!_menuTool) {
-        _menuTool = [[UIScrollView alloc] init];
-        _menuTool.backgroundColor = [UIColor clearColor];
-        _menuTool.scrollEnabled = YES;
-        _menuTool.showsVerticalScrollIndicator = NO;
-        _menuTool.showsHorizontalScrollIndicator = NO;
-    }
-    return _menuTool;
-}
-
-- (UIView *)menuToolLayoutContainer {
-    if (!_menuToolLayoutContainer) {
-        _menuToolLayoutContainer = [[UIView alloc] init];
-        _menuToolLayoutContainer.backgroundColor = [UIColor clearColor];
-    }
-    return _menuToolLayoutContainer;
-}
-
-- (UIView *)contentView {
-    if (!_contentView) {
-        _contentView = [(TDFSDFullScreenConsoleController<TDFSDFullScreenConsoleControllerInheritProtocol> *)self contentViewForFullScreenConsole];
-    }
-    return _contentView;
-}
-
 #pragma mark - event
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.view endEditing:YES];
@@ -216,8 +158,64 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     }
 }
 
-@end
+#pragma mark - getter
+- (UIView *)container {
+    if (!_container) {
+        _container = [[UIView alloc] init];
+        [_container setBackgroundColor:[UIColor colorWithRed:2/255.f green:31/255.f blue:40/255.f alpha:0.7]];
+    }
+    return _container;
+}
 
+- (UIVisualEffectView *)effectView {
+    if (!_effectView) {
+        UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+        _effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+    }
+    return _effectView;
+}
+
+- (UILabel *)consoleTitleLabel {
+    if (!_consoleTitleLabel) {
+        _consoleTitleLabel = [[UILabel alloc] init];
+        [_consoleTitleLabel setBackgroundColor:[UIColor clearColor]];
+        _consoleTitleLabel.textAlignment = NSTextAlignmentLeft;
+        _consoleTitleLabel.numberOfLines = 1;
+        _consoleTitleLabel.textColor = [UIColor whiteColor];
+        _consoleTitleLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:18];
+        _consoleTitleLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        _consoleTitleLabel.text = [(TDFSDFullScreenConsoleController<TDFSDFullScreenConsoleControllerInheritProtocol> *)self titleForFullScreenConsole];
+    }
+    return _consoleTitleLabel;
+}
+
+- (UIScrollView *)menuTool {
+    if (!_menuTool) {
+        _menuTool = [[UIScrollView alloc] init];
+        _menuTool.backgroundColor = [UIColor clearColor];
+        _menuTool.scrollEnabled = YES;
+        _menuTool.showsVerticalScrollIndicator = NO;
+        _menuTool.showsHorizontalScrollIndicator = NO;
+    }
+    return _menuTool;
+}
+
+- (UIView *)menuToolLayoutContainer {
+    if (!_menuToolLayoutContainer) {
+        _menuToolLayoutContainer = [[UIView alloc] init];
+        _menuToolLayoutContainer.backgroundColor = [UIColor clearColor];
+    }
+    return _menuToolLayoutContainer;
+}
+
+- (UIView *)contentView {
+    if (!_contentView) {
+        _contentView = [(TDFSDFullScreenConsoleController<TDFSDFullScreenConsoleControllerInheritProtocol> *)self contentViewForFullScreenConsole];
+    }
+    return _contentView;
+}
+
+@end
 
 @implementation TDFSDFunctionMenuItem
 

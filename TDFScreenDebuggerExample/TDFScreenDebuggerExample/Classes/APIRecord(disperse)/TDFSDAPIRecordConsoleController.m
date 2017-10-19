@@ -105,7 +105,6 @@
     }];
     [self.loadingView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.center.equalTo(self.apiRecordContainer);
-        make.width.and.height.equalTo(@44);
     }];
 }
 
