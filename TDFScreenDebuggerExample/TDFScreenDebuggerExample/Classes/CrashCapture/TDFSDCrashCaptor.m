@@ -33,9 +33,11 @@ static const CGFloat  keepAliveReloadRenderingInterval  = 1 / 120.0f;
 #if DEBUG
 SD_CONSTRUCTOR_METHOD_DECLARE \
 (SD_CONSTRUCTOR_METHOD_PRIORITY_CRASH_CAPTURE, {
-//    if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
-//        [[TDFSDCrashCaptor sharedInstance] thaw];
-//    }
+    if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [[TDFSDCrashCaptor sharedInstance] thaw];
+        });
+    }
 })
 #endif
 
@@ -122,7 +124,7 @@ static void ocExceptionHandler(NSException *exception) {
     crash.exceptionReason = [exception reason];
     crash.exceptionCallStack = [NSString stringWithFormat:@"%@", [[exception callStackSymbols] componentsJoinedByString:@"\n"]];
     
-    NSLog(@"%@", crash);
+    NSLog(@"%@", crash.debugDescription);
 
     if ([[TDFSDPersistenceSetting sharedInstance] needCacheCrashLogToSandBox]) {
         [[TDFSDCrashCaptor sharedInstance] performSelectorOnMainThread:@selector(cacheCrashLog:) withObject:crash waitUntilDone:YES];
