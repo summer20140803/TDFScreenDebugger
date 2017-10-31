@@ -8,6 +8,7 @@
 
 #import "TDFSDManager.h"
 #import "TDFSDViewController.h"
+#import "TDFScreenDebuggerDefine.h"
 
 @interface TDFSDManager () <TDFSDWindowDelegate>
 
@@ -21,6 +22,23 @@
 @end
 
 @implementation TDFSDManager
+
+#if DEBUG
+SD_CONSTRUCTOR_METHOD_DECLARE \
+(SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_CACHE_ROOT, {
+    // build exclusive cache folder in sandbox
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *systemDicPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *sdkLocalCacheFolderPath = [systemDicPath stringByAppendingPathComponent:SD_LOCAL_CACHE_ROOT_FILE_FOLDER_NAME];
+    BOOL isDictonary;
+    if ([fileManager fileExistsAtPath:sdkLocalCacheFolderPath isDirectory:&isDictonary] && !isDictonary) {
+        [fileManager removeItemAtPath:sdkLocalCacheFolderPath error:nil];
+    }
+    if (![fileManager fileExistsAtPath:sdkLocalCacheFolderPath]) {
+        [fileManager createDirectoryAtPath:sdkLocalCacheFolderPath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+})
+#endif
 
 + (instancetype)manager {
     static TDFSDManager *manager = nil;

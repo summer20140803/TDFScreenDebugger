@@ -19,7 +19,7 @@
         setting.messageRemindType = SDMessageRemindTypeSystemLog;
         setting.allowCatchAPIRecordFlag = YES;
         setting.allowCrashCaptureFlag = YES;
-        setting.needCacheCrashLogToSandBox = NO;
+        setting.needCacheCrashLogToSandBox = YES;
         setting.allowMonitorSystemLogFlag = YES;
         setting.limitSizeOfSingleSystemLogMessageData = 1024 * 10;
     });

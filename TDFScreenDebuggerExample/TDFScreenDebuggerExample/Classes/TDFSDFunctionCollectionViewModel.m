@@ -13,6 +13,7 @@
 #import "TDFSDAPIRecordConsoleController.h"
 #import "TDFSDAPIRecordSelectableController.h"
 #import "TDFSDLogViewController.h"
+#import "TDFSDCrashCaptureHistoryController.h"
 
 @interface TDFSDFunctionCollectionViewModel ()
 
@@ -36,6 +37,7 @@
                 case 0: target = [[TDFSDAPIRecordConsoleController alloc] init]; break;
                 case 1: target = [[TDFSDAPIRecordSelectableController alloc] init]; break;
                 case 2: target = [[TDFSDLogViewController alloc] init]; break;
+                case 4: target = [[TDFSDCrashCaptureHistoryController alloc] init]; break;
             }
             
             if (current && target) {

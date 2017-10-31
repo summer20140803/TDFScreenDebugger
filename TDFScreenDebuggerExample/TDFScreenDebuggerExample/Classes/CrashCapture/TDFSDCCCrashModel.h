@@ -7,12 +7,13 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TDFSDCCCrashModel : NSObject
+@interface TDFSDCCCrashModel : NSObject <NSCoding>
 
 @property (nonatomic,   copy) NSString *exceptionType;
 @property (nonatomic,   copy) NSString *exceptionTime;
 @property (nonatomic,   copy) NSString *exceptionName;
 @property (nonatomic,   copy) NSString *exceptionReason;
+@property (nonatomic,   copy) NSString *fuzzyLocalization;    // OC exp only..
 @property (nonatomic,   copy) NSString *exceptionCallStack;
 
 @end

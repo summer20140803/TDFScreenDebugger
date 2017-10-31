@@ -12,6 +12,7 @@
 #import "TDFSDCrashCapturePresentationController.h"
 #import "TDFSDTransitionAnimator.h"
 #import <ReactiveObjC/ReactiveObjC.h>
+#import <objc/runtime.h>
 #import <signal.h>
 #import <execinfo.h>
 
@@ -20,21 +21,86 @@
 @property (nonatomic, unsafe_unretained) NSUncaughtExceptionHandler *originHandler;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, assign) BOOL  needKeepAlive;
+@property (nonatomic, assign) BOOL  needApplyForKeepingLifeCycle;
 
 @end
 
 @implementation TDFSDCrashCaptor
 
-static const NSString *machSignalExceptionFlag          = @"sd_mach_signal_exception";
+static const NSString *crashCallStackSymbolLocalizationFailDescription = @"fuzzy localization fail";
 static const CGFloat  keepAliveReloadRenderingInterval  = 1 / 120.0f;
 
 #pragma mark - life cycle
 
 #if DEBUG
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+
+        unsigned int registerClassCount;
+        Class *classes = objc_copyClassList(&registerClassCount);
+
+        for (int i = 0; i < registerClassCount; i++) {
+            Class class = classes[i];
+            if (strcmp(class_getName(class), "_CNZombie_") == 0) continue;
+
+            if (class_respondsToSelector(class, @selector(viewDidLoad))) {
+                NSBundle *bundle = [NSBundle bundleForClass:class];
+                if ([bundle isEqual:[NSBundle mainBundle]]) {
+                    printf("[TDFScreenDebugger.CrashCaptor.StartingUp] %s\n", class_getName(class));
+
+                    SEL selectors[] = {
+                        @selector(viewDidLoad),
+                        @selector(viewWillAppear:),
+                        @selector(viewDidAppear:),
+                        @selector(viewWillDisappear:),
+                        @selector(viewDidDisappear:),
+                        @selector(viewWillLayoutSubviews),
+                        @selector(viewDidLayoutSubviews)
+                    };
+
+                    for(int index = 0; index < sizeof(selectors)/sizeof(SEL); index ++) {
+                        SEL selector = selectors[index];
+                        if ([NSStringFromSelector(selector) hasSuffix:@":"]) {
+                            singleParmIMPReset(selector, class);
+                        } else {
+                            nullaParmIMPReset(selector, class);
+                        }
+                    }
+                }
+            }
+        }
+        free(classes);
+    });
+}
+
+SD_CONSTRUCTOR_METHOD_DECLARE \
+(SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_CACHE_CRASH, {
+    // build exclusive crash folder in sdk's root folder
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *systemDicPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *crashFolderPath = [[systemDicPath stringByAppendingPathComponent:SD_LOCAL_CACHE_ROOT_FILE_FOLDER_NAME] stringByAppendingPathComponent:SD_CRASH_CAPTOR_CACHE_FILE_FOLDER_NAME];
+    BOOL isDictonary;
+    if ([fileManager fileExistsAtPath:crashFolderPath isDirectory:&isDictonary] && !isDictonary) {
+        [fileManager removeItemAtPath:crashFolderPath error:nil];
+    }
+    if (![fileManager fileExistsAtPath:crashFolderPath]) {
+        [fileManager createDirectoryAtPath:crashFolderPath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+})
+
 SD_CONSTRUCTOR_METHOD_DECLARE \
 (SD_CONSTRUCTOR_METHOD_PRIORITY_CRASH_CAPTURE, {
+    
     if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        // some sdk will dispatch `NSSetUncaughtExceptionHandler` method after about one second when runtime lib had started up
+        // if these sdk don't register last exception-handler after their handler, we cannot handle exception normally
+        // so we decide to delay the crash captor registration, only that we can handle crashs
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            
+            // here we invoke some unsafe-async api, but if the crash occurs during controller's loading, this may lead to some dead cycle
+            // so according to the reason above, we should intercept the crash individually when controller is loaded
+            // in `+ load` method, we use runtime to hook all classes which inherit UIViewController and filter out system classes
             [[TDFSDCrashCaptor sharedInstance] thaw];
         });
     }
@@ -50,13 +116,30 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
     return sharedInstance;
 }
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        _needApplyForKeepingLifeCycle = YES;
+        
+    }
+    return self;
+}
+
 - (void)dealloc {
     [self freeze];
 }
 
 #pragma mark - interface methods
 - (void)clearHistoryCrashLog {
-
+    @synchronized(self) {
+        NSString *cachePath = SD_CRASH_CAPTOR_CACHE_MODEL_ARCHIVE_PATH;
+        NSMutableArray *cacheCrashModels = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
+        if (!cacheCrashModels || cacheCrashModels.count == 0) {
+            return;
+        }
+        [cacheCrashModels removeAllObjects];
+        [NSKeyedArchiver archiveRootObject:cacheCrashModels toFile:cachePath];
+    }
 }
 
 #pragma mark - TDFSDFunctionIOControlProtocol
@@ -84,6 +167,40 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 }
 
 #pragma mark - private
+static void nullaParmIMPReset(SEL selector, Class class) {
+    Method method = class_getInstanceMethod(class, selector);
+    void(*imp)(id, SEL, ...) = (typeof(imp))method_getImplementation(method);
+    method_setImplementation(method, imp_implementationWithBlock(^(id target, SEL action){
+        @try {
+            imp(target, selector);
+        } @catch (NSException *e) {
+            if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
+                [TDFSDCrashCaptor sharedInstance].needApplyForKeepingLifeCycle = NO;
+                ocExceptionHandler(e);
+            } else {
+                @throw e;
+            }
+        }
+    }));
+}
+
+static void singleParmIMPReset(SEL selector, Class class) {
+    Method method = class_getInstanceMethod(class, selector);
+    void(*imp)(id, SEL, ...) = (typeof(imp))method_getImplementation(method);
+    method_setImplementation(method, imp_implementationWithBlock(^(id target, SEL action, BOOL animated){
+        @try {
+            imp(target, selector, animated);
+        } @catch (NSException *e) {
+            if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
+                [TDFSDCrashCaptor sharedInstance].needApplyForKeepingLifeCycle = NO;
+                ocExceptionHandler(e);
+            } else {
+                @throw e;
+            }
+        }
+    }));
+}
+
 static void machSignalExceptionHandler(int signal) {
     const char* names[NSIG];
     names[SIGABRT] = "SIGABRT";
@@ -106,7 +223,10 @@ static void machSignalExceptionHandler(int signal) {
     crash.exceptionTime = [[TDFSDCrashCaptor sharedInstance].dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSinceNow:0]];
     crash.exceptionName = [NSString stringWithUTF8String:names[signal]];
     crash.exceptionReason = [NSString stringWithUTF8String:reasons[signal]];
+    crash.fuzzyLocalization = (NSString *)crashCallStackSymbolLocalizationFailDescription;
     crash.exceptionCallStack = exceptionCallStackInfo();
+    
+    NSLog(@"%@", crash.debugDescription);
     
     if ([[TDFSDPersistenceSetting sharedInstance] needCacheCrashLogToSandBox]) {
         [[TDFSDCrashCaptor sharedInstance] performSelectorOnMainThread:@selector(cacheCrashLog:) withObject:crash waitUntilDone:YES];
@@ -122,6 +242,7 @@ static void ocExceptionHandler(NSException *exception) {
     crash.exceptionTime = [[TDFSDCrashCaptor sharedInstance].dateFormatter stringFromDate:[NSDate dateWithTimeIntervalSinceNow:0]];
     crash.exceptionName = [exception name];
     crash.exceptionReason = [exception reason];
+    crash.fuzzyLocalization = crashFuzzyLocalization([exception callStackSymbols]);
     crash.exceptionCallStack = [NSString stringWithFormat:@"%@", [[exception callStackSymbols] componentsJoinedByString:@"\n"]];
     
     NSLog(@"%@", crash.debugDescription);
@@ -131,7 +252,11 @@ static void ocExceptionHandler(NSException *exception) {
     }
 
     showFriendlyCrashPresentation(crash, exception);
-    applyForKeepingLifeCycle();
+    if ([[TDFSDCrashCaptor sharedInstance] needApplyForKeepingLifeCycle]) {
+        applyForKeepingLifeCycle();
+    } else {
+        [TDFSDCrashCaptor sharedInstance].needApplyForKeepingLifeCycle = YES;
+    }
 }
 
 static NSArray<NSNumber *> * exSignals(void) {
@@ -158,6 +283,36 @@ static NSString * exceptionCallStackInfo(void) {
     
     free(symbols);
     return callstackInfo;
+}
+
+static NSString *crashFuzzyLocalization(NSArray<NSString *> *callStackSymbols) {
+    __block NSString *fuzzyLocalization = nil;
+    NSString *regularExpressionFormatStr = @"[-\\+]\\[.+\\]";
+    
+    NSRegularExpression *regularExp = [[NSRegularExpression alloc] initWithPattern:regularExpressionFormatStr options:NSRegularExpressionCaseInsensitive error:nil];
+    
+    for (int index = 2; index < callStackSymbols.count; index++) {
+        NSString *callStackSymbol = callStackSymbols[index];
+        
+        [regularExp enumerateMatchesInString:callStackSymbol options:NSMatchingReportProgress range:NSMakeRange(0, callStackSymbol.length) usingBlock:^(NSTextCheckingResult * _Nullable result, NSMatchingFlags flags, BOOL * _Nonnull stop) {
+            if (result) {
+                NSString* callStackSymbolMsg = [callStackSymbol substringWithRange:result.range];
+                NSString *className = [callStackSymbolMsg componentsSeparatedByString:@" "].firstObject;
+                className = [className componentsSeparatedByString:@"["].lastObject;
+                NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(className)];
+                
+                // filter out system class
+                if ([bundle isEqual:[NSBundle mainBundle]]) {
+                    fuzzyLocalization = callStackSymbolMsg;
+                }
+                *stop = YES;
+            }
+        }];
+        
+        if (fuzzyLocalization.length) break;
+    }
+    
+    return fuzzyLocalization ?: crashCallStackSymbolLocalizationFailDescription;
 }
 
 static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition) {
@@ -202,6 +357,9 @@ static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition)
         }
     }];
     p.transitioningDelegate = [TDFSDCrashCaptor sharedInstance];
+    if (effectiveWindow.rootViewController.presentedViewController) {
+        [effectiveWindow.rootViewController.presentedViewController dismissViewControllerAnimated:NO completion:nil];
+    }
     [effectiveWindow.rootViewController presentViewController:p animated:YES completion:nil];
 }
 
@@ -230,7 +388,18 @@ static void applyForKeepingLifeCycle(void) {
 }
 
 - (void)cacheCrashLog:(TDFSDCCCrashModel *)model {
-    
+    @synchronized(self) {
+        NSString *cachePath = SD_CRASH_CAPTOR_CACHE_MODEL_ARCHIVE_PATH;
+        NSMutableArray *cacheCrashModels = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
+        if (!cacheCrashModels) {
+            cacheCrashModels = @[].mutableCopy;
+        }
+        if (![cacheCrashModels containsObject:model]) {
+            [cacheCrashModels addObject:model];
+        }
+        BOOL isSuccess = [NSKeyedArchiver archiveRootObject:cacheCrashModels toFile:cachePath];
+        NSLog(@"[TDFScreenDebugger.CrashCaptor] %d", isSuccess);
+    }
 }
 
 #pragma mark - UIViewControllerTransitioningDelegate

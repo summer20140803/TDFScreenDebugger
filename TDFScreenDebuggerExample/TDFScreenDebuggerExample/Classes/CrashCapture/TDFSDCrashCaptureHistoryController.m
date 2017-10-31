@@ -6,8 +6,11 @@
 //
 
 #import "TDFSDCrashCaptureHistoryController.h"
+#import "TDFSDCrashCaptor.h"
+#import <ReactiveObjC/ReactiveObjC.h>
+#import <Masonry/Masonry.h>
 
-@interface TDFSDCrashCaptureHistoryController ()
+@interface TDFSDCrashCaptureHistoryController () <TDFSDFullScreenConsoleControllerInheritProtocol>
 
 @end
 
@@ -15,7 +18,28 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    NSString *cachePath = SD_CRASH_CAPTOR_CACHE_MODEL_ARCHIVE_PATH;
+    NSMutableArray *cacheCrashModels = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
+    NSLog(@"%@", cacheCrashModels);
+}
+
+#pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
+- (NSString *)titleForFullScreenConsole {
+    return @"Crash History";
+}
+
+- (UIView *)contentViewForFullScreenConsole {
+    return [[UIView alloc] init];
+}
+
+- (NSArray<TDFSDFunctionMenuItem *> *)functionMenuItemsForFullScreenConsole {
+    if (!self.menuItems) {
+        return @[ [TDFSDFunctionMenuItem itemWithImage:[UIImage imageNamed:@"icon_screenDebugger_trash"]
+                      actionHandler:^(TDFSDFunctionMenuItem *item) {
+                          [[TDFSDCrashCaptor sharedInstance] clearHistoryCrashLog];
+                      }] ];
+    }
+    return self.menuItems;
 }
 
 @end

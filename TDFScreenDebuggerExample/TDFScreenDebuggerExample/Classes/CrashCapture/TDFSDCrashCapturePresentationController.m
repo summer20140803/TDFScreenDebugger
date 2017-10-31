@@ -36,6 +36,7 @@ static const NSString *kSDCCTerminateButtonTitle  =  @"Terminate";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     [self.view setBackgroundColor:[UIColor clearColor]];
     [self layoutPageSubviews];
 }
@@ -62,7 +63,7 @@ static const NSString *kSDCCTerminateButtonTitle  =  @"Terminate";
         make.edges.equalTo(self.view);
     }];
     [self.titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.container).with.offset(40);
+        make.top.equalTo(self.container).with.offset(30);
         make.left.equalTo(self.container).with.offset(16);
         make.right.equalTo(self.container).with.offset(-16);
     }];
@@ -111,10 +112,10 @@ static const NSString *kSDCCTerminateButtonTitle  =  @"Terminate";
         _titleLabel = [[UILabel alloc] init];
         [_titleLabel setBackgroundColor:[UIColor clearColor]];
         _titleLabel.textAlignment = NSTextAlignmentLeft;
-        _titleLabel.numberOfLines = 1;
+        _titleLabel.numberOfLines = 2;
         _titleLabel.textColor = [UIColor whiteColor];
-        _titleLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:22];
-        _titleLabel.lineBreakMode = NSLineBreakByCharWrapping;
+        _titleLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:25];
+        _titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
         _titleLabel.text = @"Hey, We capture a crash !";
     }
     return _titleLabel;
@@ -191,14 +192,14 @@ static const NSString *kSDCCTerminateButtonTitle  =  @"Terminate";
 }
 
 - (NSAttributedString *)crashInfoAttributedString {
-    NSString *preTip = @"The following is a detailed crash message\n\n";
+    NSString *preTip = @"The following is a detailed crash message\n";
     NSString *crashDes = self.crashInfo.description;
     NSString *crashInfo = [NSString stringWithFormat:@"%@%@", preTip, crashDes];
     NSMutableAttributedString *mutableAS = [[NSMutableAttributedString alloc] initWithString:crashInfo];
     NSRange allRange = NSMakeRange(0, crashInfo.length);
     NSRange preRange = NSMakeRange(0, preTip.length);
     [mutableAS addAttributes:@{NSFontAttributeName:[UIFont fontWithName:@"PingFang SC" size:13], NSForegroundColorAttributeName:[UIColor whiteColor]} range:allRange];
-    [mutableAS addAttributes:@{NSFontAttributeName:[UIFont fontWithName:@"PingFang SC" size:15], NSForegroundColorAttributeName:[UIColor yellowColor]} range:preRange];
+    [mutableAS addAttributes:@{NSFontAttributeName:[UIFont fontWithName:@"PingFang SC" size:16], NSForegroundColorAttributeName:[UIColor yellowColor]} range:preRange];
     return [mutableAS copy];
 }
 
