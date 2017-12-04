@@ -35,6 +35,14 @@
     NSString *crashModelsCachePath = [crashCacheFolderPath stringByAppendingPathComponent:@"crashModels.archive"];  \
     crashModelsCachePath;  \
 })
+#define SD_CRASH_CAPTOR_CACHE_REGISTERED_CLASSES_ARCHIVE_PATH  \
+({  \
+    NSString *documentPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];  \
+    NSString *rootFolderPath = [documentPath stringByAppendingPathComponent:SD_LOCAL_CACHE_ROOT_FILE_FOLDER_NAME];  \
+    NSString *crashCacheFolderPath = [rootFolderPath stringByAppendingPathComponent:SD_CRASH_CAPTOR_CACHE_FILE_FOLDER_NAME];  \
+    NSString *registeredClassesCachePath = [crashCacheFolderPath stringByAppendingPathComponent:@"registeredClassesByDeveloper.archive"];  \
+    registeredClassesCachePath;  \
+})
 
 
 //========================

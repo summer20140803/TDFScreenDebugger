@@ -36,41 +36,32 @@ static const CGFloat  keepAliveReloadRenderingInterval  = 1 / 120.0f;
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-
-        unsigned int registerClassCount;
-        Class *classes = objc_copyClassList(&registerClassCount);
-
-        for (int i = 0; i < registerClassCount; i++) {
-            Class class = classes[i];
-            if (strcmp(class_getName(class), "_CNZombie_") == 0) continue;
-
-            if (class_respondsToSelector(class, @selector(viewDidLoad))) {
-                NSBundle *bundle = [NSBundle bundleForClass:class];
-                if ([bundle isEqual:[NSBundle mainBundle]]) {
-                    printf("[TDFScreenDebugger.CrashCaptor.StartingUp] %s\n", class_getName(class));
-
-                    SEL selectors[] = {
-                        @selector(viewDidLoad),
-                        @selector(viewWillAppear:),
-                        @selector(viewDidAppear:),
-                        @selector(viewWillDisappear:),
-                        @selector(viewDidDisappear:),
-                        @selector(viewWillLayoutSubviews),
-                        @selector(viewDidLayoutSubviews)
-                    };
-
-                    for(int index = 0; index < sizeof(selectors)/sizeof(SEL); index ++) {
-                        SEL selector = selectors[index];
-                        if ([NSStringFromSelector(selector) hasSuffix:@":"]) {
-                            singleParmIMPReset(selector, class);
-                        } else {
-                            nullaParmIMPReset(selector, class);
-                        }
+        
+        NSString *cachePath = SD_CRASH_CAPTOR_CACHE_REGISTERED_CLASSES_ARCHIVE_PATH;
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSArray *registeredViewControllerHeirClasses = [NSArray array];
+        
+        if ([fileManager fileExistsAtPath:cachePath]) {
+            registeredViewControllerHeirClasses = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath] ?: @[];
+            hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClasses);
+            
+            __weak NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+            __block id token = [center addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
+                dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                    @synchronized(self) {
+                        NSArray *newHeirClasses = [NSArray array];
+                        obtainAllViewControllerHeirs(&newHeirClasses);
+                        [NSKeyedArchiver archiveRootObject:newHeirClasses toFile:cachePath];
                     }
-                }
-            }
+                });
+                
+                [center removeObserver:token];
+            }];
+        } else {
+            obtainAllViewControllerHeirs(&registeredViewControllerHeirClasses);
+            hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClasses);
+            [NSKeyedArchiver archiveRootObject:registeredViewControllerHeirClasses toFile:cachePath];
         }
-        free(classes);
     });
 }
 
@@ -148,7 +139,7 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
     for (int index = 0; index < machSignals.count; index ++) {
         signal([machSignals[index] intValue], &machSignalExceptionHandler);
     }
-    // Avoid calling loops
+    // Avoid calling dead loops
     if (self.originHandler != &ocExceptionHandler) {
         self.originHandler = NSGetUncaughtExceptionHandler();
     }
@@ -167,6 +158,51 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 }
 
 #pragma mark - private
+static void obtainAllViewControllerHeirs(NSArray **heirs) {
+    unsigned int registerClassCount;
+    Class *classes = objc_copyClassList(&registerClassCount);
+    
+    NSMutableArray *viewControllerHeirs = [NSMutableArray array];
+    
+    for (int i = 0; i < registerClassCount; i++) {
+        Class class = classes[i];
+        if (strcmp(class_getName(class), "_CNZombie_") == 0) continue;
+        
+        if (class_respondsToSelector(class, @selector(viewDidLoad))) {
+            NSBundle *bundle = [NSBundle bundleForClass:class];
+            if ([bundle isEqual:[NSBundle mainBundle]]) {
+                NSLog(@"[TDFScreenDebugger.CrashCaptor.TraverseRegisteredClasses] %s\n", class_getName(class));
+                [viewControllerHeirs addObject:class];
+            }
+        }
+    }
+    free(classes);
+    *heirs = viewControllerHeirs;
+}
+
+static void hookAllViewControllerHeirsLifeCycle(NSArray *allHeirs) {
+    [allHeirs enumerateObjectsUsingBlock:^(id  _Nonnull class, NSUInteger idx, BOOL * _Nonnull stop) {
+        SEL selectors[] = {
+            @selector(viewDidLoad),
+            @selector(viewWillAppear:),
+            @selector(viewDidAppear:),
+            @selector(viewWillDisappear:),
+            @selector(viewDidDisappear:),
+            @selector(viewWillLayoutSubviews),
+            @selector(viewDidLayoutSubviews)
+        };
+        
+        for(int index = 0; index < sizeof(selectors)/sizeof(SEL); index ++) {
+            SEL selector = selectors[index];
+            if ([NSStringFromSelector(selector) hasSuffix:@":"]) {
+                singleParmIMPReset(selector, class);
+            } else {
+                nullaParmIMPReset(selector, class);
+            }
+        }
+    }];
+}
+
 static void nullaParmIMPReset(SEL selector, Class class) {
     Method method = class_getInstanceMethod(class, selector);
     void(*imp)(id, SEL, ...) = (typeof(imp))method_getImplementation(method);
@@ -375,7 +411,7 @@ static void applyForKeepingLifeCycle(void) {
     
     // let app continue to run
     while (captor.needKeepAlive) {
-        for (NSString *mode in (__bridge NSArray *)allModesRef) {
+        for (NSString *mode in (__bridge_transfer NSArray *)allModesRef) {
             if ([mode isEqualToString:(NSString *)kCFRunLoopCommonModes]) {
                 continue;
             }
@@ -383,8 +419,6 @@ static void applyForKeepingLifeCycle(void) {
             CFRunLoopRunInMode(modeRef, keepAliveReloadRenderingInterval, false);
         }
     }
-    
-    CFRelease(allModesRef);
 }
 
 - (void)cacheCrashLog:(TDFSDCCCrashModel *)model {
@@ -398,7 +432,7 @@ static void applyForKeepingLifeCycle(void) {
             [cacheCrashModels addObject:model];
         }
         BOOL isSuccess = [NSKeyedArchiver archiveRootObject:cacheCrashModels toFile:cachePath];
-        NSLog(@"[TDFScreenDebugger.CrashCaptor] %d", isSuccess);
+        NSLog(@"[TDFScreenDebugger.CrashCaptor.SaveCrashLog] %@", isSuccess ? @"result_success" : @"result_failure");
     }
 }
 
