@@ -80,7 +80,7 @@ typedef NS_ENUM(NSUInteger, kSDARCurrentContentType) {
     } else {
         [self.bindingContentView setContentOffset:CGPointMake(0, 0) animated:YES];
     }
-    [self.bindingContentView sd_fadeAnimation];
+    [self.bindingContentView sd_fadeAnimationWithDuration:0.15f];
 }
 
 - (TDFALResponseModel *)resp {

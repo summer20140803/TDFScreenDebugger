@@ -48,12 +48,14 @@
 //========================
 //   CONSTRUCTOR METHOD
 //========================
-#define SD_CONSTRUCTOR_METHOD_PRIORITY_CRASH_CAPTURE     4294967295    //(2^32-1 in 32bit)
-#define SD_CONSTRUCTOR_METHOD_PRIORITY_LOG_VIEW          101
-#define SD_CONSTRUCTOR_METHOD_PRIORITY_API_RECORD        102
+#define SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_BASE_CACHE_ROOT  101
+#define SD_CONSTRUCTOR_METHOD_PRIORITY_LOG_VIEW               102
+#define SD_CONSTRUCTOR_METHOD_PRIORITY_API_RECORD             103
 
-#define SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_CACHE_ROOT   200
-#define SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_CACHE_CRASH  201
+#define SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_CACHE_CRASH_CAPTOR                      200
+#define SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_VIEW_CONTROLLER_HEIR_LIFECYCLE_SWIZZLE  201
+
+#define SD_CONSTRUCTOR_METHOD_PRIORITY_CRASH_CAPTURE     4294967295    //(2^32-1 in 32bit)
 
 #define SD_CONSTRUCTOR_METHOD_DECLARE(PRIORITY, ...)  \
 __attribute__((constructor(PRIORITY)))  \
@@ -80,5 +82,14 @@ typedef NS_ENUM(NSUInteger, SDAllReadNotificationContentType) {
 #define SD_CRASH_EXCEPTION_TYPE_SIGNAL   @"mach_signal_exception"
 #define SD_CRASH_EXCEPTION_TYPE_OC       @"oc_exception"
 
+//====================
+//   OTHER USE CASE
+//====================
+#define SD_EXPORT  extern
+
+#define SD_DELAY_HANDLER(DELAY_TIME, ...)  \
+dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(DELAY_TIME * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{  \
+    __VA_ARGS__  \
+});
 
 #endif /* TDFScreenDebuggerDefine_h */

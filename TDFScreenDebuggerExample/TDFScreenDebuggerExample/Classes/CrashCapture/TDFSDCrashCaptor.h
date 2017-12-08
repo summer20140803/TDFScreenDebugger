@@ -7,11 +7,16 @@
 
 #import <Foundation/Foundation.h>
 #import "TDFSDFunctionIOControlProtocol.h"
+@class TDFSDCCCrashModel;
 
 @interface TDFSDCrashCaptor : NSObject <TDFSDFunctionIOControlProtocol>
 
-+ (instancetype)sharedInstance;
+/**
+ this handler block can be used for customized reporting behavior
+ */
+@property (nonatomic,  copy) void (^sd_didReceiveCrashHandler)(TDFSDCCCrashModel *crashModel);
 
++ (instancetype)sharedInstance;
 - (void)clearHistoryCrashLog;
 
 @end

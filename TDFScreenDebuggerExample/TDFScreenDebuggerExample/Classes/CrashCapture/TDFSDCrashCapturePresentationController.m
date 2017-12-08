@@ -7,6 +7,8 @@
 
 #import "TDFSDCrashCapturePresentationController.h"
 #import "TDFSDCCCrashModel.h"
+#import "TDFScreenDebuggerDefine.h"
+#import "UIView+ScreenDebugger.h"
 #import <Masonry/Masonry.h>
 
 @interface TDFSDCrashCapturePresentationController ()
@@ -43,7 +45,20 @@ static const NSString *kSDCCTerminateButtonTitle  =  @"Terminate";
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    self.presentationView.attributedText = [self crashInfoAttributedString];
+    SD_DELAY_HANDLER(0.35f, {
+        [self.titleLabel sd_fadeAnimationWithDuration:0.25f];
+        self.titleLabel.text = @"Hey, We capture a crash !";
+    })
+    SD_DELAY_HANDLER(1.0f, {
+        [self.presentationView sd_fadeAnimationWithDuration:0.40f];
+        self.presentationView.attributedText = [self crashInfoAttributedString];
+    })
+    SD_DELAY_HANDLER(1.40f, {
+        [self.terminateButton sd_fadeAnimationWithDuration:0.20f];
+        [self.exportButton sd_fadeAnimationWithDuration:0.20f];
+        self.exportButton.hidden = NO;
+        self.terminateButton.hidden = NO;
+    })
 }
 
 #pragma mark - private
@@ -116,7 +131,6 @@ static const NSString *kSDCCTerminateButtonTitle  =  @"Terminate";
         _titleLabel.textColor = [UIColor whiteColor];
         _titleLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:25];
         _titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-        _titleLabel.text = @"Hey, We capture a crash !";
     }
     return _titleLabel;
 }
@@ -145,6 +159,7 @@ static const NSString *kSDCCTerminateButtonTitle  =  @"Terminate";
         [_exportButton setTitle:(NSString *)kSDCCExportButtonTitle forState:UIControlStateNormal];
         _exportButton.layer.cornerRadius = 4.0f;
         _exportButton.layer.masksToBounds = YES;
+        _exportButton.hidden = YES;
         @weakify(self)
         _exportButton.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(UIButton * _Nullable input) {
             @strongify(self)
@@ -174,6 +189,7 @@ static const NSString *kSDCCTerminateButtonTitle  =  @"Terminate";
         [_terminateButton setTitle:(NSString *)kSDCCTerminateButtonTitle forState:UIControlStateNormal];
         _terminateButton.layer.cornerRadius = 4.0f;
         _terminateButton.layer.masksToBounds = YES;
+        _terminateButton.hidden = YES;
         @weakify(self)
         _terminateButton.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
             @strongify(self)

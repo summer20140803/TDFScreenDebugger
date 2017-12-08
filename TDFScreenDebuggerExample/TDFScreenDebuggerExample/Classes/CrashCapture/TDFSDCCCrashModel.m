@@ -39,11 +39,11 @@ static  NSString * kSDCrashModelPersistenceKeyExceptionCallStack  = @"exceptionC
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
-    [aCoder encodeObject:_exceptionTime forKey:kSDCrashModelPersistenceKeyExceptionTime];
-    [aCoder encodeObject:_exceptionType forKey:kSDCrashModelPersistenceKeyExceptionType];
-    [aCoder encodeObject:_exceptionName forKey:kSDCrashModelPersistenceKeyExceptionName];
-    [aCoder encodeObject:_exceptionReason forKey:kSDCrashModelPersistenceKeyExceptionReason];
-    [aCoder encodeObject:_fuzzyLocalization forKey:kSDCrashModelPersistenceKeyFuzzyLocalization];
+    [aCoder encodeObject:_exceptionTime      forKey:kSDCrashModelPersistenceKeyExceptionTime];
+    [aCoder encodeObject:_exceptionType      forKey:kSDCrashModelPersistenceKeyExceptionType];
+    [aCoder encodeObject:_exceptionName      forKey:kSDCrashModelPersistenceKeyExceptionName];
+    [aCoder encodeObject:_exceptionReason    forKey:kSDCrashModelPersistenceKeyExceptionReason];
+    [aCoder encodeObject:_fuzzyLocalization  forKey:kSDCrashModelPersistenceKeyFuzzyLocalization];
     [aCoder encodeObject:_exceptionCallStack forKey:kSDCrashModelPersistenceKeyExceptionCallStack];
 }
 

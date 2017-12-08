@@ -30,7 +30,7 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.backgroundView = self.effectBackgroudView;
-        self.backgroundView.alpha = 0.5;
+        self.backgroundView.alpha = 0.35;
         self.layer.cornerRadius = 10;
         self.layer.masksToBounds = YES;
         [self layoutPageSubviews];
@@ -40,9 +40,9 @@
 
 #pragma mark - interface methods
 - (void)bindWithViewModel:(TDFSDARCollectionViewModel *)viewModel {
-    self.timeLabel.text = viewModel.requestModel.milestoneTime ?: @"Not set";
-    self.descriptionLabel.text = viewModel.requestModel.taskDescription ?: @"Not set";
-    self.validURLLabel.text = viewModel.requestModel.validURL ?: @"Not set";
+    self.timeLabel.text = [viewModel.requestModel.milestoneTime stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: @"Not set";
+    self.descriptionLabel.text = [viewModel.requestModel.taskDescription stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: @"Not set";
+    self.validURLLabel.text = [viewModel.requestModel.validURL stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: @"Not set";
 }
 
 #pragma mark - getter
@@ -95,7 +95,7 @@
 
 #pragma mark - private
 - (void)layoutPageSubviews {
-    
+    [self.contentView addSubview:self.effectBackgroudView];
     [self.contentView addSubview:self.timeLabel];
     [self.contentView addSubview:self.descriptionLabel];
     [self.contentView addSubview:self.validURLLabel];

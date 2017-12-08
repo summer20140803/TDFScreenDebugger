@@ -6,7 +6,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TDFSDCCCrashModel.h"
 
 @interface TDFSDCCCollectionViewModel : NSObject
+
+@property (nonatomic, strong) TDFSDCCCrashModel *crashModel;
+@property (nonatomic, assign, readonly) CGFloat cellHeight;
+@property (nonatomic, assign, readonly) CGFloat cellWidth;
 
 @end

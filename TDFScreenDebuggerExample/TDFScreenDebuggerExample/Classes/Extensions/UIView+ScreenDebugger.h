@@ -10,6 +10,6 @@
 
 @interface UIView (ScreenDebugger)
 
-- (void)sd_fadeAnimation;
+- (void)sd_fadeAnimationWithDuration:(CGFloat)duration;
 
 @end

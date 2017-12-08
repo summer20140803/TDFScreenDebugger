@@ -34,8 +34,13 @@
 #pragma mark - life cycle
 - (void)viewDidLoad {
     [self.apiRequestListView registerClass:[TDFSDARCollectionViewCell class] forCellWithReuseIdentifier:NSStringFromClass([TDFSDARCollectionViewCell class])];
-    [super viewDidLoad];
     [self observeAPIRequests];
+    [super viewDidLoad];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.apiRequestListView sd_triggleWithLoadAnimation];
 }
 
 #pragma mark - private

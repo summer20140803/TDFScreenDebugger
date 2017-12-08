@@ -15,7 +15,13 @@
 
     NSArray<UICollectionViewCell *> *visibleCells = self.visibleCells;
     
-    [visibleCells enumerateObjectsUsingBlock:^(UICollectionViewCell * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+    NSArray *sortedVisibleCells = [visibleCells sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+        NSIndexPath *path1 = [self indexPathForCell:obj1];
+        NSIndexPath *path2 = [self indexPathForCell:obj2];
+        return [path1 compare:path2];
+    }];
+    
+    [sortedVisibleCells enumerateObjectsUsingBlock:^(UICollectionViewCell * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         
         obj.backgroundView.alpha = 0;
         obj.contentView.alpha = 0;

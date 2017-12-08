@@ -10,16 +10,16 @@
 
 @implementation UIView (ScreenDebugger)
 
-- (void)sd_fadeAnimation {
+- (void)sd_fadeAnimationWithDuration:(CGFloat)duration {
     
     CATransition *animation = [CATransition animation];
     animation.fillMode = kCAFillModeForwards;
     animation.removedOnCompletion = NO;
     
-    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
 
     animation.type = kCATransitionFade;
-    animation.duration = 0.15f;
+    animation.duration = duration;
     
     [self.layer addAnimation:animation forKey:nil];
 }

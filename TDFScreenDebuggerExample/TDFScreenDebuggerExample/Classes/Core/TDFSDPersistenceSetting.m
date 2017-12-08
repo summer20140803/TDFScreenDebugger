@@ -78,7 +78,7 @@
     model6.quickLaunchDescrition = @"< not specified >";
     [functions addObject:model6];
 
-    return [functions copy];
+    return functions;
 }
 
 @end

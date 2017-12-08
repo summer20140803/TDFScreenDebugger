@@ -6,7 +6,11 @@
 //
 
 #import <UIKit/UIKit.h>
+@class TDFSDCCCollectionViewModel;
 
 @interface TDFSDCCCollectionViewCell : UICollectionViewCell
+
++ (instancetype)cellWithCollectionView:(UICollectionView *)collectionView indexPath:(NSIndexPath *)indexPath;
+- (void)bindWithViewModel:(TDFSDCCCollectionViewModel *)viewModel;
 
 @end

@@ -33,40 +33,8 @@ static const CGFloat  keepAliveReloadRenderingInterval  = 1 / 120.0f;
 #pragma mark - life cycle
 
 #if DEBUG
-+ (void)load {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        
-        NSString *cachePath = SD_CRASH_CAPTOR_CACHE_REGISTERED_CLASSES_ARCHIVE_PATH;
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSArray *registeredViewControllerHeirClasses = [NSArray array];
-        
-        if ([fileManager fileExistsAtPath:cachePath]) {
-            registeredViewControllerHeirClasses = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath] ?: @[];
-            hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClasses);
-            
-            __weak NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-            __block id token = [center addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
-                dispatch_async(dispatch_get_global_queue(0, 0), ^{
-                    @synchronized(self) {
-                        NSArray *newHeirClasses = [NSArray array];
-                        obtainAllViewControllerHeirs(&newHeirClasses);
-                        [NSKeyedArchiver archiveRootObject:newHeirClasses toFile:cachePath];
-                    }
-                });
-                
-                [center removeObserver:token];
-            }];
-        } else {
-            obtainAllViewControllerHeirs(&registeredViewControllerHeirClasses);
-            hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClasses);
-            [NSKeyedArchiver archiveRootObject:registeredViewControllerHeirClasses toFile:cachePath];
-        }
-    });
-}
-
 SD_CONSTRUCTOR_METHOD_DECLARE \
-(SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_CACHE_CRASH, {
+(SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_CACHE_CRASH_CAPTOR, {
     // build exclusive crash folder in sdk's root folder
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *systemDicPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
@@ -77,6 +45,36 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
     }
     if (![fileManager fileExistsAtPath:crashFolderPath]) {
         [fileManager createDirectoryAtPath:crashFolderPath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+})
+
+SD_CONSTRUCTOR_METHOD_DECLARE \
+(SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_VIEW_CONTROLLER_HEIR_LIFECYCLE_SWIZZLE, {
+    
+    NSString *cachePath = SD_CRASH_CAPTOR_CACHE_REGISTERED_CLASSES_ARCHIVE_PATH;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSArray *registeredViewControllerHeirClassNames = [NSArray array];
+    
+    if ([fileManager fileExistsAtPath:cachePath]) {
+        registeredViewControllerHeirClassNames = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath] ?: @[];
+        hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
+        
+        __weak NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        __block id token = [center addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                @synchronized(token) {  // Does it really need to lock here?
+                    NSArray *newHeirClassNames = [NSArray array];
+                    obtainAllViewControllerHeirNames(&newHeirClassNames);
+                    [NSKeyedArchiver archiveRootObject:newHeirClassNames toFile:cachePath];
+                }
+            });
+            
+            [center removeObserver:token];
+        }];
+    } else {
+        obtainAllViewControllerHeirNames(&registeredViewControllerHeirClassNames);
+        hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
+        [NSKeyedArchiver archiveRootObject:registeredViewControllerHeirClassNames toFile:cachePath];
     }
 })
 
@@ -158,11 +156,11 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 }
 
 #pragma mark - private
-static void obtainAllViewControllerHeirs(NSArray **heirs) {
+static void obtainAllViewControllerHeirNames(NSArray **heirs) {
     unsigned int registerClassCount;
     Class *classes = objc_copyClassList(&registerClassCount);
     
-    NSMutableArray *viewControllerHeirs = [NSMutableArray array];
+    NSMutableArray *viewControllerHeirNames = [NSMutableArray array];
     
     for (int i = 0; i < registerClassCount; i++) {
         Class class = classes[i];
@@ -172,16 +170,18 @@ static void obtainAllViewControllerHeirs(NSArray **heirs) {
             NSBundle *bundle = [NSBundle bundleForClass:class];
             if ([bundle isEqual:[NSBundle mainBundle]]) {
                 NSLog(@"[TDFScreenDebugger.CrashCaptor.TraverseRegisteredClasses] %s\n", class_getName(class));
-                [viewControllerHeirs addObject:class];
+                [viewControllerHeirNames addObject:NSStringFromClass(class)];
             }
         }
     }
     free(classes);
-    *heirs = viewControllerHeirs;
+    *heirs = viewControllerHeirNames;
 }
 
-static void hookAllViewControllerHeirsLifeCycle(NSArray *allHeirs) {
-    [allHeirs enumerateObjectsUsingBlock:^(id  _Nonnull class, NSUInteger idx, BOOL * _Nonnull stop) {
+static void hookAllViewControllerHeirsLifeCycle(NSArray *allHeirNames) {
+    [allHeirNames enumerateObjectsUsingBlock:^(NSString * _Nonnull className, NSUInteger idx, BOOL * _Nonnull stop) {
+        Class class = NSClassFromString(className);
+        
         SEL selectors[] = {
             @selector(viewDidLoad),
             @selector(viewWillAppear:),
@@ -372,8 +372,10 @@ static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition)
     p.crashInfo = crash;
     p.exportProxy = [RACSubject subject];
     p.terminateProxy = [RACSubject subject];
+    
+    __weak TDFSDCrashCaptor *captor = [TDFSDCrashCaptor sharedInstance];
     [p.exportProxy subscribeNext:^(id  _Nullable x) {
-        ////// export code //////
+        !captor.sd_didReceiveCrashHandler ?: captor.sd_didReceiveCrashHandler(crash);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             void(^done)() = x;
             done();

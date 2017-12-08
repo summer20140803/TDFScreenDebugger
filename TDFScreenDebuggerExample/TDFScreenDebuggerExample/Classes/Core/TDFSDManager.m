@@ -25,7 +25,7 @@
 
 #if DEBUG
 SD_CONSTRUCTOR_METHOD_DECLARE \
-(SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_CACHE_ROOT, {
+(SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_BASE_CACHE_ROOT, {
     // build exclusive cache folder in sandbox
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *systemDicPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];

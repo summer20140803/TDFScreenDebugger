@@ -47,12 +47,12 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
 
 /**
  a flag to tell the crash captor Whether need cache crash-log to local file,
- cached file can be look over again in history-list. default is NO
+ cached file can be look over again in history-list. default is YES
  */
 @property (nonatomic, assign) BOOL needCacheCrashLogToSandBox;
 
 /**
- when log viewr receives a system log message data, we create buffer according to given max-size,
+ when log viewer receives a system log message data, we create buffer according to given max-size,
  if over, will cut out the data to given max-size. default is 1024 * 10, just be avaliable for iOS 10.0+
  */
 @property (nonatomic, assign) ssize_t limitSizeOfSingleSystemLogMessageData  NS_CLASS_AVAILABLE_IOS(10_0);
