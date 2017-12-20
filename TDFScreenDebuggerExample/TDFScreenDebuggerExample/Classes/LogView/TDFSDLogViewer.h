@@ -9,13 +9,11 @@
 #import "TDFSDFunctionIOControlProtocol.h"
 @class TDFSDLVLogModel;
 
-
 @interface TDFSDLogViewer : NSObject <TDFSDFunctionIOControlProtocol>
 
 @property (nonatomic, strong, readonly) NSArray<TDFSDLVLogModel *> *logs;
 
 + (instancetype)sharedInstance;
-
 - (void)clearCurrentSystemLogs;
 
 @end

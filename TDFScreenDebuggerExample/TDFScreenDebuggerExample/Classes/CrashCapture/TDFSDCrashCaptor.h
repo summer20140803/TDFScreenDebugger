@@ -11,12 +11,12 @@
 
 @interface TDFSDCrashCaptor : NSObject <TDFSDFunctionIOControlProtocol>
 
++ (instancetype)sharedInstance;
+- (void)clearHistoryCrashLog;
+
 /**
  this handler block can be used for customized reporting behavior
  */
 @property (nonatomic,  copy) void (^sd_didReceiveCrashHandler)(TDFSDCCCrashModel *crashModel);
-
-+ (instancetype)sharedInstance;
-- (void)clearHistoryCrashLog;
 
 @end

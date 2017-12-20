@@ -21,7 +21,7 @@
 
 @end
 
-CF_EXPORT const CGFloat SDFullScreenContentViewEdgeMargin;
+SD_EXPORT const CGFloat SDFullScreenContentViewEdgeMargin;
 
 @interface TDFSDFullScreenConsoleController : UIViewController <UIViewControllerTransitioningDelegate>
 

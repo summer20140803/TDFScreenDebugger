@@ -22,6 +22,11 @@
         setting.needCacheCrashLogToSandBox = YES;
         setting.allowMonitorSystemLogFlag = YES;
         setting.limitSizeOfSingleSystemLogMessageData = 1024 * 10;
+        setting.allowUILagsMonitoring = YES;
+        setting.tolerableLagThreshold = 0.10f;
+        setting.allowApplicationCPUMonitoring = YES;
+        setting.allowApplicationMemoryMonitoring = YES;
+        setting.allowScreenFPSMonitoring = YES;
     });
     return setting;
 }
