@@ -80,7 +80,7 @@
         
         CGMutablePathRef path = CGPathCreateMutable();
         CGPathAddRect(path, NULL, CGRectMake((size.width - textSize.width) / 2, 5, textSize.width, textSize.height));
-        CTFramesetterRef frameSetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)attributedText);
+        CTFramesetterRef frameSetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)as);
         CTFrameRef frame = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, as.length), path, NULL);
         CTFrameDraw(frame, context);
         

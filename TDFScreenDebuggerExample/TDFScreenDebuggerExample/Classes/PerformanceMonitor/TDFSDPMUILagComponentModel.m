@@ -15,7 +15,7 @@
 }
 
 - (BOOL)isEqual:(id)object {
-    return [self.description isEqualToString:object];
+    return [self.description isEqualToString:[(NSObject *)object description]];
 }
 
 #pragma mark - TDFSDMessageRemindProtocol

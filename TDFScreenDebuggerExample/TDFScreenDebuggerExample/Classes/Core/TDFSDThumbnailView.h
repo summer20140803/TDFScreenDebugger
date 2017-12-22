@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <ReactiveObjC/ReactiveObjC.h>
+@class RACSubject;
 
 @interface TDFSDThumbnailView : UIView
 

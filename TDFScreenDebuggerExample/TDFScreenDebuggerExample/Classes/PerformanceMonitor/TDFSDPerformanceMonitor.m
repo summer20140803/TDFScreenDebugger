@@ -111,6 +111,18 @@ static const uint64_t        kSDDispatchSourceInterval  =  1 * NSEC_PER_SEC;
 @implementation TDFSDPMFPSComponent
 
 - (void)thaw {
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        @weakify(self)
+        [[[RACObserve([TDFSDPersistenceSetting sharedInstance], allowScreenFPSMonitoring) skip:1]
+         distinctUntilChanged]
+         subscribeNext:^(NSNumber * _Nullable x) {
+             @strongify(self)
+             [x boolValue] ? [self thaw] : [self freeze];
+        }];
+    });
+    
     if (![TDFSDPersistenceSetting sharedInstance].allowScreenFPSMonitoring) return;
     
     _displayLink = [CADisplayLink displayLinkWithTarget:[TDFSDPMWeakProxy proxyWithTarget:self] selector:@selector(frameRender:)];
@@ -174,7 +186,7 @@ static const uint64_t        kSDDispatchSourceInterval  =  1 * NSEC_PER_SEC;
                 [NSThread sleepForTimeInterval:[TDFSDPersistenceSetting sharedInstance].tolerableLagThreshold];
                 if (pm_timeout) {
                     NSString *uiThreadCallStackDes = [TDFSDCallStackFetcher sd_callStackOfMainThread];
-                    NSLog(@"\n[TDFScreenDebugger.PerformanceMonitor.UILagComponent]\n%@\n", uiThreadCallStackDes);
+                    printf("\n\n[TDFScreenDebugger.PerformanceMonitor.UILagComponent]\n%s\n\n", [uiThreadCallStackDes UTF8String]);
                     
                     TDFSDPMUILagComponentModel *lag = [[TDFSDPMUILagComponentModel alloc] init];
                     lag.occurTime = [NSDate date];
@@ -308,8 +320,13 @@ SD_CONSTRUCTOR_METHOD_DECLARE(SD_CONSTRUCTOR_METHOD_PRIORITY_PERFORMANCE_MONITOR
         _source_t = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, sd_better_queue_by_qos(NSQualityOfServiceDefault));
         dispatch_source_set_timer(_source_t, DISPATCH_TIME_NOW, kSDDispatchSourceInterval, 0);
         dispatch_source_set_event_handler(_source_t, ^{
-            [self.appMemoryComponent takeApplicationMemoryUsage];
-            [self.appCpuComponent takeApplicationCPUUsage];
+            
+            if ([TDFSDPersistenceSetting sharedInstance].allowApplicationMemoryMonitoring) {
+                [self.appMemoryComponent takeApplicationMemoryUsage];
+            }
+            if ([TDFSDPersistenceSetting sharedInstance].allowApplicationCPUMonitoring) {
+                [self.appCpuComponent takeApplicationCPUUsage];
+            }
         });
     }
     return _source_t;

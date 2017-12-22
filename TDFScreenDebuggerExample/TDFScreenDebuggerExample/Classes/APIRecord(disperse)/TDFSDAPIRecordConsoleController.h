@@ -8,7 +8,6 @@
 
 #import "TDFSDFullScreenConsoleController.h"
 
-
 @interface TDFSDAPIRecordConsoleController : TDFSDFullScreenConsoleController
 
 @end

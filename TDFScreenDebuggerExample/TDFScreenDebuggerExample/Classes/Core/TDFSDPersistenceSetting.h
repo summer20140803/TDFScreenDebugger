@@ -80,5 +80,10 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
  a flag to tell the performance monitor whether should monitor device screen fps. default is YES
  */
 @property (nonatomic, assign) BOOL allowScreenFPSMonitoring;
+/**
+ when fps is monitoring, if fps value exceeds this threshold,
+ fps component will born a warnning for user. default is `30`
+ */
+@property (nonatomic, assign) NSUInteger fpsWarnningThreshold;
 
 @end
