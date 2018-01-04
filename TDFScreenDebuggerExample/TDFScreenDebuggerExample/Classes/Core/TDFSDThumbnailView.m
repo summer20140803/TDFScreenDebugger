@@ -169,7 +169,6 @@
     @weakify(self)
     [tapGesture.rac_gestureSignal subscribeNext:^(__kindof UIGestureRecognizer * _Nullable x) {
         @strongify(self)
-        [self.viewModel forceAllRead];
         !self.tapProxy ?: [self.tapProxy sendNext:x];
     }];
     [self addGestureRecognizer:tapGesture];
@@ -177,7 +176,7 @@
 
 - (void)addLongPressGesture {
     UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] init];
-    longPressGesture.minimumPressDuration = 1;
+    longPressGesture.minimumPressDuration = 0.5;
     @weakify(self)
     [longPressGesture.rac_gestureSignal
     subscribeNext:^(__kindof UIGestureRecognizer * _Nullable x) {

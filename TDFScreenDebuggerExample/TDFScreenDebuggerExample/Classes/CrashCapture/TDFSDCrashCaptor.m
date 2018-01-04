@@ -64,7 +64,7 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
             dispatch_async(dispatch_get_global_queue(0, 0), ^{
                 @synchronized(token) {  // Does it really need to lock here?
                     NSArray *newHeirClassNames = [NSArray array];
-                    obtainAllViewControllerHeirNames(&newHeirClassNames);
+                    obtainAllViewControllerHeirNames(&newHeirClassNames, NO);
                     [NSKeyedArchiver archiveRootObject:newHeirClassNames toFile:cachePath];
                 }
             });
@@ -72,7 +72,7 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
             [center removeObserver:token];
         }];
     } else {
-        obtainAllViewControllerHeirNames(&registeredViewControllerHeirClassNames);
+        obtainAllViewControllerHeirNames(&registeredViewControllerHeirClassNames, YES);
         hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
         [NSKeyedArchiver archiveRootObject:registeredViewControllerHeirClassNames toFile:cachePath];
     }
@@ -156,7 +156,7 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 }
 
 #pragma mark - private
-static void obtainAllViewControllerHeirNames(NSArray **heirs) {
+static void obtainAllViewControllerHeirNames(NSArray **heirs, BOOL needPrintClasses) {
     unsigned int registerClassCount;
     Class *classes = objc_copyClassList(&registerClassCount);
     
@@ -169,7 +169,9 @@ static void obtainAllViewControllerHeirNames(NSArray **heirs) {
         if (class_respondsToSelector(class, @selector(viewDidLoad))) {
             NSBundle *bundle = [NSBundle bundleForClass:class];
             if ([bundle isEqual:[NSBundle mainBundle]]) {
-                NSLog(@"[TDFScreenDebugger.CrashCaptor.TraverseRegisteredClasses] %s\n", class_getName(class));
+                if (needPrintClasses) {
+                    printf("[TDFScreenDebugger.CrashCaptor.TraverseRegisteredClasses] %s\n", class_getName(class));
+                }
                 [viewControllerHeirNames addObject:NSStringFromClass(class)];
             }
         }

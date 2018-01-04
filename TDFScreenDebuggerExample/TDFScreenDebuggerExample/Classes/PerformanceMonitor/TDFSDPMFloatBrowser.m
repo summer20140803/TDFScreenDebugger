@@ -13,11 +13,17 @@
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
 
-#define kSDPMDataLabelSize  CGSizeMake(60., 30.)
+#define kSDPMDataLabelSize  CGSizeMake(80., 40.)
+
+static UIView *createSeparateLine(void) {
+    UIView *separateLine = [[UIView alloc] init];
+    separateLine.backgroundColor = [UIColor groupTableViewBackgroundColor];
+    return separateLine;
+}
 
 @interface TDFSDPMDataLabel : TDFSDAsyncDisplayLabel {
     @protected
-    CAShapeLayer *_shapeLayer;
+    CAShapeLayer *shapeLayer;
 }
 
 @property (nonatomic, copy) void (^didTapDataLabelHandler)(TDFSDPMDataLabel *label);
@@ -30,15 +36,16 @@
 
 + (instancetype)label {
     TDFSDPMDataLabel *label = [[TDFSDPMDataLabel alloc] init];
-    CAShapeLayer *layer = [CAShapeLayer layer];
-    layer.fillColor = [UIColor colorWithWhite:1 alpha:0].CGColor;
-    layer.path = [UIBezierPath bezierPathWithRect:(CGRect){{0, 0}, kSDPMDataLabelSize}].CGPath;
-    [label.layer addSublayer:layer];
-    label->_shapeLayer = layer;
     
-    label.backgroundColor = [UIColor clearColor];
+    CAShapeLayer * shapeLayer = [CAShapeLayer layer];
+    shapeLayer.fillColor = [UIColor colorWithWhite:1 alpha:0.1].CGColor;
+    shapeLayer.path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, kSDPMDataLabelSize.width, kSDPMDataLabelSize.height) cornerRadius:0].CGPath;
+    [label.layer addSublayer:shapeLayer];
+    label->shapeLayer = shapeLayer;
+    
     label.numberOfLines = 2;
     label.userInteractionEnabled = YES;
+    label.textColor = [UIColor whiteColor];   // ???
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:label action:@selector(tap:)];
     [label addGestureRecognizer:tap];
@@ -51,19 +58,10 @@
 }
 
 - (void)flash {
-    [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseInOut |
-                                                    UIViewAnimationOptionBeginFromCurrentState
-     animations:^{
-        self->_shapeLayer.fillColor = [UIColor colorWithWhite:1 alpha:0.4].CGColor;
-    } completion:^(BOOL finished) {
-        if (finished) {
-            [UIView animateWithDuration:0.2 delay:0.2 options:UIViewAnimationOptionCurveEaseInOut |
-                                                              UIViewAnimationOptionBeginFromCurrentState
-             animations:^{
-                 self->_shapeLayer.fillColor = [UIColor colorWithWhite:1 alpha:0].CGColor;
-            } completion:nil];
-        }
-    }];
+    self->shapeLayer.fillColor = [UIColor colorWithRed:1 green:0 blue:0 alpha:0.3].CGColor;
+    SD_DELAY_HANDLER(0.5, {
+        self->shapeLayer.fillColor = [UIColor colorWithWhite:1 alpha:0.1].CGColor;
+    });
 }
 
 @end
@@ -83,7 +81,9 @@
 #pragma mark - life cycle
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        [self setBackgroundColor:[UIColor colorWithRed:2/255.f green:31/255.f blue:40/255.f alpha:0.7]];
+        [self setBackgroundColor:[UIColor colorWithRed:2/255.f green:31/255.f blue:40/255.f alpha:0.8]];
+        self.layer.cornerRadius = 20.0f;
+        self.layer.masksToBounds = YES;
         [self layoutPageSubviews];
         [self addLongPressGesture];
         [self observeMonitoringDataSource];
@@ -117,6 +117,9 @@
     [self addSubview:self.lagView];
     [self addSubview:self.centerEnterBtn];
     
+    UIView *separateYLine = createSeparateLine();
+    [self addSubview:separateYLine];
+    
     [self.cpuView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.and.top.equalTo(self);
         make.width.equalTo(@(kSDPMDataLabelSize.width));
@@ -128,24 +131,33 @@
         make.height.equalTo(@(kSDPMDataLabelSize.height));
     }];
     [self.fpsView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.and.bottom.equalTo(self);
+        make.left.equalTo(self);
+        make.top.equalTo(self.cpuView.mas_bottom);
         make.width.equalTo(@(kSDPMDataLabelSize.width));
         make.height.equalTo(@(kSDPMDataLabelSize.height));
     }];
     [self.lagView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.and.bottom.equalTo(self);
+        make.top.equalTo(self.memoryView.mas_bottom);
+        make.right.equalTo(self);
         make.width.equalTo(@(kSDPMDataLabelSize.width));
         make.height.equalTo(@(kSDPMDataLabelSize.height));
     }];
     [self.centerEnterBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.and.bottom.equalTo(self);
-        make.height.equalTo(@20);
+        make.height.equalTo(@30);
     }];
+    [separateYLine mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self).with.offset(15);
+        make.bottom.equalTo(self).with.offset(-45);
+        make.centerX.equalTo(self);
+        make.width.equalTo(@0.5);
+    }];
+    [self layoutIfNeeded];
 }
 
 - (void)addLongPressGesture {
     UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] init];
-    longPressGesture.minimumPressDuration = 1;
+    longPressGesture.minimumPressDuration = 0.5;
     @weakify(self)
     [longPressGesture.rac_gestureSignal
      subscribeNext:^(__kindof UIGestureRecognizer * _Nullable x) {
@@ -159,7 +171,7 @@
     @weakify(self)
     [RACObserve([TDFSDPerformanceMonitor sharedInstance], uiLags) subscribeNext:^(NSArray * _Nullable lags) {
         @strongify(self)
-        self.lagView.attributedText = [self formattedAttributedStringWithMonitoringText:[NSString stringWithFormat:@"Lags\n%ld", lags.count]];
+        self.lagView.attributedText = [self formattedAttributedStringWithMonitoringText:[NSString stringWithFormat:@"LAG\n%ld", lags.count]];
         [self.lagView flash];
     }];
     [RACObserve([TDFSDPerformanceMonitor sharedInstance], appCpuUsage) subscribeNext:^(NSNumber * _Nullable appCpuUsage) {
@@ -171,13 +183,13 @@
     [RACObserve([TDFSDPerformanceMonitor sharedInstance], appMemoryUsage) subscribeNext:^(NSNumber * _Nullable appMemoryUsage) {
         @strongify(self)
         if ([TDFSDPersistenceSetting sharedInstance].allowApplicationMemoryMonitoring) {
-            self.memoryView.attributedText = [self formattedAttributedStringWithMonitoringText:[NSString stringWithFormat:@"Memory\n%.1f%%", [appMemoryUsage doubleValue]]];
+            self.memoryView.attributedText = [self formattedAttributedStringWithMonitoringText:[NSString stringWithFormat:@"MEM\n%.1fMB", [appMemoryUsage doubleValue]]];
         }
     }];
     [RACObserve([TDFSDPerformanceMonitor sharedInstance], screenFps) subscribeNext:^(NSNumber * _Nullable screenFps) {
         @strongify(self)
         if ([TDFSDPersistenceSetting sharedInstance].allowScreenFPSMonitoring) {
-            self.fpsView.attributedText = [self formattedAttributedStringWithMonitoringText:[NSString stringWithFormat:@"FPS\n%.1f%%", [screenFps doubleValue]]];
+            self.fpsView.attributedText = [self formattedAttributedStringWithMonitoringText:[NSString stringWithFormat:@"FPS\n%d", [screenFps intValue]]];
             if ([screenFps doubleValue] < [TDFSDPersistenceSetting sharedInstance].fpsWarnningThreshold) {
                 [self.fpsView flash];
             }
@@ -187,15 +199,12 @@
 
 - (NSAttributedString *)formattedAttributedStringWithMonitoringText:(NSString *)monitoringText {
     NSMutableAttributedString *mutableString = [[NSMutableAttributedString alloc] initWithString:monitoringText];
-    NSRange titleRange = NSMakeRange(0, [monitoringText rangeOfString:@"\n"].location);
-    [mutableString addAttributes:@{ NSFontAttributeName:[UIFont fontWithName:@"PingFang SC" size:13],
-                                    NSForegroundColorAttributeName:[UIColor whiteColor] }
-                           range:titleRange];
-    NSRange dataRange = NSMakeRange([monitoringText rangeOfString:@"\n"].location, monitoringText.length);
-    [mutableString addAttributes:@{ NSFontAttributeName:[UIFont fontWithName:@"PingFangSC-Medium" size:16],
-                                    NSForegroundColorAttributeName:[UIColor whiteColor] }
+    NSRange dataRange = NSMakeRange(0, monitoringText.length);
+    [mutableString addAttributes:@{ NSFontAttributeName : [UIFont fontWithName:@"PingFangSC-Medium" size:13],
+                                    NSForegroundColorAttributeName : [UIColor whiteColor] }
                            range:dataRange];
     NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+    style.alignment = NSTextAlignmentCenter;
     [mutableString addAttributes:@{ NSParagraphStyleAttributeName : style } range:NSMakeRange(0, monitoringText.length)];
     return mutableString;
 }
@@ -252,11 +261,11 @@
 - (UIButton *)centerEnterBtn {
     if (!_centerEnterBtn) {
         _centerEnterBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [_centerEnterBtn setBackgroundColor:[UIColor colorWithWhite:1 alpha:0.1]];
+        [_centerEnterBtn setBackgroundColor:[UIColor clearColor]];
         _centerEnterBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
-        _centerEnterBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:15];
+        _centerEnterBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:12];
         [_centerEnterBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_centerEnterBtn setTitle:@"Debugger Center" forState:UIControlStateNormal];
+        [_centerEnterBtn setTitle:@"Tap to Debugger Center" forState:UIControlStateNormal];
         @weakify(self)
         _centerEnterBtn.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
             @strongify(self)

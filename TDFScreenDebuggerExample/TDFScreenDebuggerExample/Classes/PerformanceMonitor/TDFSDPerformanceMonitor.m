@@ -138,13 +138,14 @@ static const uint64_t        kSDDispatchSourceInterval  =  1 * NSEC_PER_SEC;
 
 #pragma mark - private
 - (void)frameRender:(CADisplayLink *)displayLink {
-    _frameIdx = 0;
+    _frameIdx ++;
     NSTimeInterval gap = displayLink.timestamp - _lastFrameRenderTime;
     if (gap < 1) return;
     
     _lastFrameRenderTime = displayLink.timestamp;
-    _frameIdx = 0;
     int fps = (int)round(_frameIdx/gap);
+    _frameIdx = 0;
+    
     !self.didMonitorNewFPSValueHandler ?: self.didMonitorNewFPSValueHandler(fps);
 }
 
@@ -312,6 +313,10 @@ SD_CONSTRUCTOR_METHOD_DECLARE(SD_CONSTRUCTOR_METHOD_PRIORITY_PERFORMANCE_MONITOR
     NSArray<id<TDFSDFunctionIOControlProtocol>> *freezableComponents = @[ self.uiLagComponent, self.fpsComponent ];
     [freezableComponents makeObjectsPerformSelector:@selector(freeze)];
     dispatch_source_cancel(self.source_t);
+}
+
+- (void)clearAllCachedUILags {
+    self.uiLags = @[];
 }
 
 #pragma mark - getter

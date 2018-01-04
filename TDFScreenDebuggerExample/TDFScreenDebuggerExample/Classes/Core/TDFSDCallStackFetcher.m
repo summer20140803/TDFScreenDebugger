@@ -76,7 +76,7 @@ static mach_port_t main_thread_id;
  */
 @implementation TDFSDCallStackFetcher
 
-+ (void)initialize {
++ (void)load {
     main_thread_id = mach_thread_self();
 }
 
@@ -418,6 +418,5 @@ uintptr_t sd_segmentBaseOfImageIndex(const uint32_t idx) {
     }
     return 0;
 }
-
 
 @end

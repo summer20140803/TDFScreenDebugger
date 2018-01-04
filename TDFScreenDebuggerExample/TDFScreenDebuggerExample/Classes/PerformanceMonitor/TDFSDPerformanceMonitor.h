@@ -18,5 +18,6 @@
 @property (nonatomic, assign, readonly) CGFloat appMemoryUsage;
 
 + (instancetype)sharedInstance;
+- (void)clearAllCachedUILags;
 
 @end

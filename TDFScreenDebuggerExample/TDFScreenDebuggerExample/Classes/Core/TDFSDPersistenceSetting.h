@@ -65,7 +65,7 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
 @property (nonatomic, assign) BOOL allowUILagsMonitoring;
 /**
  when a lag has occurred, it is captured if the transaction's delayed response time,
- which is dispatched to the main thread, exceeds this threshold. default is `0.10f`
+ which is dispatched to the main thread, exceeds this threshold. default is `0.2s`
  */
 @property (nonatomic, assign) NSTimeInterval  tolerableLagThreshold;
 /**
@@ -82,7 +82,7 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
 @property (nonatomic, assign) BOOL allowScreenFPSMonitoring;
 /**
  when fps is monitoring, if fps value exceeds this threshold,
- fps component will born a warnning for user. default is `30`
+ fps component will born a warnning for user. default is `40`
  */
 @property (nonatomic, assign) NSUInteger fpsWarnningThreshold;
 

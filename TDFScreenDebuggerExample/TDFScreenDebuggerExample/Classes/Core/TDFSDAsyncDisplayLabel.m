@@ -64,7 +64,7 @@
 - (void)displayFrameImageWithSize:(CGSize)size as:(NSAttributedString *)as {
     if (!as) return;
     
-    size.height += 10;
+//    size.height += 10;
     
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -74,12 +74,13 @@
         CGContextTranslateCTM(context, 0, size.height);
         CGContextScaleCTM(context, 1, -1);
         
-        CGSize textSize = [as.string boundingRectWithSize: size options: NSStringDrawingUsesLineFragmentOrigin attributes: @{ NSFontAttributeName: self.font } context: nil].size;
+        CGSize textSize = [as boundingRectWithSize:size options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil].size;
+    
         textSize.width = ceil(textSize.width);
         textSize.height = ceil(textSize.height);
         
         CGMutablePathRef path = CGPathCreateMutable();
-        CGPathAddRect(path, NULL, CGRectMake((size.width - textSize.width) / 2, 5, textSize.width, textSize.height));
+        CGPathAddRect(path, NULL, CGRectMake((size.width - textSize.width) / 2, 0, textSize.width, textSize.height));
         CTFramesetterRef frameSetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef)as);
         CTFrameRef frame = CTFramesetterCreateFrame(frameSetter, CFRangeMake(0, as.length), path, NULL);
         CTFrameDraw(frame, context);
