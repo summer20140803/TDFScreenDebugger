@@ -16,6 +16,7 @@
 #import <signal.h>
 #import <execinfo.h>
 
+
 @interface TDFSDCrashCaptor () <UIViewControllerTransitioningDelegate>
 
 @property (nonatomic, unsafe_unretained) NSUncaughtExceptionHandler *originHandler;
@@ -120,15 +121,13 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 
 #pragma mark - interface methods
 - (void)clearHistoryCrashLog {
-    @synchronized(self) {
-        NSString *cachePath = SD_CRASH_CAPTOR_CACHE_MODEL_ARCHIVE_PATH;
-        NSMutableArray *cacheCrashModels = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
-        if (!cacheCrashModels || cacheCrashModels.count == 0) {
-            return;
-        }
-        [cacheCrashModels removeAllObjects];
-        [NSKeyedArchiver archiveRootObject:cacheCrashModels toFile:cachePath];
+    NSString *cachePath = SD_CRASH_CAPTOR_CACHE_MODEL_ARCHIVE_PATH;
+    NSMutableArray *cacheCrashModels = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
+    if (!cacheCrashModels || cacheCrashModels.count == 0) {
+        return;
     }
+    [cacheCrashModels removeAllObjects];
+    [NSKeyedArchiver archiveRootObject:cacheCrashModels toFile:cachePath];
 }
 
 #pragma mark - TDFSDFunctionIOControlProtocol
@@ -404,6 +403,7 @@ static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition)
 }
 
 static void applyForKeepingLifeCycle(void) {
+    
     CFRunLoopRef runloop = CFRunLoopGetCurrent();
     CFArrayRef allModesRef = CFRunLoopCopyAllModes(runloop);
     
@@ -414,6 +414,7 @@ static void applyForKeepingLifeCycle(void) {
     }
     
     // let app continue to run
+    // gyl-tip:如果跳转到此处并没有成功展示崩溃汇报页，说明此时程序内存已处于不稳定状态，请直接移步Xcode控制台查看打印的崩溃日志
     while (captor.needKeepAlive) {
         for (NSString *mode in (__bridge_transfer NSArray *)allModesRef) {
             if ([mode isEqualToString:(NSString *)kCFRunLoopCommonModes]) {
@@ -426,18 +427,16 @@ static void applyForKeepingLifeCycle(void) {
 }
 
 - (void)cacheCrashLog:(TDFSDCCCrashModel *)model {
-    @synchronized(self) {
-        NSString *cachePath = SD_CRASH_CAPTOR_CACHE_MODEL_ARCHIVE_PATH;
-        NSMutableArray *cacheCrashModels = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
-        if (!cacheCrashModels) {
-            cacheCrashModels = @[].mutableCopy;
-        }
-        if (![cacheCrashModels containsObject:model]) {
-            [cacheCrashModels addObject:model];
-        }
-        BOOL isSuccess = [NSKeyedArchiver archiveRootObject:cacheCrashModels toFile:cachePath];
-        NSLog(@"[TDFScreenDebugger.CrashCaptor.SaveCrashLog] %@", isSuccess ? @"success" : @"failure");
+    NSString *cachePath = SD_CRASH_CAPTOR_CACHE_MODEL_ARCHIVE_PATH;
+    NSMutableArray *cacheCrashModels = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
+    if (!cacheCrashModels) {
+        cacheCrashModels = @[].mutableCopy;
     }
+    if (![cacheCrashModels containsObject:model]) {
+        [cacheCrashModels addObject:model];
+    }
+    BOOL isSuccess = [NSKeyedArchiver archiveRootObject:cacheCrashModels toFile:cachePath];
+    NSLog(@"[TDFScreenDebugger.CrashCaptor.SaveCrashLog] %@", isSuccess ? @"success" : @"failure");
 }
 
 #pragma mark - UIViewControllerTransitioningDelegate

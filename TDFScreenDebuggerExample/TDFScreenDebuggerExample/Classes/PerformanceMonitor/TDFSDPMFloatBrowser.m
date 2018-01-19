@@ -15,11 +15,11 @@
 
 #define kSDPMDataLabelSize  CGSizeMake(80., 40.)
 
-static UIView *createSeparateLine(void) {
-    UIView *separateLine = [[UIView alloc] init];
-    separateLine.backgroundColor = [UIColor groupTableViewBackgroundColor];
-    return separateLine;
-}
+//static UIView *createSeparateLine(void) {
+//    UIView *separateLine = [[UIView alloc] init];
+//    separateLine.backgroundColor = [UIColor groupTableViewBackgroundColor];
+//    return separateLine;
+//}
 
 @interface TDFSDPMDataLabel : TDFSDAsyncDisplayLabel {
     @protected
@@ -117,8 +117,8 @@ static UIView *createSeparateLine(void) {
     [self addSubview:self.lagView];
     [self addSubview:self.centerEnterBtn];
     
-    UIView *separateYLine = createSeparateLine();
-    [self addSubview:separateYLine];
+//    UIView *separateYLine = createSeparateLine();
+//    [self addSubview:separateYLine];
     
     [self.cpuView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.and.top.equalTo(self);
@@ -146,12 +146,12 @@ static UIView *createSeparateLine(void) {
         make.left.right.and.bottom.equalTo(self);
         make.height.equalTo(@30);
     }];
-    [separateYLine mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).with.offset(15);
-        make.bottom.equalTo(self).with.offset(-45);
-        make.centerX.equalTo(self);
-        make.width.equalTo(@0.5);
-    }];
+//    [separateYLine mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(self).with.offset(15);
+//        make.bottom.equalTo(self).with.offset(-45);
+//        make.centerX.equalTo(self);
+//        make.width.equalTo(@0.5);
+//    }];
     [self layoutIfNeeded];
 }
 
