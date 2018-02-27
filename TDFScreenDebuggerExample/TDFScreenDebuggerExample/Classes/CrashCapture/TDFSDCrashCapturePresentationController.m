@@ -166,7 +166,7 @@ static const NSString *kSDCCTerminateButtonTitle  =  @"Terminate";
             [input setTitle:@"" forState:UIControlStateNormal];
             input.userInteractionEnabled = NO;
             [self.indicatorView startAnimating];
-            void(^done)() = ^{
+            void(^done)(void) = ^{
                 @strongify(self)
                 [self.exportButton setTitle:(NSString *)kSDCCExportButtonTitle forState:UIControlStateNormal];
                 self.exportButton.userInteractionEnabled = YES;

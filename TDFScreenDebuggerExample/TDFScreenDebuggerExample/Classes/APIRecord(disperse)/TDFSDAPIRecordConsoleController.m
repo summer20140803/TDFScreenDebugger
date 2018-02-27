@@ -194,8 +194,8 @@
                }]
                foldLeftWithStart:[[NSMutableAttributedString alloc] initWithString:@""]
                reduce:^id _Nullable(NSMutableAttributedString * _Nullable accumulator, NSAttributedString * _Nullable value) {
-                   return ([accumulator appendAttributedString:value],
-                           [accumulator appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]],
+                   return ((void)([accumulator appendAttributedString:value]),
+                           (void)([accumulator appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]]),
                            accumulator);
                }];
     }]
@@ -231,8 +231,8 @@
     }]
     foldLeftWithStart:[[NSMutableAttributedString alloc] initWithString:@""]
     reduce:^id _Nullable(NSMutableAttributedString * _Nullable accumulator, NSAttributedString * _Nullable value) {
-        return ([accumulator appendAttributedString:value],
-                [accumulator appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]],
+        return ((void)([accumulator appendAttributedString:value]),
+                (void)([accumulator appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n\n"]]),
                 accumulator);
     }];
 }

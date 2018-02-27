@@ -378,7 +378,7 @@ static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition)
     [p.exportProxy subscribeNext:^(id  _Nullable x) {
         !captor.sd_didReceiveCrashHandler ?: captor.sd_didReceiveCrashHandler(crash);
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            void(^done)() = x;
+            void(^done)(void) = x;
             done();
         });
     }];
@@ -414,7 +414,7 @@ static void applyForKeepingLifeCycle(void) {
     }
     
     // let app continue to run
-    // gyl-tip:如果跳转到此处并没有成功展示崩溃汇报页，说明此时程序内存已处于不稳定状态，请直接移步Xcode控制台查看打印的崩溃日志
+    // gyl-tip:如果跳转到此处并没有成功展示崩溃汇报页，说明此时程序内存已处于不稳定状态，请直接移步Xcode控制台查看协助打印的崩溃日志
     while (captor.needKeepAlive) {
         for (NSString *mode in (__bridge_transfer NSArray *)allModesRef) {
             if ([mode isEqualToString:(NSString *)kCFRunLoopCommonModes]) {

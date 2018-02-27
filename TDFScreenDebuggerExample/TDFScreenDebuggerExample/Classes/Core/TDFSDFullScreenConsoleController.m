@@ -109,7 +109,7 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     }];
     [self.consoleTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.container).with.offset(20);
-        make.top.equalTo(self.container).with.offset(11);
+        make.top.equalTo(self.container).with.offset(SD_IS_IPHONEX ? 35 : 11);
         make.height.equalTo(@36);
     }];
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -129,7 +129,7 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
         [self.menuTool mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.consoleTitleLabel.mas_right).with.offset(30);
             make.right.equalTo(self.container).with.offset(-16);
-            make.top.equalTo(self.container).with.offset(11);
+            make.top.equalTo(self.consoleTitleLabel);
             make.height.equalTo(@36);
         }];
         

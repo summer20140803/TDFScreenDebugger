@@ -88,6 +88,7 @@ typedef NS_ENUM(NSUInteger, SDAllReadNotificationContentType) {
 //====================
 #define SD_EXPORT  extern
 #define SD_INLINE  inline
+#define SD_IS_IPHONEX  CGSizeEqualToSize(CGSizeMake(375.f, 812.f), [UIScreen mainScreen].bounds.size)
 
 #define SD_DELAY_HANDLER(DELAY_TIME, ...)  \
 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(DELAY_TIME * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{  \
