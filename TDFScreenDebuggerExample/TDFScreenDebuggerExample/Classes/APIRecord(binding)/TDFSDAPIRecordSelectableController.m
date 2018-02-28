@@ -113,7 +113,7 @@
 #pragma mark - UICollectionViewDelegateFlowLayout
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     TDFSDARCollectionViewModel *viewModel = self.viewModels[indexPath.row];
-    return CGSizeMake(viewModel.cellWidth, viewModel.cellHeight);
+    return CGSizeMake(viewModel.cellWidth-1, viewModel.cellHeight);
 }
 
 #pragma mark - getter
