@@ -75,8 +75,12 @@ typedef NS_ENUM(NSUInteger, kSDARCurrentContentType) {
             self.bindingContentView.text = self.resp ? self.resp.selfDescription : @"The response from the server has not been received yet";
         } break;
     }
-    if (self.bindingContentView.refreshControl.isRefreshing) {
-        [self.bindingContentView.refreshControl endRefreshing];
+    if (@available(iOS 10.0, *)) {
+        if (self.bindingContentView.refreshControl.isRefreshing) {
+            [self.bindingContentView.refreshControl endRefreshing];
+        } else {
+            [self.bindingContentView setContentOffset:CGPointMake(0, 0) animated:YES];
+        }
     } else {
         [self.bindingContentView setContentOffset:CGPointMake(0, 0) animated:YES];
     }
@@ -141,7 +145,9 @@ typedef NS_ENUM(NSUInteger, kSDARCurrentContentType) {
             self.contentType = currentContentType;
         }];
         
-        _bindingContentView.refreshControl = refreshControl;
+        if (@available(iOS 10.0, *)) {
+            _bindingContentView.refreshControl = refreshControl;
+        }
     }
     return _bindingContentView;
 }

@@ -9,6 +9,7 @@
 #import "TDFSDFullScreenConsoleController.h"
 #import "TDFSDManager.h"
 #import "TDFSDTransitionAnimator.h"
+#import "UIView+ScreenDebugger.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
 
@@ -26,6 +27,9 @@
 // https://spin.atomicobject.com/2014/03/05/uiscrollview-autolayout-ios/
 @property (nonatomic, strong) UIView *menuToolLayoutContainer;
 @property (nonatomic, strong, readwrite) NSArray<TDFSDFunctionMenuItem *> *menuItems;
+
+@property (nonatomic, strong) UIView *hudLayer;
+@property (nonatomic, strong) UILabel *hudLabel;
 
 @end
 
@@ -69,6 +73,35 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     [[NSNotificationCenter defaultCenter] postNotificationName:SD_REMIND_MESSAGE_ALL_READ_NOTIFICATION_NAME object:@(contentType)];
 }
 
+- (void)presentLoadingHUDWithText:(NSString *)hudText autoDismiss:(BOOL)autoDismiss {
+    self.hudLayer.hidden = NO;
+    [UIView animateWithDuration:.3 delay:.05 usingSpringWithDamping:.7 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        [self.hudLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.hudLayer.mas_bottom).with.offset(-40);
+        }];
+    } completion:^(BOOL finished) {
+        if (finished && autoDismiss) {
+            SD_DELAY_HANDLER(.5f, {
+                [self dismissLoadingHUD];
+            });
+        }
+    }];
+    [self.hudLabel.superview layoutIfNeeded];
+    [self.hudLabel setText:hudText];
+    [self.hudLabel sd_fadeAnimationWithDuration:.2f];
+}
+
+- (void)dismissLoadingHUD {
+    [UIView animateWithDuration:.3 delay:0 usingSpringWithDamping:.7 initialSpringVelocity:0 options:UIViewAnimationOptionCurveLinear animations:^{
+        [self.hudLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.hudLayer.mas_bottom);
+        }];
+    } completion:^(BOOL finished) {
+        self.hudLayer.hidden = YES;
+    }];
+    [self.hudLabel.superview layoutIfNeeded];
+}
+
 #pragma mark - event
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [self.view endEditing:YES];
@@ -98,6 +131,8 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     
     [self.view addSubview:self.effectView];
     [self.view addSubview:self.container];
+    [self.view addSubview:self.hudLayer];
+    [self.hudLayer addSubview:self.hudLabel];
     [self.container addSubview:self.consoleTitleLabel];
     [self.container addSubview:self.contentView];
     
@@ -106,6 +141,14 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     }];
     [self.effectView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
+    }];
+    [self.hudLayer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.hudLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.hudLayer.mas_bottom);
+        make.left.and.right.equalTo(self.hudLayer);
+        make.height.equalTo(@40);
     }];
     [self.consoleTitleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.container).with.offset(20);
@@ -119,7 +162,9 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
         make.bottom.equalTo(self.container).with.offset(0);
     }];
     
-    // In order to avoid the following warning system, so we should judge items count setted by `TDFSDFullScreenConsoleControllerInheritProtocol` method
+    [self.container layoutIfNeeded];
+    
+    // In order to avoid the following system warning, so we should judge items count setted by `TDFSDFullScreenConsoleControllerInheritProtocol` method
     // This NSLayoutConstraint is being configured with a constant that exceeds internal limits.  A smaller value will be substituted, but this problem should be fixed. Break on BOOL _NSLayoutConstraintNumberExceedsLimit() to debug.  This will be logged only once.  This may break in the future.
     if (self.menuItems.count) {
         
@@ -213,6 +258,28 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
         _contentView = [(TDFSDFullScreenConsoleController<TDFSDFullScreenConsoleControllerInheritProtocol> *)self contentViewForFullScreenConsole];
     }
     return _contentView;
+}
+
+- (UIView *)hudLayer {
+    if (!_hudLayer) {
+        _hudLayer = [[UIView alloc] init];
+        _hudLayer.backgroundColor = [UIColor clearColor];
+        _hudLayer.hidden = YES;
+    }
+    return _hudLayer;
+}
+
+- (UILabel *)hudLabel {
+    if (!_hudLabel) {
+        _hudLabel = [[UILabel alloc] init];
+        [_hudLabel setBackgroundColor:[UIColor yellowColor]];
+        _hudLabel.textAlignment = NSTextAlignmentCenter;
+        _hudLabel.numberOfLines = 1;
+        _hudLabel.textColor = [UIColor whiteColor];
+        _hudLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:14];
+        _hudLabel.lineBreakMode = NSLineBreakByCharWrapping;
+    }
+    return _hudLabel;
 }
 
 @end

@@ -29,6 +29,8 @@ SD_EXPORT const CGFloat SDFullScreenContentViewEdgeMargin;
 @property (nonatomic, strong, readonly) NSArray<TDFSDFunctionMenuItem *> *menuItems;
 
 - (void)sendClearRemindLabelTextRequestWithContentType:(SDAllReadNotificationContentType)contentType;
+- (void)presentLoadingHUDWithText:(NSString *)hudText autoDismiss:(BOOL)autoDismiss;
+- (void)dismissLoadingHUD;
 
 @end
 

@@ -21,9 +21,9 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
 @property (nonatomic, strong, readonly) NSArray<TDFSDFunctionModel *> *functionList;
 
 
-//==========================
-//  OPTIONAL SETTING ITEMS
-//==========================
+//===================================================================================
+//                              OPTIONAL SETTING ITEMS
+//===================================================================================
 
 /**
  a setting which decides the type of the remind number. default is SDMessageRemindTypeAPIRecord
@@ -85,5 +85,9 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
  fps component will born a warnning for user. default is `40`
  */
 @property (nonatomic, assign) NSUInteger fpsWarnningThreshold;
+/**
+ a flag to tell the performance monitor whether should monitor the error caused by wild pointer. default is NO
+ */
+@property (nonatomic, assign) BOOL allowWildPointerMonitoring;
 
 @end

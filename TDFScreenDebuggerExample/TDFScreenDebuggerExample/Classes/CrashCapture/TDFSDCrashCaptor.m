@@ -11,6 +11,7 @@
 #import "TDFSDCCCrashModel.h"
 #import "TDFSDCrashCapturePresentationController.h"
 #import "TDFSDTransitionAnimator.h"
+#import "TDFSDQueueDispatcher.h"
 #import <ReactiveObjC/ReactiveObjC.h>
 #import <objc/runtime.h>
 #import <signal.h>
@@ -62,14 +63,13 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
         
         __weak NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         __block id token = [center addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
-            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            sd_dispatch_async_by_qos_background(^{
                 @synchronized(token) {  // Does it really need to lock here?
                     NSArray *newHeirClassNames = [NSArray array];
                     obtainAllViewControllerHeirNames(&newHeirClassNames, NO);
                     [NSKeyedArchiver archiveRootObject:newHeirClassNames toFile:cachePath];
                 }
             });
-            
             [center removeObserver:token];
         }];
     } else {
@@ -396,10 +396,11 @@ static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition)
         }
     }];
     p.transitioningDelegate = [TDFSDCrashCaptor sharedInstance];
-    if (effectiveWindow.rootViewController.presentedViewController) {
-        [effectiveWindow.rootViewController.presentedViewController dismissViewControllerAnimated:NO completion:nil];
+    UIViewController *topPresentedViewController = effectiveWindow.rootViewController;
+    while (topPresentedViewController.presentedViewController) {
+        topPresentedViewController = topPresentedViewController.presentedViewController;
     }
-    [effectiveWindow.rootViewController presentViewController:p animated:YES completion:nil];
+    [topPresentedViewController presentViewController:p animated:YES completion:nil];
 }
 
 static void applyForKeepingLifeCycle(void) {

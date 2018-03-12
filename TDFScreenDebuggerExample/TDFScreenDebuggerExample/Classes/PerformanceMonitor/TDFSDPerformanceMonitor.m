@@ -111,7 +111,6 @@ static const uint64_t        kSDDispatchSourceInterval  =  1 * NSEC_PER_SEC;
 @implementation TDFSDPMFPSComponent
 
 - (void)thaw {
-    
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         @weakify(self)

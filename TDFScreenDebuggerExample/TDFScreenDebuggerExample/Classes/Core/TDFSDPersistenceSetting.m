@@ -16,20 +16,27 @@
     static dispatch_once_t once = 0;
     dispatch_once(&once, ^{
         setting = [[self alloc] init];
-        setting.messageRemindType = SDMessageRemindTypeSystemLog;
-        setting.allowCatchAPIRecordFlag = YES;
-        setting.allowCrashCaptureFlag = YES;
-        setting.needCacheCrashLogToSandBox = YES;
-        setting.allowMonitorSystemLogFlag = YES;
-        setting.limitSizeOfSingleSystemLogMessageData = 1024 * 10;
-        setting.allowUILagsMonitoring = YES;
-        setting.tolerableLagThreshold = 0.20f;
-        setting.allowApplicationCPUMonitoring = YES;
-        setting.allowApplicationMemoryMonitoring = YES;
-        setting.allowScreenFPSMonitoring = YES;
-        setting.fpsWarnningThreshold = 56.0f;
     });
     return setting;
+}
+
+- (instancetype)init {
+    if (self = [super init]) {
+        _messageRemindType = SDMessageRemindTypeSystemLog;
+        _allowCatchAPIRecordFlag = YES;
+        _allowCrashCaptureFlag = YES;
+        _needCacheCrashLogToSandBox = YES;
+        _allowMonitorSystemLogFlag = YES;
+        _limitSizeOfSingleSystemLogMessageData = 1024 * 10;
+        _allowUILagsMonitoring = YES;
+        _tolerableLagThreshold = 0.20f;
+        _allowApplicationCPUMonitoring = YES;
+        _allowApplicationMemoryMonitoring = YES;
+        _allowScreenFPSMonitoring = YES;
+        _fpsWarnningThreshold = 56.0f;
+        _allowWildPointerMonitoring = NO;
+    }
+    return self;
 }
 
 - (NSArray<TDFSDFunctionModel *> *)functionList {
@@ -41,7 +48,7 @@
     model.functionName = @"API Recorder(disperse)";
     model.functionIcon = @"icon_screenDebugger_APIRecord_disperse";
     model.functionDescription = @"“ This is a convenient developer's real-time view disperse API log tool, support for keyword searches. ”";
-    model.quickLaunchDescrition = @"< just tap once >";
+    model.quickLaunchDescrition = @"< not specified >";
     [functions addObject:model];
     
     TDFSDFunctionModel *model2 = [[TDFSDFunctionModel alloc] init];
@@ -49,7 +56,7 @@
     model2.functionName = @"API Recorder(binding)";
     model2.functionIcon = @"icon_screenDebugger_APIRecord_binding";
     model2.functionDescription = @"“ This is a convenient developer's real-time view binding API log tool, support for keyword searches. ”";
-    model2.quickLaunchDescrition = @"< just tap twice >";
+    model2.quickLaunchDescrition = @"< not specified >";
     [functions addObject:model2];
     
     TDFSDFunctionModel *model3 = [[TDFSDFunctionModel alloc] init];
