@@ -22,6 +22,8 @@
 @end
 
 SD_EXPORT const CGFloat SDFullScreenContentViewEdgeMargin;
+// https://stackoverflow.com/questions/31216395/uidynamicanimator-custom-uicollectionviewlayout-resulting-in-perpetual-circula
+SD_EXPORT const int SDFullScreenContentViewDynamicAnimatorFixedOffset;
 
 @interface TDFSDFullScreenConsoleController : UIViewController <UIViewControllerTransitioningDelegate>
 

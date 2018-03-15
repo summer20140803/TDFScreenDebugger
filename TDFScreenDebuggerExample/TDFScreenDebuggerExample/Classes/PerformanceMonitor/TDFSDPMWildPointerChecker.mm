@@ -144,10 +144,10 @@ typedef void (*SDDeallocImpPointer)(id target);
     NSMutableArray *vaildClassNames = [NSMutableArray array];
     
     for (int i = 0; i < registerClassCount; i++) {
-        Class class = classes[i];
-        NSBundle *bundle = [NSBundle bundleForClass:class];
+        Class aClass = classes[i];
+        NSBundle *bundle = [NSBundle bundleForClass:aClass];
         if ([bundle isEqual:[NSBundle mainBundle]]) {
-            [vaildClassNames addObject:NSStringFromClass(class)];
+            [vaildClassNames addObject:NSStringFromClass(aClass)];
         }
     }
     free(classes);

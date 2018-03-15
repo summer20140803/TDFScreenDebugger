@@ -90,6 +90,15 @@ typedef NS_ENUM(NSUInteger, SDAllReadNotificationContentType) {
 #define SD_INLINE  inline
 #define SD_IS_IPHONEX  CGSizeEqualToSize(CGSizeMake(375.f, 812.f), [UIScreen mainScreen].bounds.size)
 
+#define SD_BUNDLE_IMAGE(IMAGE_NAME) \
+({   \
+    NSString *bundlePath = [[NSBundle bundleForClass:[self class]].resourcePath   \
+    stringByAppendingPathComponent:@"TDFScreenDebuggerBundle.bundle"];   \
+    NSBundle *resource_bundle = [NSBundle bundleWithPath:bundlePath];    \
+    UIImage *bundleImage = [UIImage imageNamed:IMAGE_NAME inBundle:resource_bundle compatibleWithTraitCollection:nil];    \
+    bundleImage;   \
+})
+
 #define SD_DELAY_HANDLER(DELAY_TIME, ...)  \
 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(DELAY_TIME * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{  \
     __VA_ARGS__  \

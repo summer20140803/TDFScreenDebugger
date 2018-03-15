@@ -34,6 +34,7 @@
 @end
 
 const CGFloat SDFullScreenContentViewEdgeMargin  = 6.f;
+const int SDFullScreenContentViewDynamicAnimatorFixedOffset = 1;
 
 static const CGFloat kSDTopToolMenuItemLength = 20.f;
 static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
@@ -158,7 +159,11 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     [self.contentView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.consoleTitleLabel.mas_bottom).with.offset(6);
         make.left.equalTo(self.container).with.offset(SDFullScreenContentViewEdgeMargin);
-        make.right.equalTo(self.container).with.offset(-SDFullScreenContentViewEdgeMargin);
+        if ([@([UIScreen mainScreen].bounds.size.width) intValue] % 2 == 0) {
+            make.right.equalTo(self.container).with.offset(-SDFullScreenContentViewEdgeMargin);
+        } else {
+            make.right.equalTo(self.container).with.offset(-SDFullScreenContentViewEdgeMargin-SDFullScreenContentViewDynamicAnimatorFixedOffset);
+        }
         make.bottom.equalTo(self.container).with.offset(0);
     }];
     

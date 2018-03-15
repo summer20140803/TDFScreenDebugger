@@ -46,7 +46,7 @@
 #pragma mark - interface methods
 - (void)bindWithViewModel:(TDFSDFunctionCollectionViewModel *)viewModel {
     self.functionNameLabel.text = viewModel.function.functionName;
-    self.functionIconView.image = [UIImage imageNamed:viewModel.function.functionIcon];
+    self.functionIconView.image = SD_BUNDLE_IMAGE(viewModel.function.functionIcon);
     self.functionDescriptionLabel.text = viewModel.function.functionDescription;
     self.quickLaunchDesLabel.text = viewModel.function.quickLaunchDescrition;
 }

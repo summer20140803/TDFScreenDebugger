@@ -64,7 +64,7 @@
 
 - (NSArray<TDFSDFunctionMenuItem *> *)functionMenuItemsForFullScreenConsole {
     if (!self.menuItems) {
-        return @[ [TDFSDFunctionMenuItem itemWithImage:[UIImage imageNamed:@"icon_screenDebugger_trash"]
+        return @[ [TDFSDFunctionMenuItem itemWithImage:SD_BUNDLE_IMAGE(@"icon_screenDebugger_trash")
                       actionHandler:^(TDFSDFunctionMenuItem *item) {
                           [[TDFSDCrashCaptor sharedInstance] clearHistoryCrashLog];
                       }] ];
@@ -98,7 +98,7 @@
 #pragma mark - UICollectionViewDelegateFlowLayout
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     TDFSDCCCollectionViewModel *viewModel = self.viewModels[indexPath.row];
-    return CGSizeMake(viewModel.cellWidth-1, viewModel.cellHeight);
+    return CGSizeMake(viewModel.cellWidth, viewModel.cellHeight);
 }
 
 #pragma mark - getter

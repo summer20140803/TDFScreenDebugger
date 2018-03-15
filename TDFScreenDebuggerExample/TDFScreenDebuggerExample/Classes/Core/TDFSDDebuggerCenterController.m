@@ -66,7 +66,7 @@
 - (NSArray<TDFSDFunctionMenuItem *> *)functionMenuItemsForFullScreenConsole {
     if (!self.menuItems) {
         @weakify(self)
-        return @[ [TDFSDFunctionMenuItem itemWithImage:[UIImage imageNamed:@"icon_screenDebugger_Setting"]
+        return @[ [TDFSDFunctionMenuItem itemWithImage:SD_BUNDLE_IMAGE(@"icon_screenDebugger_Setting")
                     actionHandler:^(TDFSDFunctionMenuItem *item) {
                         // self->strong menuItems->strong item->self
                         @strongify(self)
@@ -101,7 +101,7 @@
 #pragma mark - UICollectionViewDelegateFlowLayout
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     TDFSDFunctionCollectionViewModel *viewModel = self.viewModels[indexPath.row];
-    return CGSizeMake(viewModel.cellWidth-1, viewModel.cellHeight);
+    return CGSizeMake(viewModel.cellWidth, viewModel.cellHeight);
 }
 
 #pragma mark - getter
@@ -122,7 +122,7 @@
 - (TDFSDCustomizedFlowLayout *)flowLayout {
     if (!_flowLayout) {
         _flowLayout = [[TDFSDCustomizedFlowLayout alloc] init];
-        [_flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
+        _flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
         CGFloat itemLineMargin = 20;
         CGFloat itemCollectionEdgeMargin = 15;
         _flowLayout.minimumLineSpacing = itemLineMargin;

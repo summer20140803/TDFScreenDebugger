@@ -8,6 +8,7 @@
 
 #import "TDFSDSearchBar.h"
 #import <Masonry/Masonry.h>
+#import "TDFScreenDebuggerDefine.h"
 
 @interface TDFSDInputAccessoryView : UIView
 
@@ -39,7 +40,7 @@
     if (!_previousButton) {
         _previousButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_previousButton setBackgroundColor:[UIColor clearColor]];
-        [_previousButton setBackgroundImage:[UIImage imageNamed:@"icon_screenDebugger_up"] forState:UIControlStateNormal];
+        [_previousButton setBackgroundImage:SD_BUNDLE_IMAGE(@"icon_screenDebugger_up") forState:UIControlStateNormal];
         @weakify(self)
         _previousButton.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
             @strongify(self)
@@ -54,7 +55,7 @@
     if (!_nextButton) {
         _nextButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_nextButton setBackgroundColor:[UIColor clearColor]];
-        [_nextButton setBackgroundImage:[UIImage imageNamed:@"icon_screenDebugger_down"] forState:UIControlStateNormal];
+        [_nextButton setBackgroundImage:SD_BUNDLE_IMAGE(@"icon_screenDebugger_down") forState:UIControlStateNormal];
         @weakify(self)
         _nextButton.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
             @strongify(self)

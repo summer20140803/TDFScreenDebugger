@@ -52,26 +52,26 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 
 SD_CONSTRUCTOR_METHOD_DECLARE \
 (SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_VIEW_CONTROLLER_HEIR_LIFECYCLE_SWIZZLE, {
-    
+
     NSString *cachePath = SD_CRASH_CAPTOR_CACHE_REGISTERED_CLASSES_ARCHIVE_PATH;
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSArray *registeredViewControllerHeirClassNames = [NSArray array];
-    
+
     if ([fileManager fileExistsAtPath:cachePath]) {
         registeredViewControllerHeirClassNames = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath] ?: @[];
         hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
-        
-        __weak NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        __block id token = [center addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
-            sd_dispatch_async_by_qos_background(^{
-                @synchronized(token) {  // Does it really need to lock here?
-                    NSArray *newHeirClassNames = [NSArray array];
-                    obtainAllViewControllerHeirNames(&newHeirClassNames, NO);
-                    [NSKeyedArchiver archiveRootObject:newHeirClassNames toFile:cachePath];
-                }
-            });
-            [center removeObserver:token];
-        }];
+
+//        __weak NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+//        __block id token = [center addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
+//            sd_dispatch_async_by_qos_background(^{
+//                @synchronized(token) {  // Does it really need to lock here?
+//                    NSArray *newHeirClassNames = [NSArray array];
+//                    obtainAllViewControllerHeirNames(&newHeirClassNames, NO);
+//                    [NSKeyedArchiver archiveRootObject:newHeirClassNames toFile:cachePath];
+//                }
+//            });
+//            [center removeObserver:token];
+//        }];
     } else {
         obtainAllViewControllerHeirNames(&registeredViewControllerHeirClassNames, YES);
         hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
@@ -81,13 +81,13 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 
 SD_CONSTRUCTOR_METHOD_DECLARE \
 (SD_CONSTRUCTOR_METHOD_PRIORITY_CRASH_CAPTURE, {
-    
+
     if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
         // some sdk will dispatch `NSSetUncaughtExceptionHandler` method after about one second when runtime lib had started up
         // if these sdk don't register last exception-handler after their handler, we cannot handle exception normally
         // so we decide to delay the crash captor registration, only that we can handle crashs
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            
+
             // here we invoke some unsafe-async api, but if the crash occurs during controller's loading, this may lead to some dead cycle
             // so according to the reason above, we should intercept the crash individually when controller is loaded
             // in `+ load` method, we use runtime to hook all classes which inherit UIViewController and filter out system classes
@@ -396,11 +396,8 @@ static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition)
         }
     }];
     p.transitioningDelegate = [TDFSDCrashCaptor sharedInstance];
-    UIViewController *topPresentedViewController = effectiveWindow.rootViewController;
-    while (topPresentedViewController.presentedViewController) {
-        topPresentedViewController = topPresentedViewController.presentedViewController;
-    }
-    [topPresentedViewController presentViewController:p animated:YES completion:nil];
+    UIViewController *topViewController = obtainTopViewController(effectiveWindow.rootViewController);
+    [topViewController presentViewController:p animated:YES completion:nil];
 }
 
 static void applyForKeepingLifeCycle(void) {
@@ -425,6 +422,21 @@ static void applyForKeepingLifeCycle(void) {
             CFRunLoopRunInMode(modeRef, keepAliveReloadRenderingInterval, false);
         }
     }
+}
+
+static UIViewController * obtainTopViewController(UIViewController *rootViewController) {
+    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *navigationController = (UINavigationController *)rootViewController;
+        return obtainTopViewController([navigationController.viewControllers lastObject]);
+    }
+    if ([rootViewController isKindOfClass:[UITabBarController class]]) {
+        UITabBarController *tabController = (UITabBarController *)rootViewController;
+        return obtainTopViewController(tabController.selectedViewController);
+    }
+    if (rootViewController.presentedViewController) {
+        return obtainTopViewController(rootViewController.presentedViewController);
+    }
+    return rootViewController;
 }
 
 - (void)cacheCrashLog:(TDFSDCCCrashModel *)model {

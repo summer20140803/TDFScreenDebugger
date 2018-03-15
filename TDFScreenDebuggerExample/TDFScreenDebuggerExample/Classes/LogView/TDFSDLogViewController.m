@@ -62,13 +62,13 @@
     if (!self.menuItems) {
         @weakify(self)
         return @[
-                 [TDFSDFunctionMenuItem itemWithImage:[UIImage imageNamed:@"icon_screenDebugger_search"]
+                 [TDFSDFunctionMenuItem itemWithImage:SD_BUNDLE_IMAGE(@"icon_screenDebugger_search")
                                         actionHandler:^(TDFSDFunctionMenuItem *item) {
                                             // self->strong menuItems->strong item->self
                                             @strongify(self)
                                             [self relayoutSearchBar];
                                         }],
-                 [TDFSDFunctionMenuItem itemWithImage:[UIImage imageNamed:@"icon_screenDebugger_trash"]
+                 [TDFSDFunctionMenuItem itemWithImage:SD_BUNDLE_IMAGE(@"icon_screenDebugger_trash")
                                         actionHandler:^(TDFSDFunctionMenuItem *item) {
                                             [[TDFSDLogViewer sharedInstance] clearCurrentSystemLogs];
                                         }]

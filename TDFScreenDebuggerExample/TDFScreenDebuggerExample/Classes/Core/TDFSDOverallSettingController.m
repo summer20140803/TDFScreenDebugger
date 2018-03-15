@@ -7,6 +7,7 @@
 //
 
 #import "TDFSDOverallSettingController.h"
+#import "TDFSDPersistenceSetting.h"
 
 @interface TDFSDOverallSettingController () <TDFSDFullScreenConsoleControllerInheritProtocol>
 
@@ -16,7 +17,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
 }
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol

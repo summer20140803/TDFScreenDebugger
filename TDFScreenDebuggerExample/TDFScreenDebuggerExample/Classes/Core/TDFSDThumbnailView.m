@@ -242,8 +242,7 @@
 #pragma mark - getter
 - (UIImageView *)thumbnailIconView {
     if (!_thumbnailIconView) {
-        UIImage *thumbnailIcon = [UIImage imageNamed:@"icon_screenDebugger_thumbnail"];
-        _thumbnailIconView = [[UIImageView alloc] initWithImage:thumbnailIcon];
+        _thumbnailIconView = [[UIImageView alloc] initWithImage:SD_BUNDLE_IMAGE(@"icon_screenDebugger_thumbnail")];
         _thumbnailIconView.contentMode = UIViewContentModeScaleToFill;
     }
     return _thumbnailIconView;

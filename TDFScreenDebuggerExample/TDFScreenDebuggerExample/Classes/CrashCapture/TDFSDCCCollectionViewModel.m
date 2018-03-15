@@ -26,7 +26,11 @@
 - (CGFloat)cellWidth {
     if (_cellWidth == 0) {
         CGFloat itemCollectionEdgeMargin = 8;
-        _cellWidth = [UIScreen mainScreen].bounds.size.width - 2 * SDFullScreenContentViewEdgeMargin - itemCollectionEdgeMargin * 2;
+        if ([@([UIScreen mainScreen].bounds.size.width) intValue] % 2 == 0) {
+            _cellWidth = [UIScreen mainScreen].bounds.size.width - 2 * SDFullScreenContentViewEdgeMargin - itemCollectionEdgeMargin * 2;
+        } else {
+            _cellWidth = [UIScreen mainScreen].bounds.size.width - 2 * SDFullScreenContentViewEdgeMargin - itemCollectionEdgeMargin * 2 - SDFullScreenContentViewDynamicAnimatorFixedOffset;
+        }
     }
     return _cellWidth;
 }
