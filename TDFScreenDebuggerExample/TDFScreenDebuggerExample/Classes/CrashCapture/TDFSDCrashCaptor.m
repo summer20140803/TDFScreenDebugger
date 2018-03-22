@@ -17,10 +17,8 @@
 #import <signal.h>
 #import <execinfo.h>
 
-
 static BOOL _needApplyForKeepingLifeCycle = NO;
 static void ocExceptionHandler(NSException *e);
-
 
 @interface TDFSDCCKVOStub : NSObject
 
@@ -174,7 +172,6 @@ static void sd_cc_swizzleMethod(Class class, SEL originSEL, SEL newSEL) {
 @property (nonatomic, unsafe_unretained) NSUncaughtExceptionHandler *originHandler;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, assign) BOOL  needKeepAlive;
-//@property (nonatomic, assign) BOOL  needApplyForKeepingLifeCycle;
 
 @end
 
@@ -261,7 +258,6 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
     self = [super init];
     if (self) {
         _needApplyForKeepingLifeCycle = YES;
-        
     }
     return self;
 }
@@ -513,7 +509,7 @@ static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition)
         }
     }]
     firstObject];
-
+    
     TDFSDCrashCapturePresentationController *p = [[TDFSDCrashCapturePresentationController alloc] init];
     p.crashInfo = crash;
     p.exportProxy = [RACSubject subject];

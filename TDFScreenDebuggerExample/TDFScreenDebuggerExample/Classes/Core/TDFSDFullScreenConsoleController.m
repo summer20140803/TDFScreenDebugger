@@ -274,7 +274,7 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
 - (UILabel *)hudLabel {
     if (!_hudLabel) {
         _hudLabel = [[UILabel alloc] init];
-        [_hudLabel setBackgroundColor:[UIColor colorWithRed:85/255.f green:196/255.f blue:245/255.f alpha:0.7]];
+        [_hudLabel setBackgroundColor:[UIColor colorWithRed:85/255.f green:196/255.f blue:245/255.f alpha:1]];
         _hudLabel.textAlignment = NSTextAlignmentCenter;
         _hudLabel.numberOfLines = 1;
         _hudLabel.textColor = [UIColor whiteColor];

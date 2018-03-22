@@ -107,6 +107,8 @@
 - (UISwitch *)settingSwitch {
     if (!_settingSwitch) {
         _settingSwitch = [[UISwitch alloc] init];
+        _settingSwitch.tintColor = [UIColor colorWithRed:85/255.f green:196/255.f blue:245/255.f alpha:1];
+        _settingSwitch.onTintColor = [UIColor colorWithRed:85/255.f green:196/255.f blue:245/255.f alpha:1];
         [_settingSwitch addTarget:self action:@selector(settingSwitchValueDidChangeManually:) forControlEvents:UIControlEventValueChanged];
     }
     return _settingSwitch;

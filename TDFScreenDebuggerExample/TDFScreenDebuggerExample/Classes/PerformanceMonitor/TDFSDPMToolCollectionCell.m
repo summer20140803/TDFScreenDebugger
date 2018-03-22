@@ -84,6 +84,8 @@
 - (UISwitch *)toolSwitch {
     if (!_toolSwitch) {
         _toolSwitch = [[UISwitch alloc] init];
+        _toolSwitch.tintColor = [UIColor colorWithRed:85/255.f green:196/255.f blue:245/255.f alpha:1];
+        _toolSwitch.onTintColor = [UIColor colorWithRed:85/255.f green:196/255.f blue:245/255.f alpha:1];
         [_toolSwitch addTarget:self action:@selector(toolSwitchDidChange:) forControlEvents:UIControlEventValueChanged];
     }
     return _toolSwitch;
