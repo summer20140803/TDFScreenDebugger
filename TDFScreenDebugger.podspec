@@ -18,7 +18,7 @@ s.ios.deployment_target = '8.0'
 s.source_files = 'TDFScreenDebuggerExample/TDFScreenDebuggerExample/Classes/**/*.{h,m,mm}'
 # s.resources =  "TDFScreenDebuggerExample/TDFScreenDebuggerExample/Resource/**/*.{png,jpg,jpeg,xcassets}"
 s.resource_bundle = {
-    'TDFScreenDebuggerBundle' => ['TDFScreenDebuggerExample/TDFScreenDebuggerExample/Resource/**/*.{png,jpg,jpeg,xcassets}']
+    'TDFScreenDebuggerBundle' => ['TDFScreenDebuggerExample/TDFScreenDebuggerExample/Resource/**/*.{png,jpg,jpeg,xcassets,plist}']
 }
 
 s.dependency 'TDFAPILogger'

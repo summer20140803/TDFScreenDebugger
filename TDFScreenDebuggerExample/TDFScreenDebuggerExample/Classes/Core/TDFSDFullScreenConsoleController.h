@@ -31,8 +31,7 @@ SD_EXPORT const int SDFullScreenContentViewDynamicAnimatorFixedOffset;
 @property (nonatomic, strong, readonly) NSArray<TDFSDFunctionMenuItem *> *menuItems;
 
 - (void)sendClearRemindLabelTextRequestWithContentType:(SDAllReadNotificationContentType)contentType;
-- (void)presentLoadingHUDWithText:(NSString *)hudText autoDismiss:(BOOL)autoDismiss;
-- (void)dismissLoadingHUD;
+- (void)presentLoadingHUDWithText:(NSString *)hudText syncTransaction:(NSString *(^)(void))syncTransaction;
 
 @end
 

@@ -28,7 +28,7 @@
 @property (nonatomic, strong) UIView *menuToolLayoutContainer;
 @property (nonatomic, strong, readwrite) NSArray<TDFSDFunctionMenuItem *> *menuItems;
 
-@property (nonatomic, strong) UIView *hudLayer;
+@property (nonatomic, strong) UIControl *hudLayer;
 @property (nonatomic, strong) UILabel *hudLabel;
 
 @end
@@ -74,33 +74,30 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     [[NSNotificationCenter defaultCenter] postNotificationName:SD_REMIND_MESSAGE_ALL_READ_NOTIFICATION_NAME object:@(contentType)];
 }
 
-- (void)presentLoadingHUDWithText:(NSString *)hudText autoDismiss:(BOOL)autoDismiss {
+- (void)presentLoadingHUDWithText:(NSString *)hudText syncTransaction:(NSString *(^)(void))syncTransaction {
     self.hudLayer.hidden = NO;
-    [UIView animateWithDuration:.3 delay:.05 usingSpringWithDamping:.7 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+    [self.hudLabel setText:hudText];
+    
+    [UIView animateWithDuration:.3 delay:0 usingSpringWithDamping:.7 initialSpringVelocity:0 options:UIViewAnimationOptionCurveLinear animations:^{
         [self.hudLabel mas_updateConstraints:^(MASConstraintMaker *make) {
             make.top.equalTo(self.hudLayer.mas_bottom).with.offset(-40);
         }];
+        [self.hudLabel.superview layoutIfNeeded];
     } completion:^(BOOL finished) {
-        if (finished && autoDismiss) {
-            SD_DELAY_HANDLER(.5f, {
-                [self dismissLoadingHUD];
-            });
-        }
+        NSString *resultHit = syncTransaction();
+        self.hudLabel.text = resultHit;
+        [self.hudLabel sd_fadeAnimationWithDuration:.2f];
+        SD_DELAY_HANDLER(0.3f, {
+            [UIView animateWithDuration:.3 delay:0 usingSpringWithDamping:.7 initialSpringVelocity:0 options:UIViewAnimationOptionCurveLinear animations:^{
+                [self.hudLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+                    make.top.equalTo(self.hudLayer.mas_bottom);
+                }];
+                [self.hudLabel.superview layoutIfNeeded];
+            } completion:^(BOOL finished) {
+                self.hudLayer.hidden = YES;
+            }];
+        })
     }];
-    [self.hudLabel.superview layoutIfNeeded];
-    [self.hudLabel setText:hudText];
-    [self.hudLabel sd_fadeAnimationWithDuration:.2f];
-}
-
-- (void)dismissLoadingHUD {
-    [UIView animateWithDuration:.3 delay:0 usingSpringWithDamping:.7 initialSpringVelocity:0 options:UIViewAnimationOptionCurveLinear animations:^{
-        [self.hudLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.hudLayer.mas_bottom);
-        }];
-    } completion:^(BOOL finished) {
-        self.hudLayer.hidden = YES;
-    }];
-    [self.hudLabel.superview layoutIfNeeded];
 }
 
 #pragma mark - event
@@ -265,9 +262,9 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
     return _contentView;
 }
 
-- (UIView *)hudLayer {
+- (UIControl *)hudLayer {
     if (!_hudLayer) {
-        _hudLayer = [[UIView alloc] init];
+        _hudLayer = [[UIControl alloc] init];
         _hudLayer.backgroundColor = [UIColor clearColor];
         _hudLayer.hidden = YES;
     }
@@ -277,11 +274,11 @@ static const CGFloat kSDTopToolMenuItemMargin = kSDTopToolMenuItemLength;
 - (UILabel *)hudLabel {
     if (!_hudLabel) {
         _hudLabel = [[UILabel alloc] init];
-        [_hudLabel setBackgroundColor:[UIColor yellowColor]];
+        [_hudLabel setBackgroundColor:[UIColor colorWithRed:85/255.f green:196/255.f blue:245/255.f alpha:0.7]];
         _hudLabel.textAlignment = NSTextAlignmentCenter;
         _hudLabel.numberOfLines = 1;
         _hudLabel.textColor = [UIColor whiteColor];
-        _hudLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:14];
+        _hudLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:16];
         _hudLabel.lineBreakMode = NSLineBreakByCharWrapping;
     }
     return _hudLabel;

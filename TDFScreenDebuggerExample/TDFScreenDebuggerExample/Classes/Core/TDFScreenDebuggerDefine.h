@@ -15,6 +15,14 @@
 //========================
 #define SD_LOCAL_CACHE_ROOT_FILE_FOLDER_NAME      @"screen_debugger_local_cache"
 
+#define SD_OVERALL_SETTING_CACHE_FIFLE_PATH  \
+({  \
+    NSString *documentPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];  \
+    NSString *rootFolderPath = [documentPath stringByAppendingPathComponent:SD_LOCAL_CACHE_ROOT_FILE_FOLDER_NAME];  \
+    NSString *overallSettingCachePath = [rootFolderPath stringByAppendingPathComponent:@"overallSetting.archive"];  \
+    overallSettingCachePath;  \
+})
+
 #define SD_CRASH_CAPTOR_CACHE_FILE_FOLDER_NAME    @"crash_captor"
 #define SD_CRASH_CAPTOR_CACHE_EXPORT_FILE_PATH  \
 ({  \
@@ -90,13 +98,18 @@ typedef NS_ENUM(NSUInteger, SDAllReadNotificationContentType) {
 #define SD_INLINE  inline
 #define SD_IS_IPHONEX  CGSizeEqualToSize(CGSizeMake(375.f, 812.f), [UIScreen mainScreen].bounds.size)
 
-#define SD_BUNDLE_IMAGE(IMAGE_NAME) \
+#define SD_BUNDLE  \
 ({   \
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]].resourcePath   \
     stringByAppendingPathComponent:@"TDFScreenDebuggerBundle.bundle"];   \
-    NSBundle *resource_bundle = [NSBundle bundleWithPath:bundlePath];    \
-    UIImage *bundleImage = [UIImage imageNamed:IMAGE_NAME inBundle:resource_bundle compatibleWithTraitCollection:nil];    \
-    bundleImage;   \
+    NSBundle *resource_bundle = [NSBundle bundleWithPath:bundlePath];   \
+    resource_bundle;  \
+})
+#define SD_BUNDLE_IMAGE(IMAGE_NAME)  \
+({   \
+    NSBundle *resource_bundle = SD_BUNDLE;  \
+    UIImage *bundleImage = [UIImage imageNamed:IMAGE_NAME inBundle:resource_bundle compatibleWithTraitCollection:nil];  \
+    bundleImage;  \
 })
 
 #define SD_DELAY_HANDLER(DELAY_TIME, ...)  \

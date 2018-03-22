@@ -79,11 +79,12 @@ UICollectionViewDelegateFlowLayout>
         @strongify(self)
         TDFSDPMExtraToolModel *tool = self.toolModels[indexPath.row];
         if (isOn) {
-            [self presentLoadingHUDWithText:@"apply to application..." autoDismiss:NO];
-            [tool.realizer thaw];
-            [self presentLoadingHUDWithText:@"success" autoDismiss:YES];
+            [self presentLoadingHUDWithText:@"apply to application..." syncTransaction:^NSString *{
+//                [tool.realizer thaw];
+                return @"success";
+            }];
         } else {
-            [tool.realizer freeze];
+//            [tool.realizer freeze];
         }
         tool.isOn = isOn;
         [TDFSDPersistenceSetting sharedInstance].allowWildPointerMonitoring = isOn;

@@ -85,7 +85,6 @@
     if (!_toolSwitch) {
         _toolSwitch = [[UISwitch alloc] init];
         [_toolSwitch addTarget:self action:@selector(toolSwitchDidChange:) forControlEvents:UIControlEventValueChanged];
-//        _toolSwitch.onTintColor =
     }
     return _toolSwitch;
 }

@@ -18,19 +18,170 @@
 #import <execinfo.h>
 
 
+static BOOL _needApplyForKeepingLifeCycle = NO;
+static void ocExceptionHandler(NSException *e);
+
+
+@interface TDFSDCCKVOStub : NSObject
+
++ (instancetype)sharedInstance;
+
+@end
+
+@implementation TDFSDCCKVOStub
+
++ (instancetype)sharedInstance {
+    static TDFSDCCKVOStub *sharedInstance = nil;
+    static dispatch_once_t once = 0;
+    dispatch_once(&once, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
+
+@end
+
+@interface TDFSDCCKVORemoveHelper : NSObject
+
+@property (nonatomic, weak) id observeObj;
+@property (nonatomic, weak) NSString *keyPath;
+
+@end
+
+@implementation TDFSDCCKVORemoveHelper
+
+- (void)dealloc {
+    if (_observeObj) {
+        [_observeObj removeObserver:[TDFSDCCKVOStub sharedInstance] forKeyPath:_keyPath];
+    }
+}
+
+@end
+
+@interface UIViewController (SDCrashCaptorAdditions)
+
+@end
+
+@implementation UIViewController (SDCrashCaptorAdditions)
+
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sd_cc_swizzleMethod([UIViewController class], @selector(init), @selector(sd_cc_init));
+        sd_cc_swizzleMethod([UIViewController class], @selector(initWithCoder:), @selector(sd_cc_initWithCoder:));
+        sd_cc_swizzleMethod([UIViewController class], @selector(initWithNibName:bundle:), @selector(sd_cc_initWithNibName:bundle:));
+    });
+}
+
+- (instancetype)sd_cc_init {
+    [self sd_cc_injectCrashCaptorForViewControllerLifeCycle];
+    return [self sd_cc_init];
+}
+
+- (instancetype)sd_cc_initWithCoder:(NSCoder *)aDecoder {
+    [self sd_cc_injectCrashCaptorForViewControllerLifeCycle];
+    return [self sd_cc_initWithCoder:aDecoder];
+}
+
+- (instancetype)sd_cc_initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    [self sd_cc_injectCrashCaptorForViewControllerLifeCycle];
+    return [self sd_cc_initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+}
+
+- (void)sd_cc_injectCrashCaptorForViewControllerLifeCycle {
+    NSString *identifier = [NSString stringWithFormat:@"sd_cc_%@", [[NSProcessInfo processInfo] globallyUniqueString]];
+    [self addObserver:[TDFSDCCKVOStub sharedInstance] forKeyPath:identifier options:NSKeyValueObservingOptionNew context:nil];
+    
+    TDFSDCCKVORemoveHelper *helper = [[TDFSDCCKVORemoveHelper alloc] init];
+    helper.observeObj = self;
+    helper.keyPath = identifier.copy;
+    
+    objc_setAssociatedObject(self, _cmd, helper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    Class kvoCls = object_getClass(self);
+    Class originCls = class_getSuperclass(kvoCls);
+    
+    SEL origin_selectors[] = {
+        @selector(viewDidLoad),
+        @selector(viewWillAppear:),
+        @selector(viewDidAppear:),
+        @selector(viewWillDisappear:),
+        @selector(viewDidDisappear:),
+        @selector(viewWillLayoutSubviews),
+        @selector(viewDidLayoutSubviews)
+    };
+    
+    IMP new_method_pointers[] = {
+        (IMP)sd_cc_viewDidLoad,
+        (IMP)sd_cc_viewWillAppear,
+        (IMP)sd_cc_viewDidAppear,
+        (IMP)sd_cc_viewWillDisappear,
+        (IMP)sd_cc_viewDidDisappear,
+        (IMP)sd_cc_viewWillLayoutSubviews,
+        (IMP)sd_cc_viewDidLayoutSubviews
+    };
+    
+    for (int index = 0; index < sizeof(origin_selectors)/sizeof(SEL); index ++) {
+        SEL selector = origin_selectors[index];
+        const char *originMethodEncoding = method_getTypeEncoding(class_getInstanceMethod(originCls, selector));
+        class_addMethod(kvoCls, selector, new_method_pointers[index], originMethodEncoding);
+    }
+}
+
+static void sd_cc_viewDidLoad(UIViewController *kvo_vc, SEL sel) { sd_cc_injectCrashCaptor(kvo_vc, sel); }
+static void sd_cc_viewWillAppear(UIViewController *kvo_vc, SEL sel, BOOL animated) { sd_cc_injectCrashCaptor(kvo_vc, sel); }
+static void sd_cc_viewDidAppear(UIViewController *kvo_vc, SEL sel, BOOL animated) { sd_cc_injectCrashCaptor(kvo_vc, sel); }
+static void sd_cc_viewWillDisappear(UIViewController *kvo_vc, SEL sel, BOOL animated) { sd_cc_injectCrashCaptor(kvo_vc, sel); }
+static void sd_cc_viewDidDisappear(UIViewController *kvo_vc, SEL sel, BOOL animated) { sd_cc_injectCrashCaptor(kvo_vc, sel); }
+static void sd_cc_viewWillLayoutSubviews(UIViewController *kvo_vc, SEL sel) { sd_cc_injectCrashCaptor(kvo_vc, sel); }
+static void sd_cc_viewDidLayoutSubviews(UIViewController *kvo_vc, SEL sel) { sd_cc_injectCrashCaptor(kvo_vc, sel); }
+
+
+static void sd_cc_injectCrashCaptor(UIViewController *vc, SEL sel) {
+    Class kvo_cls = object_getClass(vc);
+    Class origin_cls = class_getSuperclass(kvo_cls);
+    
+    IMP origin_imp = method_getImplementation(class_getInstanceMethod(origin_cls, sel));
+    assert(origin_imp != NULL);
+    
+    void(*func)(UIViewController *, SEL) =  (void(*)(UIViewController *, SEL))origin_imp;
+    
+    @try { func(vc, sel); }
+    @catch (NSException *e) {
+        if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
+            _needApplyForKeepingLifeCycle = NO;
+            ocExceptionHandler(e);
+        } else { @throw e; }
+    }
+}
+
+static void sd_cc_swizzleMethod(Class class, SEL originSEL, SEL newSEL) {
+    Method originMethod = class_getInstanceMethod(class, originSEL);
+    Method newMethod = class_getInstanceMethod(class, newSEL);
+    
+    BOOL addMethodSuccess = class_addMethod(class, originSEL, method_getImplementation(newMethod), method_getTypeEncoding(newMethod));
+    if (addMethodSuccess) {
+        class_replaceMethod(class, newSEL, method_getImplementation(originMethod), method_getTypeEncoding(originMethod));
+    } else {
+        method_exchangeImplementations(originMethod, newMethod);
+    }
+}
+
+@end
+
 @interface TDFSDCrashCaptor () <UIViewControllerTransitioningDelegate>
 
 @property (nonatomic, unsafe_unretained) NSUncaughtExceptionHandler *originHandler;
 @property (nonatomic, strong) NSDateFormatter *dateFormatter;
 @property (nonatomic, assign) BOOL  needKeepAlive;
-@property (nonatomic, assign) BOOL  needApplyForKeepingLifeCycle;
+//@property (nonatomic, assign) BOOL  needApplyForKeepingLifeCycle;
 
 @end
 
 @implementation TDFSDCrashCaptor
 
 static const NSString *crashCallStackSymbolLocalizationFailDescription = @"fuzzy localization fail";
-static const CGFloat  keepAliveReloadRenderingInterval  = 1 / 120.0f;
+static const CGFloat  keepAliveReloadRenderingInterval  = 1 / 60.0f;
 
 #pragma mark - life cycle
 
@@ -53,14 +204,14 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 SD_CONSTRUCTOR_METHOD_DECLARE \
 (SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_VIEW_CONTROLLER_HEIR_LIFECYCLE_SWIZZLE, {
 
-    NSString *cachePath = SD_CRASH_CAPTOR_CACHE_REGISTERED_CLASSES_ARCHIVE_PATH;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSArray *registeredViewControllerHeirClassNames = [NSArray array];
-
-    if ([fileManager fileExistsAtPath:cachePath]) {
-        registeredViewControllerHeirClassNames = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath] ?: @[];
-        hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
-
+//    NSString *cachePath = SD_CRASH_CAPTOR_CACHE_REGISTERED_CLASSES_ARCHIVE_PATH;
+//    NSFileManager *fileManager = [NSFileManager defaultManager];
+//    NSArray *registeredViewControllerHeirClassNames = [NSArray array];
+//
+//    if ([fileManager fileExistsAtPath:cachePath]) {
+//        registeredViewControllerHeirClassNames = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath] ?: @[];
+//        hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
+//
 //        __weak NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 //        __block id token = [center addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
 //            sd_dispatch_async_by_qos_background(^{
@@ -72,11 +223,11 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 //            });
 //            [center removeObserver:token];
 //        }];
-    } else {
-        obtainAllViewControllerHeirNames(&registeredViewControllerHeirClassNames, YES);
-        hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
-        [NSKeyedArchiver archiveRootObject:registeredViewControllerHeirClassNames toFile:cachePath];
-    }
+//    } else {
+//        obtainAllViewControllerHeirNames(&registeredViewControllerHeirClassNames, YES);
+//        hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
+//        [NSKeyedArchiver archiveRootObject:registeredViewControllerHeirClassNames toFile:cachePath];
+//    }
 })
 
 SD_CONSTRUCTOR_METHOD_DECLARE \
@@ -155,88 +306,82 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 }
 
 #pragma mark - private
-static void obtainAllViewControllerHeirNames(NSArray **heirs, BOOL needPrintClasses) {
-    unsigned int registerClassCount;
-    Class *classes = objc_copyClassList(&registerClassCount);
-    
-    NSMutableArray *viewControllerHeirNames = [NSMutableArray array];
-    
-    for (int i = 0; i < registerClassCount; i++) {
-        Class class = classes[i];
-        if (strcmp(class_getName(class), "_CNZombie_") == 0) continue;
-        
-        if (class_respondsToSelector(class, @selector(viewDidLoad))) {
-            NSBundle *bundle = [NSBundle bundleForClass:class];
-            if ([bundle isEqual:[NSBundle mainBundle]]) {
-                if (needPrintClasses) {
-                    printf("[TDFScreenDebugger.CrashCaptor.TraverseRegisteredClasses] %s\n", class_getName(class));
-                }
-                [viewControllerHeirNames addObject:NSStringFromClass(class)];
-            }
-        }
-    }
-    free(classes);
-    *heirs = viewControllerHeirNames;
-}
+//static void obtainAllViewControllerHeirNames(NSArray **heirs, BOOL needPrintClasses) {
+//    unsigned int registerClassCount;
+//    Class *classes = objc_copyClassList(&registerClassCount);
+//
+//    NSMutableArray *viewControllerHeirNames = [NSMutableArray array];
+//
+//    for (int i = 0; i < registerClassCount; i++) {
+//        Class class = classes[i];
+//        if (strcmp(class_getName(class), "_CNZombie_") == 0) continue;
+//
+//        if (class_respondsToSelector(class, @selector(viewDidLoad))) {
+//            NSBundle *bundle = [NSBundle bundleForClass:class];
+//            if ([bundle isEqual:[NSBundle mainBundle]]) {
+//                if (needPrintClasses) {
+//                    printf("[TDFScreenDebugger.CrashCaptor.TraverseRegisteredClasses] %s\n", class_getName(class));
+//                }
+//                [viewControllerHeirNames addObject:NSStringFromClass(class)];
+//            }
+//        }
+//    }
+//    free(classes);
+//    *heirs = viewControllerHeirNames;
+//}
 
-static void hookAllViewControllerHeirsLifeCycle(NSArray *allHeirNames) {
-    [allHeirNames enumerateObjectsUsingBlock:^(NSString * _Nonnull className, NSUInteger idx, BOOL * _Nonnull stop) {
-        Class class = NSClassFromString(className);
-        
-        SEL selectors[] = {
-            @selector(viewDidLoad),
-            @selector(viewWillAppear:),
-            @selector(viewDidAppear:),
-            @selector(viewWillDisappear:),
-            @selector(viewDidDisappear:),
-            @selector(viewWillLayoutSubviews),
-            @selector(viewDidLayoutSubviews)
-        };
-        
-        for(int index = 0; index < sizeof(selectors)/sizeof(SEL); index ++) {
-            SEL selector = selectors[index];
-            if ([NSStringFromSelector(selector) hasSuffix:@":"]) {
-                singleParmIMPReset(selector, class);
-            } else {
-                nullaParmIMPReset(selector, class);
-            }
-        }
-    }];
-}
+//static void hookAllViewControllerHeirsLifeCycle(NSArray *allHeirNames) {
+//    [allHeirNames enumerateObjectsUsingBlock:^(NSString * _Nonnull className, NSUInteger idx, BOOL * _Nonnull stop) {
+//        Class class = NSClassFromString(className);
+//
+//        SEL selectors[] = {
+//            @selector(viewDidLoad),
+//            @selector(viewWillAppear:),
+//            @selector(viewDidAppear:),
+//            @selector(viewWillDisappear:),
+//            @selector(viewDidDisappear:),
+//            @selector(viewWillLayoutSubviews),
+//            @selector(viewDidLayoutSubviews)
+//        };
+//
+//        for(int index = 0; index < sizeof(selectors)/sizeof(SEL); index ++) {
+//            SEL selector = selectors[index];
+//            if ([NSStringFromSelector(selector) hasSuffix:@":"]) {
+//                singleParmIMPReset(selector, class);
+//            } else {
+//                nullaParmIMPReset(selector, class);
+//            }
+//        }
+//    }];
+//}
 
-static void nullaParmIMPReset(SEL selector, Class class) {
-    Method method = class_getInstanceMethod(class, selector);
-    void(*imp)(id, SEL, ...) = (typeof(imp))method_getImplementation(method);
-    method_setImplementation(method, imp_implementationWithBlock(^(id target, SEL action){
-        @try {
-            imp(target, selector);
-        } @catch (NSException *e) {
-            if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
-                [TDFSDCrashCaptor sharedInstance].needApplyForKeepingLifeCycle = NO;
-                ocExceptionHandler(e);
-            } else {
-                @throw e;
-            }
-        }
-    }));
-}
-
-static void singleParmIMPReset(SEL selector, Class class) {
-    Method method = class_getInstanceMethod(class, selector);
-    void(*imp)(id, SEL, ...) = (typeof(imp))method_getImplementation(method);
-    method_setImplementation(method, imp_implementationWithBlock(^(id target, SEL action, BOOL animated){
-        @try {
-            imp(target, selector, animated);
-        } @catch (NSException *e) {
-            if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
-                [TDFSDCrashCaptor sharedInstance].needApplyForKeepingLifeCycle = NO;
-                ocExceptionHandler(e);
-            } else {
-                @throw e;
-            }
-        }
-    }));
-}
+//static void nullaParmIMPReset(SEL selector, Class class) {
+//    Method method = class_getInstanceMethod(class, selector);
+//    void(*imp)(id, SEL, ...) = (typeof(imp))method_getImplementation(method);
+//    method_setImplementation(method, imp_implementationWithBlock(^(id target, SEL selector){
+//        @try { imp(target, selector); }
+//        @catch (NSException *e) {
+//            if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
+//                _needApplyForKeepingLifeCycle = NO;
+//                ocExceptionHandler(e);
+//            } else { @throw e; }
+//        }
+//    }));
+//}
+//
+//static void singleParmIMPReset(SEL selector, Class class) {
+//    Method method = class_getInstanceMethod(class, selector);
+//    void(*imp)(id, SEL, ...) = (typeof(imp))method_getImplementation(method);
+//    method_setImplementation(method, imp_implementationWithBlock(^(id target, SEL selector, BOOL animated){
+//        @try { imp(target, selector, animated); }
+//        @catch (NSException *e) {
+//            if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
+//                _needApplyForKeepingLifeCycle = NO;
+//                ocExceptionHandler(e);
+//            } else { @throw e; }
+//        }
+//    }));
+//}
 
 static void machSignalExceptionHandler(int signal) {
     const char* names[NSIG];
@@ -281,7 +426,7 @@ static void ocExceptionHandler(NSException *exception) {
     crash.exceptionReason = [exception reason];
     crash.fuzzyLocalization = crashFuzzyLocalization([exception callStackSymbols]);
     crash.exceptionCallStack = [NSString stringWithFormat:@"%@", [[exception callStackSymbols] componentsJoinedByString:@"\n"]];
-    
+
     NSLog(@"%@", crash.debugDescription);
 
     if ([[TDFSDPersistenceSetting sharedInstance] needCacheCrashLogToSandBox]) {
@@ -289,10 +434,10 @@ static void ocExceptionHandler(NSException *exception) {
     }
 
     showFriendlyCrashPresentation(crash, exception);
-    if ([[TDFSDCrashCaptor sharedInstance] needApplyForKeepingLifeCycle]) {
+    if (_needApplyForKeepingLifeCycle) {
         applyForKeepingLifeCycle();
     } else {
-        [TDFSDCrashCaptor sharedInstance].needApplyForKeepingLifeCycle = YES;
+        _needApplyForKeepingLifeCycle = YES;
     }
 }
 
@@ -373,7 +518,7 @@ static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition)
     p.crashInfo = crash;
     p.exportProxy = [RACSubject subject];
     p.terminateProxy = [RACSubject subject];
-    
+
     __weak TDFSDCrashCaptor *captor = [TDFSDCrashCaptor sharedInstance];
     [p.exportProxy subscribeNext:^(id  _Nullable x) {
         !captor.sd_didReceiveCrashHandler ?: captor.sd_didReceiveCrashHandler(crash);
@@ -414,7 +559,7 @@ static void applyForKeepingLifeCycle(void) {
     // let app continue to run
     // gyl-tip:如果跳转到此处并没有成功展示崩溃汇报页，说明此时程序内存已处于不稳定状态，请直接移步Xcode控制台查看协助打印的崩溃日志
     while (captor.needKeepAlive) {
-        for (NSString *mode in (__bridge_transfer NSArray *)allModesRef) {
+        for (NSString *mode in (__bridge NSArray *)allModesRef) {
             if ([mode isEqualToString:(NSString *)kCFRunLoopCommonModes]) {
                 continue;
             }
@@ -422,6 +567,8 @@ static void applyForKeepingLifeCycle(void) {
             CFRunLoopRunInMode(modeRef, keepAliveReloadRenderingInterval, false);
         }
     }
+    
+    CFRelease(allModesRef);
 }
 
 static UIViewController * obtainTopViewController(UIViewController *rootViewController) {

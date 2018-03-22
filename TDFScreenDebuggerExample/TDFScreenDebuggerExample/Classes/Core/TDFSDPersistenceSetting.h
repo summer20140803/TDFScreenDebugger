@@ -14,12 +14,12 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
     SDMessageRemindTypeSystemLog     =  1,
 };
 
-@interface TDFSDPersistenceSetting : NSObject
+@interface TDFSDPersistenceSetting : NSObject <NSCoding>
 
 + (instancetype)sharedInstance;
 
 @property (nonatomic, strong, readonly) NSArray<TDFSDFunctionModel *> *functionList;
-
+@property (nonatomic, strong, readonly) NSArray<NSDictionary<NSString *, id> *> *settingList;
 
 //===================================================================================
 //                              OPTIONAL SETTING ITEMS
@@ -87,6 +87,7 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
 @property (nonatomic, assign) NSUInteger fpsWarnningThreshold;
 /**
  a flag to tell the performance monitor whether should monitor the error caused by wild pointer. default is NO
+ In addition, when restart app, the value will restored to 'NO' automatically
  */
 @property (nonatomic, assign) BOOL allowWildPointerMonitoring;
 

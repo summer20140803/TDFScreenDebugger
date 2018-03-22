@@ -8,21 +8,44 @@
 
 #import "TDFSDPersistenceSetting.h"
 #import "TDFSDFunctionModel.h"
+#import "TDFScreenDebuggerDefine.h"
 
 @implementation TDFSDPersistenceSetting
+
+static  NSString * kSDOverallSettingPersistenceKeyMessageRemindType                      =  @"messageRemindType";
+static  NSString * kSDOverallSettingPersistenceKeyAllowCatchAPIRecordFlag                =  @"allowCatchAPIRecordFlag";
+static  NSString * kSDOverallSettingPersistenceKeyAllowMonitorSystemLogFlag              =  @"allowMonitorSystemLogFlag";
+static  NSString * kSDOverallSettingPersistenceKeyLimitSizeOfSingleSystemLogMessageData  =  @"limitSizeOfSingleSystemLogMessageData";
+static  NSString * kSDOverallSettingPersistenceKeyAllowCrashCaptureFlag                  =  @"allowCrashCaptureFlag";
+static  NSString * kSDOverallSettingPersistenceKeyNeedCacheCrashLogToSandBox             =  @"needCacheCrashLogToSandBox";
+static  NSString * kSDOverallSettingPersistenceKeyAllowUILagsMonitoring                  =  @"allowUILagsMonitoring";
+static  NSString * kSDOverallSettingPersistenceKeyTolerableLagThreshold                  =  @"tolerableLagThreshold";
+static  NSString * kSDOverallSettingPersistenceKeyAllowApplicationCPUMonitoring          =  @"allowApplicationCPUMonitoring";
+static  NSString * kSDOverallSettingPersistenceKeyAllowApplicationMemoryMonitoring       =  @"allowApplicationMemoryMonitoring";
+static  NSString * kSDOverallSettingPersistenceKeyAllowScreenFPSMonitoring               =  @"allowScreenFPSMonitoring";
+static  NSString * kSDOverallSettingPersistenceKeyFpsWarnningThreshold                   =  @"fpsWarnningThreshold";
+static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring             =  @"allowWildPointerMonitoring";
+
+@synthesize functionList = _functionList;
+@synthesize settingList = _settingList;
 
 + (instancetype)sharedInstance {
     static TDFSDPersistenceSetting *setting = nil;
     static dispatch_once_t once = 0;
     dispatch_once(&once, ^{
-        setting = [[self alloc] init];
+        id unarchiver = [NSKeyedUnarchiver unarchiveObjectWithFile:SD_OVERALL_SETTING_CACHE_FIFLE_PATH];
+        if (unarchiver) {
+            setting = unarchiver;
+        } else {
+            setting = [[self alloc] init];
+        }
     });
     return setting;
 }
 
 - (instancetype)init {
     if (self = [super init]) {
-        _messageRemindType = SDMessageRemindTypeSystemLog;
+        _messageRemindType = SDMessageRemindTypeAPIRecord;
         _allowCatchAPIRecordFlag = YES;
         _allowCrashCaptureFlag = YES;
         _needCacheCrashLogToSandBox = YES;
@@ -33,7 +56,7 @@
         _allowApplicationCPUMonitoring = YES;
         _allowApplicationMemoryMonitoring = YES;
         _allowScreenFPSMonitoring = YES;
-        _fpsWarnningThreshold = 56.0f;
+        _fpsWarnningThreshold = 50.0f;
         _allowWildPointerMonitoring = NO;
     }
     return self;
@@ -92,6 +115,53 @@
     [functions addObject:model6];
 
     return functions;
+}
+
+- (NSArray<NSDictionary<NSString *,id> *> *)settingList {
+    if (!_settingList) {
+        NSString *plistPath = [SD_BUNDLE pathForResource:@"TDFSDOverallSettingConfiguration" ofType:@"plist"];
+        _settingList = [[NSArray alloc] initWithContentsOfFile:plistPath];
+    }
+    return _settingList;
+}
+
+#pragma mark - Function IO
+
+
+#pragma mark - NSCoding
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
+    if (self = [super init]) {
+        _messageRemindType = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyMessageRemindType] unsignedIntegerValue];
+        _allowCatchAPIRecordFlag = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowCatchAPIRecordFlag] boolValue];
+        _allowMonitorSystemLogFlag = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowMonitorSystemLogFlag] boolValue];
+        _limitSizeOfSingleSystemLogMessageData = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyLimitSizeOfSingleSystemLogMessageData] integerValue];
+        _allowCrashCaptureFlag = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowCrashCaptureFlag] boolValue];
+        _needCacheCrashLogToSandBox = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyNeedCacheCrashLogToSandBox] boolValue];
+        _allowUILagsMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowUILagsMonitoring] boolValue];
+        _tolerableLagThreshold = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyTolerableLagThreshold] doubleValue];
+        _allowApplicationCPUMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowApplicationCPUMonitoring] boolValue];
+        _allowApplicationMemoryMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowApplicationMemoryMonitoring] boolValue];
+        _allowScreenFPSMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowScreenFPSMonitoring] boolValue];
+        _fpsWarnningThreshold = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyFpsWarnningThreshold] unsignedIntegerValue];
+        _allowWildPointerMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring] boolValue];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:@(_messageRemindType) forKey:kSDOverallSettingPersistenceKeyMessageRemindType];
+    [aCoder encodeObject:@(_allowCatchAPIRecordFlag) forKey:kSDOverallSettingPersistenceKeyAllowCatchAPIRecordFlag];
+    [aCoder encodeObject:@(_allowMonitorSystemLogFlag) forKey:kSDOverallSettingPersistenceKeyAllowMonitorSystemLogFlag];
+    [aCoder encodeObject:@(_limitSizeOfSingleSystemLogMessageData) forKey:kSDOverallSettingPersistenceKeyLimitSizeOfSingleSystemLogMessageData];
+    [aCoder encodeObject:@(_allowCrashCaptureFlag) forKey:kSDOverallSettingPersistenceKeyAllowCrashCaptureFlag];
+    [aCoder encodeObject:@(_needCacheCrashLogToSandBox) forKey:kSDOverallSettingPersistenceKeyNeedCacheCrashLogToSandBox];
+    [aCoder encodeObject:@(_allowUILagsMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowUILagsMonitoring];
+    [aCoder encodeObject:@(_tolerableLagThreshold) forKey:kSDOverallSettingPersistenceKeyTolerableLagThreshold];
+    [aCoder encodeObject:@(_allowApplicationCPUMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowApplicationCPUMonitoring];
+    [aCoder encodeObject:@(_allowApplicationMemoryMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowApplicationMemoryMonitoring];
+    [aCoder encodeObject:@(_allowScreenFPSMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowScreenFPSMonitoring];
+    [aCoder encodeObject:@(_fpsWarnningThreshold) forKey:kSDOverallSettingPersistenceKeyFpsWarnningThreshold];
+    [aCoder encodeObject:@(_allowWildPointerMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring];
 }
 
 @end
