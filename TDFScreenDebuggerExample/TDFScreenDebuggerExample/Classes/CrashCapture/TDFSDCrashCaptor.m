@@ -199,35 +199,6 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 })
 
 SD_CONSTRUCTOR_METHOD_DECLARE \
-(SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_VIEW_CONTROLLER_HEIR_LIFECYCLE_SWIZZLE, {
-
-//    NSString *cachePath = SD_CRASH_CAPTOR_CACHE_REGISTERED_CLASSES_ARCHIVE_PATH;
-//    NSFileManager *fileManager = [NSFileManager defaultManager];
-//    NSArray *registeredViewControllerHeirClassNames = [NSArray array];
-//
-//    if ([fileManager fileExistsAtPath:cachePath]) {
-//        registeredViewControllerHeirClassNames = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath] ?: @[];
-//        hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
-//
-//        __weak NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-//        __block id token = [center addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
-//            sd_dispatch_async_by_qos_background(^{
-//                @synchronized(token) {  // Does it really need to lock here?
-//                    NSArray *newHeirClassNames = [NSArray array];
-//                    obtainAllViewControllerHeirNames(&newHeirClassNames, NO);
-//                    [NSKeyedArchiver archiveRootObject:newHeirClassNames toFile:cachePath];
-//                }
-//            });
-//            [center removeObserver:token];
-//        }];
-//    } else {
-//        obtainAllViewControllerHeirNames(&registeredViewControllerHeirClassNames, YES);
-//        hookAllViewControllerHeirsLifeCycle(registeredViewControllerHeirClassNames);
-//        [NSKeyedArchiver archiveRootObject:registeredViewControllerHeirClassNames toFile:cachePath];
-//    }
-})
-
-SD_CONSTRUCTOR_METHOD_DECLARE \
 (SD_CONSTRUCTOR_METHOD_PRIORITY_CRASH_CAPTURE, {
 
     if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
@@ -302,83 +273,6 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 }
 
 #pragma mark - private
-//static void obtainAllViewControllerHeirNames(NSArray **heirs, BOOL needPrintClasses) {
-//    unsigned int registerClassCount;
-//    Class *classes = objc_copyClassList(&registerClassCount);
-//
-//    NSMutableArray *viewControllerHeirNames = [NSMutableArray array];
-//
-//    for (int i = 0; i < registerClassCount; i++) {
-//        Class class = classes[i];
-//        if (strcmp(class_getName(class), "_CNZombie_") == 0) continue;
-//
-//        if (class_respondsToSelector(class, @selector(viewDidLoad))) {
-//            NSBundle *bundle = [NSBundle bundleForClass:class];
-//            if ([bundle isEqual:[NSBundle mainBundle]]) {
-//                if (needPrintClasses) {
-//                    printf("[TDFScreenDebugger.CrashCaptor.TraverseRegisteredClasses] %s\n", class_getName(class));
-//                }
-//                [viewControllerHeirNames addObject:NSStringFromClass(class)];
-//            }
-//        }
-//    }
-//    free(classes);
-//    *heirs = viewControllerHeirNames;
-//}
-
-//static void hookAllViewControllerHeirsLifeCycle(NSArray *allHeirNames) {
-//    [allHeirNames enumerateObjectsUsingBlock:^(NSString * _Nonnull className, NSUInteger idx, BOOL * _Nonnull stop) {
-//        Class class = NSClassFromString(className);
-//
-//        SEL selectors[] = {
-//            @selector(viewDidLoad),
-//            @selector(viewWillAppear:),
-//            @selector(viewDidAppear:),
-//            @selector(viewWillDisappear:),
-//            @selector(viewDidDisappear:),
-//            @selector(viewWillLayoutSubviews),
-//            @selector(viewDidLayoutSubviews)
-//        };
-//
-//        for(int index = 0; index < sizeof(selectors)/sizeof(SEL); index ++) {
-//            SEL selector = selectors[index];
-//            if ([NSStringFromSelector(selector) hasSuffix:@":"]) {
-//                singleParmIMPReset(selector, class);
-//            } else {
-//                nullaParmIMPReset(selector, class);
-//            }
-//        }
-//    }];
-//}
-
-//static void nullaParmIMPReset(SEL selector, Class class) {
-//    Method method = class_getInstanceMethod(class, selector);
-//    void(*imp)(id, SEL, ...) = (typeof(imp))method_getImplementation(method);
-//    method_setImplementation(method, imp_implementationWithBlock(^(id target, SEL selector){
-//        @try { imp(target, selector); }
-//        @catch (NSException *e) {
-//            if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
-//                _needApplyForKeepingLifeCycle = NO;
-//                ocExceptionHandler(e);
-//            } else { @throw e; }
-//        }
-//    }));
-//}
-//
-//static void singleParmIMPReset(SEL selector, Class class) {
-//    Method method = class_getInstanceMethod(class, selector);
-//    void(*imp)(id, SEL, ...) = (typeof(imp))method_getImplementation(method);
-//    method_setImplementation(method, imp_implementationWithBlock(^(id target, SEL selector, BOOL animated){
-//        @try { imp(target, selector, animated); }
-//        @catch (NSException *e) {
-//            if ([[TDFSDPersistenceSetting sharedInstance] allowCrashCaptureFlag]) {
-//                _needApplyForKeepingLifeCycle = NO;
-//                ocExceptionHandler(e);
-//            } else { @throw e; }
-//        }
-//    }));
-//}
-
 static void machSignalExceptionHandler(int signal) {
     const char* names[NSIG];
     names[SIGABRT] = "SIGABRT";

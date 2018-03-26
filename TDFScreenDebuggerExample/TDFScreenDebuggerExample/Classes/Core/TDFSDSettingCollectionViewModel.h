@@ -15,6 +15,8 @@
 @property (nonatomic, copy, readonly) NSString *settingTitle;
 @property (nonatomic, copy, readonly) NSString *settingDescription;
 
+@property (nonatomic, strong, readonly) NSArray<NSString *> *optionalValues;  // not be nil just when type == SDSettingEditTypeOptionPicker
+
 - (instancetype)initWithSettingDictionary:(NSDictionary *)settingDictionary;
 
 @end

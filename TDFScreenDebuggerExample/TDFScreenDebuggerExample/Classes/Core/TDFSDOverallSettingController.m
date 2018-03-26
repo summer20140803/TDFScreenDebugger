@@ -11,27 +11,38 @@
 #import "TDFSDPersistenceSetting.h"
 #import "TDFSDCustomizedFlowLayout.h"
 #import "TDFSDSettingCollectionViewModel.h"
+#import "TDFSDSettingOptionPickerCell.h"
 #import "UICollectionView+ScreenDebugger.h"
 #import <ReactiveObjC/ReactiveObjC.h>
+#import <Masonry/Masonry.h>
 
 @interface TDFSDOverallSettingController () <TDFSDFullScreenConsoleControllerInheritProtocol,
 UICollectionViewDataSource,
 UICollectionViewDelegate,
 UICollectionViewDelegateFlowLayout,
+UITableViewDataSource,
+UITableViewDelegate,
 SDSettingCollectionCellOptionPickerDelegate>
 
 @property (nonatomic, strong) UICollectionView *settingListView;
 @property (nonatomic, strong) NSArray<TDFSDSettingCollectionViewModel *> *settingItems;
+
 @property (nonatomic, strong) UITableView *optionPickerView;
+@property (nonatomic, strong) UIControl *pickerMaskView;
+@property (nonatomic, strong) NSArray *currentPickerOptions;
+@property (nonatomic, assign) NSUInteger currentPickerIndex;
 
 @end
 
 @implementation TDFSDOverallSettingController
 
+static const CGFloat kSDSettingOptionPickerCellHeight  =  40.0f;
+
 - (void)viewDidLoad {
     [self initializeSettings];
     [self.settingListView registerClass:[TDFSDSettingCollectionCell class] forCellWithReuseIdentifier:NSStringFromClass([TDFSDSettingCollectionCell class])];
     [super viewDidLoad];
+    [self layoutPageSubviews];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -95,13 +106,53 @@ SDSettingCollectionCellOptionPickerDelegate>
     return CGSizeMake(viewModel.cellWidth, viewModel.cellHeight);
 }
 
+#pragma mark - UITableViewDataSource & Delegate
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return self.currentPickerOptions.count ?: 0;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 1;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    TDFSDSettingOptionPickerCell *cell = [TDFSDSettingOptionPickerCell cellWithTableView:tableView indexPath:indexPath];
+    TDFSDSettingCollectionViewModel *item = self.settingItems[self.currentPickerIndex];
+    @weakify(self)
+    [cell bindWithOptionTitle:item.optionalValues[indexPath.section] optionDidPickHandler:^(NSIndexPath *indexPath, NSString *pickValue) {
+        NSLog(@"%@", pickValue);
+        @strongify(self)
+        updateSettingValueWithIndex(pickValue, self.currentPickerIndex);
+        [self popPickerView];
+        [self.settingListView sd_safeReloadDataIfUseCustomLayout];
+    }];
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return kSDSettingOptionPickerCellHeight;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return CGFLOAT_MIN;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 10;
+}
+
 #pragma mark - SDSettingCollectionCellOptionPickerDelegate
 - (void)pickerButtonDidClickWithIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"点击了选择按钮");
+    self.currentPickerIndex = indexPath.row;
+    [self pushPickerViewWithIndexPath:indexPath];
 }
 
 - (void)switchValueDidChangeManually:(BOOL)isOn withIndexPath:(NSIndexPath *)indexPath {
-    updateSettingValueWithIndexPath(@(isOn), indexPath);
+    updateSettingValueWithIndex(@(isOn), indexPath.row);
 }
 
 #pragma mark - getter
@@ -130,7 +181,92 @@ SDSettingCollectionCellOptionPickerDelegate>
     return flowLayout;
 }
 
+- (UITableView *)optionPickerView {
+    if (!_optionPickerView) {
+        _optionPickerView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
+        _optionPickerView.backgroundColor = [UIColor clearColor];
+        _optionPickerView.showsHorizontalScrollIndicator = NO;
+        _optionPickerView.showsVerticalScrollIndicator = NO;
+        _optionPickerView.dataSource = self;
+        _optionPickerView.delegate = self;
+        _optionPickerView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
+    return _optionPickerView;
+}
+
+- (UIControl *)pickerMaskView {
+    if (!_pickerMaskView) {
+        _pickerMaskView = [[UIControl alloc] init];
+        _pickerMaskView.hidden = YES;
+        [_pickerMaskView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0]];
+        @weakify(self)
+        [[_pickerMaskView rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(__kindof UIControl * _Nullable x) {
+            @strongify(self)
+            [self popPickerView];
+        }];
+    }
+    return _pickerMaskView;
+}
+
 #pragma mark - private
+- (void)layoutPageSubviews {
+    [self.view addSubview:self.pickerMaskView];
+    [self.view addSubview:self.optionPickerView];
+    [self.pickerMaskView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    [self.optionPickerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view.mas_right);
+        make.width.equalTo(@100);
+        make.centerY.equalTo(self.view);
+        make.height.equalTo(@0);
+    }];
+}
+
+- (void)pushPickerViewWithIndexPath:(NSIndexPath *)indexPath {
+    self.pickerMaskView.hidden = NO;
+    
+    TDFSDSettingCollectionViewModel *item = self.settingItems[indexPath.row];
+    CGFloat height = item.optionalValues.count * (kSDSettingOptionPickerCellHeight + 10);
+    CGFloat screenHeight = [[UIScreen mainScreen] bounds].size.height;
+    if (height > screenHeight) {
+        [self.optionPickerView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@(screenHeight));
+        }];
+        self.optionPickerView.scrollEnabled = YES;
+    } else {
+        [self.optionPickerView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.height.equalTo(@(height));
+        }];
+        self.optionPickerView.scrollEnabled = NO;
+    }
+    [self.optionPickerView.superview layoutIfNeeded];
+    
+    self.currentPickerOptions = item.optionalValues;
+    
+    [UIView animateWithDuration:0.4 delay:0 usingSpringWithDamping:0.7 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+        [self.pickerMaskView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0.50f]];
+        [self.optionPickerView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.view.mas_right).with.offset(-100);
+        }];
+        [self.optionPickerView.superview layoutIfNeeded];
+    } completion:nil];
+    
+    [self.optionPickerView reloadData];
+}
+
+- (void)popPickerView {
+    [UIView animateWithDuration:0.4 delay:0 usingSpringWithDamping:1 initialSpringVelocity:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+        [self.pickerMaskView setBackgroundColor:[UIColor colorWithWhite:0 alpha:0]];
+        [self.optionPickerView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.view.mas_right).with.offset(0);
+        }];
+        [self.optionPickerView.superview layoutIfNeeded];
+    } completion:^(BOOL finished) {
+        self.pickerMaskView.hidden = YES;
+    }];
+}
+
 static id settingValueForIndexPath(NSIndexPath *indexPath) {
     TDFSDPersistenceSetting *ps = [TDFSDPersistenceSetting sharedInstance];
     switch (indexPath.row) {
@@ -160,9 +296,9 @@ static id settingValueForIndexPath(NSIndexPath *indexPath) {
     return nil;
 }
 
-static void updateSettingValueWithIndexPath(id newValue, NSIndexPath *indexPath) {
+static void updateSettingValueWithIndex(id newValue, NSInteger index) {
     TDFSDPersistenceSetting *ps = [TDFSDPersistenceSetting sharedInstance];
-    switch (indexPath.row) {
+    switch (index) {
         case 0:{
             if ([newValue isEqualToString:@"api record"]) {
                 ps.messageRemindType = SDMessageRemindTypeAPIRecord;
@@ -172,15 +308,15 @@ static void updateSettingValueWithIndexPath(id newValue, NSIndexPath *indexPath)
         } break;
         case 1:{ ps.allowCatchAPIRecordFlag = [newValue boolValue]; } break;
         case 2:{ ps.allowMonitorSystemLogFlag = [newValue boolValue]; } break;
-        case 3:{ ps.limitSizeOfSingleSystemLogMessageData = [newValue integerValue]; } break;
+        case 3:{ ps.limitSizeOfSingleSystemLogMessageData = [(NSString *)newValue integerValue]; } break;
         case 4:{ ps.allowCrashCaptureFlag = [newValue boolValue]; } break;
         case 5:{ ps.needCacheCrashLogToSandBox = [newValue boolValue]; } break;
         case 6:{ ps.allowUILagsMonitoring = [newValue boolValue]; } break;
-        case 7:{ ps.tolerableLagThreshold = [newValue doubleValue]; } break;
+        case 7:{ ps.tolerableLagThreshold = [(NSString *)newValue doubleValue]; } break;
         case 8:{ ps.allowApplicationCPUMonitoring = [newValue boolValue]; } break;
         case 9:{ ps.allowApplicationMemoryMonitoring = [newValue boolValue]; } break;
         case 10:{ ps.allowScreenFPSMonitoring = [newValue boolValue]; } break;
-        case 11:{ ps.fpsWarnningThreshold = [newValue integerValue]; } break;
+        case 11:{ ps.fpsWarnningThreshold = [(NSString *)newValue integerValue]; } break;
         case 12:{ ps.allowWildPointerMonitoring = [newValue boolValue]; } break;
     }
 }

@@ -107,8 +107,9 @@
 - (UISwitch *)settingSwitch {
     if (!_settingSwitch) {
         _settingSwitch = [[UISwitch alloc] init];
-        _settingSwitch.tintColor = [UIColor colorWithRed:85/255.f green:196/255.f blue:245/255.f alpha:1];
-        _settingSwitch.onTintColor = [UIColor colorWithRed:85/255.f green:196/255.f blue:245/255.f alpha:1];
+        _settingSwitch.tintColor = [UIColor colorWithRed:27/255.f green:156/255.f blue:226/255.f alpha:1];
+        _settingSwitch.onTintColor = [UIColor colorWithRed:27/255.f green:156/255.f blue:226/255.f alpha:1];
+        _settingSwitch.thumbTintColor = [UIColor colorWithRed:27/255.f green:156/255.f blue:226/255.f alpha:1];
         [_settingSwitch addTarget:self action:@selector(settingSwitchValueDidChangeManually:) forControlEvents:UIControlEventValueChanged];
     }
     return _settingSwitch;
@@ -119,7 +120,7 @@
         _pickerButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_pickerButton setBackgroundColor:[UIColor clearColor]];
         [_pickerButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
-        _pickerButton.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:13];
+        _pickerButton.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:14];
         [_pickerButton setTitleColor:[UIColor colorWithRed:85/255.f green:196/255.f blue:245/255.f alpha:1] forState:UIControlStateNormal];
         [_pickerButton addTarget:self action:@selector(pickerButtonDidClick:) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -141,7 +142,6 @@
         make.left.equalTo(self.contentView).with.offset(11);
         make.top.equalTo(self.contentView);
         make.height.equalTo(@40);
-        make.right.lessThanOrEqualTo(self.contentView).with.offset(-100);
     }];
     [self.settingDescriptionLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.settingTitleLabel);
@@ -168,7 +168,7 @@
 }
 
 - (void)pickerButtonDidClick:(UIButton *)buttonSender {
-    if ([self.optionDelegate respondsToSelector:@selector(pickerButtonDidClick:)]) {
+    if ([self.optionDelegate respondsToSelector:@selector(pickerButtonDidClickWithIndexPath:)]) {
         [self.optionDelegate pickerButtonDidClickWithIndexPath:self.indexPath];
     }
 }

@@ -2,14 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <array>
-    <dict>
-        <key>title</key>
-        <string>messageRemindType</string>
-        <key>description</key>
-        <string>a setting which decides the type of the remind number. default is api count</string>
-        <key>type</key>
-        <integer>1</integer>
-    </dict>
+	<dict>
+		<key>options</key>
+		<array>
+			<string>api record</string>
+			<string>system log</string>
+		</array>
+		<key>title</key>
+		<string>messageRemindType</string>
+		<key>description</key>
+		<string>a setting which decides the type of the remind number. default is api count</string>
+		<key>type</key>
+		<integer>1</integer>
+	</dict>
 	<dict>
 		<key>title</key>
 		<string>allowCatchAPIRecord</string>
@@ -23,88 +28,127 @@
 		<string>allowMonitorSystemLog</string>
 		<key>description</key>
 		<string>a flag to tell the log viewer whether should monitor system logs</string>
-        <key>type</key>
-        <integer>0</integer>
+		<key>type</key>
+		<integer>0</integer>
 	</dict>
 	<dict>
+		<key>options</key>
+		<array>
+			<string>128</string>
+			<string>256</string>
+			<string>512</string>
+			<string>1024</string>
+			<string>2048</string>
+			<string>5120</string>
+			<string>10240</string>
+		</array>
 		<key>title</key>
 		<string>limitSizeOfSingleSystemLogMessageData</string>
 		<key>description</key>
 		<string>when log viewer receives a system log message data, we create buffer according to given max-size. if over, will cut out the data to given max-size. default is 1024 * 10, just be avaliable for iOS 10.0+</string>
-        <key>type</key>
-        <integer>1</integer>
+		<key>type</key>
+		<integer>1</integer>
 	</dict>
 	<dict>
 		<key>title</key>
 		<string>allowCrashCapture</string>
 		<key>description</key>
 		<string>a flag to tell the crash captor whether should capture crash</string>
-        <key>type</key>
-        <integer>0</integer>
+		<key>type</key>
+		<integer>0</integer>
 	</dict>
 	<dict>
 		<key>title</key>
 		<string>needCacheCrashLogToSandBox</string>
 		<key>description</key>
 		<string>a flag to tell the crash captor whether need cache crash-log to local file, cached file can be look over again in history-list</string>
-        <key>type</key>
-        <integer>0</integer>
+		<key>type</key>
+		<integer>0</integer>
 	</dict>
 	<dict>
 		<key>title</key>
 		<string>allowUILagsMonitoring</string>
 		<key>description</key>
 		<string>a flag to tell the performance monitor whether should monitor lags which may occurred by UI Thread</string>
-        <key>type</key>
-        <integer>0</integer>
+		<key>type</key>
+		<integer>0</integer>
 	</dict>
 	<dict>
+		<key>options</key>
+		<array>
+			<string>0.05</string>
+			<string>0.08</string>
+			<string>0.10</string>
+			<string>0.15</string>
+			<string>0.20</string>
+			<string>0.25</string>
+			<string>0.30</string>
+			<string>0.35</string>
+			<string>0.40</string>
+			<string>0.50</string>
+			<string>0.75</string>
+			<string>1.00</string>
+		</array>
 		<key>title</key>
 		<string>tolerableLagThreshold</string>
 		<key>description</key>
-		<string>when a lag has occurred, it is captured if the transaction's delayed response time, which is dispatched to the main thread, exceeds this threshold. default is `0.2s`</string>
-        <key>type</key>
-        <integer>1</integer>
+		<string>when a lag has occurred, it is captured if the transaction&apos;s delayed response time, which is dispatched to the main thread, exceeds this threshold. default is `0.2s`</string>
+		<key>type</key>
+		<integer>1</integer>
 	</dict>
 	<dict>
 		<key>title</key>
 		<string>allowApplicationCPUMonitoring</string>
 		<key>description</key>
-        <string>a flag to tell the performance monitor whether should monitor application CPU usage</string>
-        <key>type</key>
-        <integer>0</integer>
+		<string>a flag to tell the performance monitor whether should monitor application CPU usage</string>
+		<key>type</key>
+		<integer>0</integer>
 	</dict>
 	<dict>
 		<key>title</key>
 		<string>allowApplicationMemoryMonitoring</string>
 		<key>description</key>
 		<string>a flag to tell the performance monitor whether should monitor application Memory usage</string>
-        <key>type</key>
-        <integer>0</integer>
+		<key>type</key>
+		<integer>0</integer>
 	</dict>
 	<dict>
 		<key>title</key>
 		<string>allowScreenFPSMonitoring</string>
 		<key>description</key>
 		<string>a flag to tell the performance monitor whether should monitor device screen fps</string>
-        <key>type</key>
-        <integer>0</integer>
+		<key>type</key>
+		<integer>0</integer>
 	</dict>
 	<dict>
+		<key>options</key>
+		<array>
+			<string>5</string>
+			<string>10</string>
+			<string>15</string>
+			<string>20</string>
+			<string>25</string>
+			<string>30</string>
+			<string>35</string>
+			<string>40</string>
+			<string>45</string>
+			<string>50</string>
+			<string>55</string>
+		</array>
 		<key>title</key>
 		<string>fpsWarnningThreshold</string>
 		<key>description</key>
-		<string>when fps is monitoring, if fps value exceeds this threshold, fps component will born a warnning for user. default is `40`</string>
-        <key>type</key>
-        <integer>1</integer>
+		<string>when fps is monitoring, if fps value exceeds this threshold, fps component will born a warnning for user. default is `30`</string>
+		<key>type</key>
+		<integer>1</integer>
 	</dict>
 	<dict>
 		<key>title</key>
 		<string>allowWildPointerMonitoring</string>
 		<key>description</key>
 		<string>a flag to tell the performance monitor whether should monitor the error caused by wild pointer. default is NO. In addition, when restart app, the value will restored to `NO` automatically</string>
-        <key>type</key>
-        <integer>0</integer>
+		<key>type</key>
+		<integer>0</integer>
 	</dict>
 </array>
 </plist>

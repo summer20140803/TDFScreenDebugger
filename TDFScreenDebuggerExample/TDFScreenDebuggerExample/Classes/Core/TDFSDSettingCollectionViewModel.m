@@ -26,6 +26,7 @@
         _settingTitle = settingDictionary[@"title"];
         _settingDescription = settingDictionary[@"description"];
         _type = [settingDictionary[@"type"] unsignedIntegerValue];
+        _optionalValues = settingDictionary[@"options"];
         _cellHeight = [self preCellHeight];
     }
     return self;

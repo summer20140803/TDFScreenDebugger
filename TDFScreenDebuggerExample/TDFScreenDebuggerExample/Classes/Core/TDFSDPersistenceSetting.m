@@ -56,7 +56,7 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring    
         _allowApplicationCPUMonitoring = YES;
         _allowApplicationMemoryMonitoring = YES;
         _allowScreenFPSMonitoring = YES;
-        _fpsWarnningThreshold = 50.0f;
+        _fpsWarnningThreshold = 30;
         _allowWildPointerMonitoring = NO;
     }
     return self;
@@ -113,6 +113,11 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring    
     model6.functionDescription = @"“ This is a tool which can help developer to find out retain-cycle nodes in project. ”";
     model6.quickLaunchDescrition = @"< not specified >";
     [functions addObject:model6];
+    
+    TDFSDFunctionModel *model7 = [[TDFSDFunctionModel alloc] init];
+    model7.index = 6;
+    model7.functionName = @"调试器使用文档";
+    model7.functionIcon = @"";
 
     return functions;
 }
@@ -124,9 +129,6 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring    
     }
     return _settingList;
 }
-
-#pragma mark - Function IO
-
 
 #pragma mark - NSCoding
 - (instancetype)initWithCoder:(NSCoder *)aDecoder {

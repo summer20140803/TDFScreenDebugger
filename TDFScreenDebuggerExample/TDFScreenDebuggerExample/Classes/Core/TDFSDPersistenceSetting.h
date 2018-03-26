@@ -82,7 +82,7 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
 @property (nonatomic, assign) BOOL allowScreenFPSMonitoring;
 /**
  when fps is monitoring, if fps value exceeds this threshold,
- fps component will born a warnning for user. default is `40`
+ fps component will born a warnning for user. default is `30`
  */
 @property (nonatomic, assign) NSUInteger fpsWarnningThreshold;
 /**
