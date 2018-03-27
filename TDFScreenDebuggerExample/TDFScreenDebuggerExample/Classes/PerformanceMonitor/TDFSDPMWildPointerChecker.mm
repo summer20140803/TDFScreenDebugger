@@ -176,19 +176,19 @@ typedef void (*SDDeallocImpPointer)(id target);
 }
 
 - (void)addZombieProxyValueToPool:(NSValue *)objValue {
-    @synchronized(self) {
+//    @synchronized(self) {
         if (self.undeallocTargetPool.count >= self.maxZombieProxyCount) {
             NSValue *firstProxyValue = self.undeallocTargetPool.firstObject;
             __unsafe_unretained id target = nil;
             [firstProxyValue getValue:&target];
             Class originClass = ((TDFSDPMZombieProxy *)target).originClass;
             object_setClass(target, originClass);
-            
+
             [self.undeallocTargetPool removeObjectAtIndex:0];
             [self invokeOriginDealloc:target];
         }
         [self.undeallocTargetPool addObject:objValue];
-    }
+//    }
 }
 
 @end
