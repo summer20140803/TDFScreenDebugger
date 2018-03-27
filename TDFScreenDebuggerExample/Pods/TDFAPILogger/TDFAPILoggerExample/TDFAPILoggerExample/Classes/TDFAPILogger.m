@@ -190,7 +190,7 @@ static void * TDFAPILoggerTakeOffDate = &TDFAPILoggerTakeOffDate;
 - (void)apiDidTakeOff:(NSNotification *)notification {
     NSURLRequest *request = TDFAPILoggerRequestFromAFNNotification(notification);
     
-    if (!request && !(self.requestLoggerElements & 0x00) && (!self.loggerFilter || self.loggerFilter(request))) return;
+    if (!request || !(self.requestLoggerElements | 0x00) || (self.loggerFilter && !self.loggerFilter(request))) return;
     
     // In addition，check whiteList for shielding some needless api log..
     if (self.serverModuleWhiteList && self.serverModuleWhiteList.count) {
@@ -351,7 +351,7 @@ nextStep_Req:;
     NSURLResponse *response = TDFAPILoggerResponseFromAFNNotification(notification);
     NSError *error = TDFAPILoggerErrorFromAFNNotification(notification);
     
-    if (!request && !response && !(self.responseLoggerElements & 0x00) && (!self.loggerFilter || self.loggerFilter(request))) return;
+    if (!request || !(self.requestLoggerElements | 0x00) || (self.loggerFilter && !self.loggerFilter(request))) return;
     
     // In addition，check whiteList for shielding some needless api log..
     if (self.serverModuleWhiteList && self.serverModuleWhiteList.count) {
@@ -500,3 +500,4 @@ nextStep_Resp:;
 }
 
 @end
+

@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreGraphics/CoreGraphics.h>
 #import "TDFSDFunctionIOControlProtocol.h"
 #import "TDFScreenDebuggerDefine.h"
 @class TDFSDPMUILagComponentModel;

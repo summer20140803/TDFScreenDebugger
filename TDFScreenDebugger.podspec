@@ -4,8 +4,8 @@ Pod::Spec.new do |s|
   s.summary      = "Debug环境下的真机调试工具"
 
   s.description  = <<-DESC
-  provide developer convenience when compose some api request code..
-                   DESC
+  协助真机调试，加快研发人员的工作效率
+  DESC
 
   s.homepage     = "git@git.2dfire-inc.com:ios/TDFScreenDebugger.git"
 
@@ -16,7 +16,6 @@ Pod::Spec.new do |s|
 
 s.ios.deployment_target = '8.0'
 s.source_files = 'TDFScreenDebuggerExample/TDFScreenDebuggerExample/Classes/**/*.{h,m,mm}'
-# s.resources =  "TDFScreenDebuggerExample/TDFScreenDebuggerExample/Resource/**/*.{png,jpg,jpeg,xcassets}"
 s.resource_bundle = {
     'TDFScreenDebuggerBundle' => ['TDFScreenDebuggerExample/TDFScreenDebuggerExample/Resource/**/*.{png,jpg,jpeg,xcassets,plist}']
 }

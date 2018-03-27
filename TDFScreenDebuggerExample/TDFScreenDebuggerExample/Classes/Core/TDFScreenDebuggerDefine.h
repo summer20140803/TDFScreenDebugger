@@ -101,7 +101,7 @@ typedef NS_ENUM(NSUInteger, SDAllReadNotificationContentType) {
 ({   \
     NSString *bundlePath = [[NSBundle bundleForClass:[self class]].resourcePath   \
     stringByAppendingPathComponent:@"TDFScreenDebuggerBundle.bundle"];   \
-    NSBundle *resource_bundle = [NSBundle bundleWithPath:bundlePath];   \
+    NSBundle *resource_bundle = [NSBundle bundleWithPath:bundlePath] ?: [NSBundle mainBundle];   \
     resource_bundle;  \
 })
 #define SD_BUNDLE_IMAGE(IMAGE_NAME)  \

@@ -9,6 +9,7 @@
 #import "TDFSDLVLogModel.h"
 #import "TDFSDPersistenceSetting.h"
 #import "TDFScreenDebuggerDefine.h"
+#import <UIKit/UIKit.h>
 #import <asl.h>
 #import <notify.h>
 #import <notify_keys.h>

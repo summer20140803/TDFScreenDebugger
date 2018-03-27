@@ -145,6 +145,13 @@ static const CGFloat kSDSettingOptionPickerCellHeight  =  40.0f;
     return 10;
 }
 
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    return [[UIView alloc] init];
+}
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    return [[UIView alloc] init];
+}
+
 #pragma mark - SDSettingCollectionCellOptionPickerDelegate
 - (void)pickerButtonDidClickWithIndexPath:(NSIndexPath *)indexPath {
     self.currentPickerIndex = indexPath.row;
@@ -286,7 +293,7 @@ static id settingValueForIndexPath(NSIndexPath *indexPath) {
         case 4:{ return @(ps.allowCrashCaptureFlag); } break;
         case 5:{ return @(ps.needCacheCrashLogToSandBox); } break;
         case 6:{ return @(ps.allowUILagsMonitoring); } break;
-        case 7:{ return [NSString stringWithFormat:@"%.1f", ps.tolerableLagThreshold]; } break;
+        case 7:{ return [NSString stringWithFormat:@"%.2f", ps.tolerableLagThreshold]; } break;
         case 8:{ return @(ps.allowApplicationCPUMonitoring); } break;
         case 9:{ return @(ps.allowApplicationMemoryMonitoring); } break;
         case 10:{ return @(ps.allowScreenFPSMonitoring); } break;

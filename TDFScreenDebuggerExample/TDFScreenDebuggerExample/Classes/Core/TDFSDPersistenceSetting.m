@@ -116,9 +116,12 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring    
     
     TDFSDFunctionModel *model7 = [[TDFSDFunctionModel alloc] init];
     model7.index = 6;
-    model7.functionName = @"调试器使用文档";
-    model7.functionIcon = @"";
-
+    model7.functionName = @"关于使用";
+    model7.functionIcon = @"icon_screenDebugger_help";
+    model7.functionDescription = @"一些关于调试器使用的基本操作和数据选项说明";
+    model7.quickLaunchDescrition = @"< no quick launch available >";
+    [functions addObject:model7];
+    
     return functions;
 }
 
@@ -145,7 +148,8 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring    
         _allowApplicationMemoryMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowApplicationMemoryMonitoring] boolValue];
         _allowScreenFPSMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowScreenFPSMonitoring] boolValue];
         _fpsWarnningThreshold = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyFpsWarnningThreshold] unsignedIntegerValue];
-        _allowWildPointerMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring] boolValue];
+//        _allowWildPointerMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring] boolValue];
+        _allowWildPointerMonitoring = NO;
     }
     return self;
 }
@@ -163,7 +167,7 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring    
     [aCoder encodeObject:@(_allowApplicationMemoryMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowApplicationMemoryMonitoring];
     [aCoder encodeObject:@(_allowScreenFPSMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowScreenFPSMonitoring];
     [aCoder encodeObject:@(_fpsWarnningThreshold) forKey:kSDOverallSettingPersistenceKeyFpsWarnningThreshold];
-    [aCoder encodeObject:@(_allowWildPointerMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring];
+//    [aCoder encodeObject:@(_allowWildPointerMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring];
 }
 
 @end

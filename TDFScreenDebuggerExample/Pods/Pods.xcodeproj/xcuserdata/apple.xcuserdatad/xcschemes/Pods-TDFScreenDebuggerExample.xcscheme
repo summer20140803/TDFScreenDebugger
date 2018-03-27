@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '627B8DA50DE1157E6D60A75ACD0D2464'
+               BlueprintIdentifier = 'DDE38708F0279588471C38B9A773D751'
                BlueprintName = 'Pods-TDFScreenDebuggerExample'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libPods-TDFScreenDebuggerExample.a'>

@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '9925C83BB32AE299BFE93784EE36F28F'
+               BlueprintIdentifier = '3201742CE3760FF452B5D9AFB376CE7E'
                BlueprintName = 'TDFAPILogger'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libTDFAPILogger.a'>

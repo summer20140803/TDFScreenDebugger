@@ -8,6 +8,7 @@ target 'TDFScreenDebuggerExample' do
   pod 'TDFAPILogger'
   pod 'Masonry'
   pod 'ReactiveObjC'
+  pod 'ICTextView'
 
   # Pods for TDFScreenDebuggerExample
 
