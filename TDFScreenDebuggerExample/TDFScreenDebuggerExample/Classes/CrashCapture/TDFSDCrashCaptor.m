@@ -62,6 +62,7 @@ static void ocExceptionHandler(NSException *e);
 
 @implementation UIViewController (SDCrashCaptorAdditions)
 
+#if DEBUG
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -70,6 +71,7 @@ static void ocExceptionHandler(NSException *e);
         sd_cc_swizzleMethod([UIViewController class], @selector(initWithNibName:bundle:), @selector(sd_cc_initWithNibName:bundle:));
     });
 }
+#endif
 
 - (instancetype)sd_cc_init {
     [self sd_cc_injectCrashCaptorForViewControllerLifeCycle];
