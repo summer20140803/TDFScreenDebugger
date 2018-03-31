@@ -41,8 +41,8 @@ static void ocExceptionHandler(NSException *e);
 
 @interface TDFSDCCKVORemoveHelper : NSObject
 
-@property (nonatomic, weak) id observeObj;
-@property (nonatomic, weak) NSString *keyPath;
+@property (nonatomic, unsafe_unretained) id observeObj;
+@property (nonatomic, copy) NSString *keyPath;
 
 @end
 
@@ -94,7 +94,7 @@ static void ocExceptionHandler(NSException *e);
     
     TDFSDCCKVORemoveHelper *helper = [[TDFSDCCKVORemoveHelper alloc] init];
     helper.observeObj = self;
-    helper.keyPath = identifier.copy;
+    helper.keyPath = identifier;
     
     objc_setAssociatedObject(self, _cmd, helper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
