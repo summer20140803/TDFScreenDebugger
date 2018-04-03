@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "TDFScreenDebugger"
-  s.version      = "0.0.3"
+  s.version      = "0.0.4"
   s.summary      = "Debug环境下的真机调试工具"
 
   s.description  = <<-DESC
