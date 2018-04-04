@@ -10,18 +10,22 @@
 
 @interface ViewController ()
 
+@property (nonatomic, unsafe_unretained) id obj;
+
 @end
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
     [self.view setBackgroundColor:[UIColor whiteColor]];
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    NSLog(@"触摸keyWindow的子view");
+    NSObject *obj = [[NSObject alloc] init];
+    self.obj = obj;
+    obj = nil;
+    NSLog(@"%@", self.obj);
 }
 
 @end

@@ -80,11 +80,11 @@ UICollectionViewDelegateFlowLayout>
         TDFSDPMExtraToolModel *tool = self.toolModels[indexPath.row];
         if (isOn) {
             [self presentLoadingHUDWithText:@"apply to application..." syncTransaction:^NSString *{
-//                [tool.realizer thaw];
+                [tool.realizer thaw];
                 return @"success";
             }];
         } else {
-//            [tool.realizer freeze];
+            [tool.realizer freeze];
         }
         tool.isOn = isOn;
         [TDFSDPersistenceSetting sharedInstance].allowWildPointerMonitoring = isOn;
@@ -96,7 +96,7 @@ UICollectionViewDelegateFlowLayout>
 
 #pragma mark - UICollectionViewDelegateFlowLayout
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    return CGSizeMake([UIScreen mainScreen].bounds.size.width - SDFullScreenContentViewEdgeMargin * 2 - 10, 80);
+    return CGSizeMake([UIScreen mainScreen].bounds.size.width - SDFullScreenContentViewEdgeMargin * 2 - 10 - 1, 80);
 }
 
 #pragma mark - getter

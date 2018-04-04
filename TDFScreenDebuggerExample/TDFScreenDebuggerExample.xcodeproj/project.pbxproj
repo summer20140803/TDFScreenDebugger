@@ -60,8 +60,9 @@
 		1848907F2068E6E600D2E5D9 /* TDFSDPerformanceMonitorToolController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1848903F2068E6E600D2E5D9 /* TDFSDPerformanceMonitorToolController.m */; };
 		184890802068E6E600D2E5D9 /* TDFSDPMFloatBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 184890412068E6E600D2E5D9 /* TDFSDPMFloatBrowser.m */; };
 		184890812068E6E600D2E5D9 /* TDFSDPMUILagCollectionViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 184890432068E6E600D2E5D9 /* TDFSDPMUILagCollectionViewModel.m */; };
-		184890822068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.mm in Sources */ = {isa = PBXBuildFile; fileRef = 184890482068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		184890822068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.m in Sources */ = {isa = PBXBuildFile; fileRef = 184890482068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.m */; };
 		184890832068E6E600D2E5D9 /* TDFSDPMToolCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 1848904C2068E6E600D2E5D9 /* TDFSDPMToolCollectionCell.m */; };
+		189DFD842074CD6100AB5ACF /* TDFSDPMZombieProxy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 189DFD832074CD6100AB5ACF /* TDFSDPMZombieProxy.mm */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		18E4B5E02068F4EC005D6EAA /* TDFSDOverallSettingConfiguration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18E4B5DE2068F4EC005D6EAA /* TDFSDOverallSettingConfiguration.plist */; };
 		18E4B5E12068F4EC005D6EAA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18E4B5DF2068F4EC005D6EAA /* Assets.xcassets */; };
 		18E4B5E42068FA14005D6EAA /* TDFSDDeveloperGuideController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18E4B5E32068FA14005D6EAA /* TDFSDDeveloperGuideController.m */; };
@@ -196,12 +197,14 @@
 		184890452068E6E600D2E5D9 /* TDFSDPMExtraToolModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFSDPMExtraToolModel.h; sourceTree = "<group>"; };
 		184890462068E6E600D2E5D9 /* TDFSDPMUILagCollectionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFSDPMUILagCollectionCell.h; sourceTree = "<group>"; };
 		184890472068E6E600D2E5D9 /* TDFSDPMUILagComponentModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFSDPMUILagComponentModel.h; sourceTree = "<group>"; };
-		184890482068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TDFSDPMWildPointerChecker.mm; sourceTree = "<group>"; };
+		184890482068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDFSDPMWildPointerChecker.m; sourceTree = "<group>"; };
 		184890492068E6E600D2E5D9 /* TDFSDPerformanceMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFSDPerformanceMonitor.h; sourceTree = "<group>"; };
 		1848904A2068E6E600D2E5D9 /* TDFSDPMFloatBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFSDPMFloatBrowser.h; sourceTree = "<group>"; };
 		1848904B2068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFSDPMWildPointerChecker.h; sourceTree = "<group>"; };
 		1848904C2068E6E600D2E5D9 /* TDFSDPMToolCollectionCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDFSDPMToolCollectionCell.m; sourceTree = "<group>"; };
 		1848904D2068E6E600D2E5D9 /* TDFSDPerformanceMonitorToolController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFSDPerformanceMonitorToolController.h; sourceTree = "<group>"; };
+		189DFD822074CD6100AB5ACF /* TDFSDPMZombieProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDFSDPMZombieProxy.h; sourceTree = "<group>"; };
+		189DFD832074CD6100AB5ACF /* TDFSDPMZombieProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TDFSDPMZombieProxy.mm; sourceTree = "<group>"; };
 		18E4B5DE2068F4EC005D6EAA /* TDFSDOverallSettingConfiguration.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = TDFSDOverallSettingConfiguration.plist; sourceTree = "<group>"; };
 		18E4B5DF2068F4EC005D6EAA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		18E4B5E22068FA14005D6EAA /* TDFSDDeveloperGuideController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDFSDDeveloperGuideController.h; sourceTree = "<group>"; };
@@ -418,12 +421,14 @@
 				184890452068E6E600D2E5D9 /* TDFSDPMExtraToolModel.h */,
 				184890462068E6E600D2E5D9 /* TDFSDPMUILagCollectionCell.h */,
 				184890472068E6E600D2E5D9 /* TDFSDPMUILagComponentModel.h */,
-				184890482068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.mm */,
+				184890482068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.m */,
 				184890492068E6E600D2E5D9 /* TDFSDPerformanceMonitor.h */,
 				1848904A2068E6E600D2E5D9 /* TDFSDPMFloatBrowser.h */,
 				1848904B2068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.h */,
 				1848904C2068E6E600D2E5D9 /* TDFSDPMToolCollectionCell.m */,
 				1848904D2068E6E600D2E5D9 /* TDFSDPerformanceMonitorToolController.h */,
+				189DFD822074CD6100AB5ACF /* TDFSDPMZombieProxy.h */,
+				189DFD832074CD6100AB5ACF /* TDFSDPMZombieProxy.mm */,
 			);
 			path = PerformanceMonitor;
 			sourceTree = "<group>";
@@ -737,7 +742,7 @@
 				18FE4DA11F668D2A00ECAA1F /* ViewController.m in Sources */,
 				1848905F2068E6E600D2E5D9 /* TDFSDPersistenceSetting.m in Sources */,
 				184890702068E6E600D2E5D9 /* TDFSDLogViewController.m in Sources */,
-				184890822068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.mm in Sources */,
+				184890822068E6E600D2E5D9 /* TDFSDPMWildPointerChecker.m in Sources */,
 				1848906D2068E6E600D2E5D9 /* TDFSDOverallSettingController.m in Sources */,
 				1848906E2068E6E600D2E5D9 /* TDFSDLogViewer.m in Sources */,
 				1848907F2068E6E600D2E5D9 /* TDFSDPerformanceMonitorToolController.m in Sources */,
@@ -789,6 +794,7 @@
 				184890672068E6E600D2E5D9 /* TDFSDSettingOptionPickerCell.m in Sources */,
 				184890832068E6E600D2E5D9 /* TDFSDPMToolCollectionCell.m in Sources */,
 				184890622068E6E600D2E5D9 /* TDFSDTransitionAnimator.m in Sources */,
+				189DFD842074CD6100AB5ACF /* TDFSDPMZombieProxy.mm in Sources */,
 				1848906F2068E6E600D2E5D9 /* TDFSDLVLogModel.m in Sources */,
 				184890782068E6E600D2E5D9 /* UIView+ScreenDebugger.m in Sources */,
 			);
