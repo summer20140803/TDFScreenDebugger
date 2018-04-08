@@ -10,8 +10,6 @@
 
 @interface TDFSDPMWildPointerChecker : NSObject <TDFSDFunctionIOControlProtocol>
 
-@property (nonatomic, assign) size_t maxZombiePoolCapacity;
-
 + (instancetype)sharedInstance;
 - (void)killZombieProxiesInPool;
 

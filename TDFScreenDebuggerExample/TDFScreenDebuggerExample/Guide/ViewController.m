@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "TDFSDPMWildPointerChecker.h"
 
 @interface ViewController ()
 
@@ -25,7 +26,15 @@
     NSObject *obj = [[NSObject alloc] init];
     self.obj = obj;
     obj = nil;
-    NSLog(@"%@", self.obj);
+}
+
+- (IBAction)testAction:(id)sender {
+    [[TDFSDPMWildPointerChecker sharedInstance] log];
+}
+
+- (IBAction)testAction2:(id)sender {
+//    NSLog(@"%@", self.obj);
+    [[TDFSDPMWildPointerChecker sharedInstance] killZombieProxiesInPool];
 }
 
 @end

@@ -7,6 +7,8 @@
 
 #import "TDFSDPMWildPointerChecker.h"
 #import "TDFSDPMZombieProxy.h"
+#import "TDFSDPersistenceSetting.h"
+#import <UIKit/UIKit.h>
 #import <objc/runtime.h>
 #import <objc/message.h>
 #import <malloc/malloc.h>
@@ -16,8 +18,9 @@
 
 @property (nonatomic, strong) NSArray<Class> *rootSwizzledClasses;
 @property (nonatomic, strong) NSDictionary<NSString *, NSValue *> *rootClassesOriginImps;
-@property (nonatomic, strong) NSArray<NSString *> *allCustomizedClassNames;
 @property (nonatomic, strong) NSMutableArray<NSValue *> *undeallocTargetPool;
+@property (nonatomic, assign) size_t currentPoolSize;
+@property (nonatomic,   copy) void (^newDeallocBlock)(__unsafe_unretained id target);
 
 @end
 
@@ -36,7 +39,6 @@
     self = [super init];
     if (self) {
         self.rootSwizzledClasses = @[[NSObject class], [NSProxy class]];
-        self.maxZombiePoolCapacity = NSIntegerMax;
         self.undeallocTargetPool = [NSMutableArray array];
     }
     return self;
@@ -62,41 +64,37 @@
         Class originClass = ((TDFSDPMZombieProxy *)target).originClass;
         object_setClass(target, originClass);
         
-        [self.undeallocTargetPool removeObject:objValue];
         [self invokeOriginDealloc:target];
     }
+    [self.undeallocTargetPool removeAllObjects];
 }
 
 #pragma mark - private
 - (void)injectZombieProxy {
-    if (self.allCustomizedClassNames == nil) {
-        [self obtainAllCustomizedClassNames];
-    }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(killZombieProxiesInPool) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
     
     SEL deallocSelector = sel_registerName("dealloc");
     
-    __weak typeof(TDFSDPMWildPointerChecker) *checker = [TDFSDPMWildPointerChecker sharedInstance];
-    
-    id newDealloc = ^void(__unsafe_unretained id target) {
-        Class currentClass = [target class];
-        NSString *className = NSStringFromClass(currentClass);
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __weak typeof(TDFSDPMWildPointerChecker) *checker = [TDFSDPMWildPointerChecker sharedInstance];
+        self.newDeallocBlock = ^void(__unsafe_unretained id target) {
+            @synchronized(checker) {
+                Class currentClass = [target class];
 
-//        if (![className hasPrefix:@"RAC"]) {
-////            NSValue *objValue = [NSValue valueWithBytes:&target objCType:@encode(typeof(target))];
-//            object_setClass(target, [TDFSDPMZombieProxy class]);
-//            ((TDFSDPMZombieProxy *)target).originClass = currentClass;
-//
-//            // we use the establishment of a no-dealloc target pool to manage these targets' lifecycle
-////            [checker addZombieProxyValueToPool:objValue];
-//        } else {
-//            [checker invokeOriginDealloc:target];
-//        }
-        
-        object_setClass(target, [TDFSDPMZombieProxy class]);
-        ((TDFSDPMZombieProxy *)target).originClass = currentClass;
-    };
+                object_setClass(target, [TDFSDPMZombieProxy class]);
+                ((TDFSDPMZombieProxy *)target).originClass = currentClass;
+             
+                // we use the establishment of a no-dealloc target pool to manage these targets' lifecycle
+//                NSValue *objValue = [NSValue valueWithBytes:&target objCType:@encode(typeof(target))];
+                NSValue *objValue = [NSValue valueWithNonretainedObject:target];
+                [checker addZombieProxyValueToPool:objValue];
+            }
+        };
+    });
     
-    IMP newDeallocIMP = imp_implementationWithBlock(newDealloc);
+    IMP newDeallocIMP = imp_implementationWithBlock(self.newDeallocBlock);
     
     NSMutableDictionary *deallocImpMaps = [NSMutableDictionary dictionary];
     for (Class rootClass in self.rootSwizzledClasses) {
@@ -131,23 +129,8 @@
     }];
     
     self.rootClassesOriginImps = nil;
-}
-
-- (void)obtainAllCustomizedClassNames {
-    unsigned int registerClassCount;
-    Class *classes = objc_copyClassList(&registerClassCount);
     
-    NSMutableArray *vaildClassNames = [NSMutableArray array];
-    
-    for (int i = 0; i < registerClassCount; i++) {
-        Class aClass = classes[i];
-        NSBundle *bundle = [NSBundle bundleForClass:aClass];
-        if ([bundle isEqual:[NSBundle mainBundle]]) {
-            [vaildClassNames addObject:NSStringFromClass(aClass)];
-        }
-    }
-    free(classes);
-    self.allCustomizedClassNames = vaildClassNames;
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
 }
 
 - (void)invokeOriginDealloc:(__unsafe_unretained id)target {
@@ -155,9 +138,8 @@
     Class rootCls = currentCls;
     SEL deallocSelector = sel_registerName("dealloc");
     
-    while (rootCls != [NSObject class] && rootCls != [NSProxy class]) {
-        rootCls = class_getSuperclass(rootCls);
-    }
+    rootCls = ([rootCls isSubclassOfClass:[NSProxy class]] ? [NSProxy class] : [NSObject class]);
+    
     NSString *clsName = NSStringFromClass(rootCls);
     void (*originalDeallocIMP)(__unsafe_unretained id, SEL) = NULL;
     [[self.rootClassesOriginImps objectForKey:clsName] getValue:&originalDeallocIMP];
@@ -168,11 +150,12 @@
 }
 
 - (void)addZombieProxyValueToPool:(NSValue *)proxyValue {
-    size_t poolSize = sizeof((__bridge const void *)(self.undeallocTargetPool));
-    NSLog(@"缓存池占用空间: %ld", poolSize);
-    if (poolSize >= self.maxZombiePoolCapacity) {
+//    self.currentPoolSize >= [TDFSDPersistenceSetting sharedInstance].maxZombiePoolCapacity
+    if (self.currentPoolSize >= NSIntegerMax) {
         [self killZombieProxiesInPool];
     }
+    size_t proxySize = sizeof((__bridge const void *)(proxyValue));
+    self.currentPoolSize += proxySize;
     [self.undeallocTargetPool addObject:proxyValue];
 }
 

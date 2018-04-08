@@ -67,8 +67,9 @@ static void ocExceptionHandler(NSException *e);
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sd_cc_swizzleMethod([UIViewController class], @selector(init), @selector(sd_cc_init));
-        sd_cc_swizzleMethod([UIViewController class], @selector(initWithCoder:), @selector(sd_cc_initWithCoder:));
-        sd_cc_swizzleMethod([UIViewController class], @selector(initWithNibName:bundle:), @selector(sd_cc_initWithNibName:bundle:));
+        // fix some unknown anomalies in iPhoneX.. 
+//        sd_cc_swizzleMethod([UIViewController class], @selector(initWithCoder:), @selector(sd_cc_initWithCoder:));
+//        sd_cc_swizzleMethod([UIViewController class], @selector(initWithNibName:bundle:), @selector(sd_cc_initWithNibName:bundle:));
     });
 }
 #endif

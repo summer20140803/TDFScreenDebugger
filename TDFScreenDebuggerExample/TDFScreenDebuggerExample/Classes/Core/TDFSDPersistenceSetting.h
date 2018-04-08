@@ -43,7 +43,7 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
 @property (nonatomic, assign) BOOL allowMonitorSystemLogFlag;
 /**
  when log viewer receives a system log message data, we create buffer according to given max-size,
- if over, will cut out the data to given max-size. default is 1024 * 10, just be avaliable for iOS 10.0+
+ if over, will cut out the data to given max-size. default is 1MB, just be avaliable for iOS 10.0+
  */
 @property (nonatomic, assign) ssize_t limitSizeOfSingleSystemLogMessageData  NS_CLASS_AVAILABLE_IOS(10_0);
 
@@ -90,5 +90,9 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
  In addition, when restart app, the value will restored to 'NO' automatically
  */
 @property (nonatomic, assign) BOOL allowWildPointerMonitoring;
+/**
+ we use the establishment of a no-dealloc target pool to manage, we will kill all targets in pool when the pool size exceeds this threshold, default is 10MB
+ */
+@property (nonatomic, assign) size_t maxZombiePoolCapacity;
 
 @end

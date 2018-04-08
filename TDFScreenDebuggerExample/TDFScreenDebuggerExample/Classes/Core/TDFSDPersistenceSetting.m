@@ -25,6 +25,8 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowApplicationMemoryMonitori
 static  NSString * kSDOverallSettingPersistenceKeyAllowScreenFPSMonitoring               =  @"allowScreenFPSMonitoring";
 static  NSString * kSDOverallSettingPersistenceKeyFpsWarnningThreshold                   =  @"fpsWarnningThreshold";
 static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring             =  @"allowWildPointerMonitoring";
+static  NSString * kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity                  =  @"maxZombiePoolCapacity";
+
 
 @synthesize functionList = _functionList;
 @synthesize settingList = _settingList;
@@ -50,7 +52,7 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring    
         _allowCrashCaptureFlag = YES;
         _needCacheCrashLogToSandBox = YES;
         _allowMonitorSystemLogFlag = YES;
-        _limitSizeOfSingleSystemLogMessageData = 1024 * 10;
+        _limitSizeOfSingleSystemLogMessageData = 1024 * 8;
         _allowUILagsMonitoring = YES;
         _tolerableLagThreshold = 0.20f;
         _allowApplicationCPUMonitoring = YES;
@@ -58,6 +60,7 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring    
         _allowScreenFPSMonitoring = YES;
         _fpsWarnningThreshold = 30;
         _allowWildPointerMonitoring = NO;
+        _maxZombiePoolCapacity = 8 * 1024 * 10;
     }
     return self;
 }
@@ -150,6 +153,7 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring    
         _fpsWarnningThreshold = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyFpsWarnningThreshold] unsignedIntegerValue];
 //        _allowWildPointerMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring] boolValue];
         _allowWildPointerMonitoring = NO;
+        _maxZombiePoolCapacity = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity] unsignedLongValue];
     }
     return self;
 }
@@ -168,6 +172,7 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring    
     [aCoder encodeObject:@(_allowScreenFPSMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowScreenFPSMonitoring];
     [aCoder encodeObject:@(_fpsWarnningThreshold) forKey:kSDOverallSettingPersistenceKeyFpsWarnningThreshold];
 //    [aCoder encodeObject:@(_allowWildPointerMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring];
+    [aCoder encodeObject:@(_maxZombiePoolCapacity) forKey:kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity];
 }
 
 @end
