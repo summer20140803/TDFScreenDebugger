@@ -1,0 +1,39 @@
+{
+  "name": "TDFScreenDebugger",
+  "version": "0.0.5",
+  "summary": "Debug环境下的真机调试工具",
+  "description": "协助真机调试，加快研发人员的工作效率",
+  "homepage": "git@git.2dfire-inc.com:ios/TDFScreenDebugger.git",
+  "license": "LICENSE",
+  "authors": {
+    "oufen": "oufen@2dfire.com"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source": {
+    "git": "git@git.2dfire-inc.com:ios/TDFScreenDebugger.git",
+    "tag": "0.0.5"
+  },
+  "source_files": "Classes/**/*.{h,m,mm}",
+  "resource_bundles": {
+    "TDFScreenDebuggerBundle": [
+      "Resource/**/*.{png,jpg,jpeg,xcassets,plist}"
+    ]
+  },
+  "dependencies": {
+    "TDFAPILogger": [
+
+    ],
+    "Masonry": [
+
+    ],
+    "ReactiveObjC": [
+
+    ],
+    "ICTextView": [
+
+    ]
+  },
+  "requires_arc": "Classes/**/*.{h,m}"
+}

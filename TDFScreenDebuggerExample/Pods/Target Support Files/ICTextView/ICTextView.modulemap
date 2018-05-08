@@ -1,0 +1,6 @@
+framework module ICTextView {
+  umbrella header "ICTextView-umbrella.h"
+
+  export *
+  module * { export * }
+}

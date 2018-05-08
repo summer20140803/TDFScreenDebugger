@@ -1,0 +1,6 @@
+framework module Pods_TDFScreenDebuggerExampleTests {
+  umbrella header "Pods-TDFScreenDebuggerExampleTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

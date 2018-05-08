@@ -1,38 +1,45 @@
 PODS:
-  - AFNetworking (3.1.0):
-    - AFNetworking/NSURLSession (= 3.1.0)
-    - AFNetworking/Reachability (= 3.1.0)
-    - AFNetworking/Security (= 3.1.0)
-    - AFNetworking/Serialization (= 3.1.0)
-    - AFNetworking/UIKit (= 3.1.0)
-  - AFNetworking/NSURLSession (3.1.0):
+  - AFNetworking (3.1.0.1):
+    - AFNetworking/NSURLSession (= 3.1.0.1)
+    - AFNetworking/Reachability (= 3.1.0.1)
+    - AFNetworking/Security (= 3.1.0.1)
+    - AFNetworking/Serialization (= 3.1.0.1)
+    - AFNetworking/UIKit (= 3.1.0.1)
+  - AFNetworking/NSURLSession (3.1.0.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (3.1.0)
-  - AFNetworking/Security (3.1.0)
-  - AFNetworking/Serialization (3.1.0)
-  - AFNetworking/UIKit (3.1.0):
+  - AFNetworking/Reachability (3.1.0.1)
+  - AFNetworking/Security (3.1.0.1)
+  - AFNetworking/Serialization (3.1.0.1)
+  - AFNetworking/UIKit (3.1.0.1):
     - AFNetworking/NSURLSession
   - ICTextView (2.0.1)
-  - Masonry (1.0.1)
+  - Masonry (1.0.1.1)
   - ReactiveObjC (2.1.0)
   - TDFAPILogger (0.0.7):
     - AFNetworking
+  - TDFScreenDebugger (0.0.5):
+    - ICTextView
+    - Masonry
+    - ReactiveObjC
+    - TDFAPILogger
 
 DEPENDENCIES:
-  - ICTextView
-  - Masonry
-  - ReactiveObjC
-  - TDFAPILogger
+  - TDFScreenDebugger (from `../`)
+
+EXTERNAL SOURCES:
+  TDFScreenDebugger:
+    :path: ../
 
 SPEC CHECKSUMS:
-  AFNetworking: d7643de29022e05c0032aa4ce24e92f49554c892
+  AFNetworking: 032062ffb24bf902c3040070304569831ee6eeea
   ICTextView: 6f53febd62a0ccf2858967a4a5599be4aaceb6b8
-  Masonry: 81342e6d58b2bf760d2d29eca19b8691bd9f6290
+  Masonry: 05666589d973e2a8624b5c6134b2e1015f3dfdac
   ReactiveObjC: 71e4c941756a17779b3580075c5b112d2bcbf550
   TDFAPILogger: 605819ea1e829ca511b1a41ff42452ddca6330e1
+  TDFScreenDebugger: 068214c14f0ffdfd492443a7a02356100d999b08
 
-PODFILE CHECKSUM: 85891685ff6eb8e20c7c69addb7658783b2ea8a0
+PODFILE CHECKSUM: c9e1f9fbd8046cd3cfefea8ea9c354dba3ee8a92
 
 COCOAPODS: 1.4.0

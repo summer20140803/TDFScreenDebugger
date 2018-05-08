@@ -1,0 +1,6 @@
+framework module TDFAPILogger {
+  umbrella header "TDFAPILogger-umbrella.h"
+
+  export *
+  module * { export * }
+}

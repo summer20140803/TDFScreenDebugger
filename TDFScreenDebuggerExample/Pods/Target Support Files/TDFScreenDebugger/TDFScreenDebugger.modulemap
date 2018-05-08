@@ -1,0 +1,6 @@
+framework module TDFScreenDebugger {
+  umbrella header "TDFScreenDebugger-umbrella.h"
+
+  export *
+  module * { export * }
+}
