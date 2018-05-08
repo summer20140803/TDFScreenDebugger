@@ -15,9 +15,9 @@ Pod::Spec.new do |s|
   s.source       = { :git => "git@git.2dfire-inc.com:ios/TDFScreenDebugger.git", tag: s.version }
 
 s.ios.deployment_target = '8.0'
-s.source_files = 'TDFScreenDebuggerExample/TDFScreenDebuggerExample/Classes/**/*.{h,m,mm}'
+s.source_files = 'Classes/**/*.{h,m,mm}'
 s.resource_bundle = {
-    'TDFScreenDebuggerBundle' => ['TDFScreenDebuggerExample/TDFScreenDebuggerExample/Resource/**/*.{png,jpg,jpeg,xcassets,plist}']
+    'TDFScreenDebuggerBundle' => ['Resource/**/*.{png,jpg,jpeg,xcassets,plist}']
 }
 
 s.dependency 'TDFAPILogger'
@@ -27,6 +27,6 @@ s.dependency 'ICTextView'
 
 # ********************** ARC & MRC ********************* #
 s.requires_arc = false
-s.requires_arc = 'TDFScreenDebuggerExample/TDFScreenDebuggerExample/Classes/**/*.{h,m}'
+s.requires_arc = 'Classes/**/*.{h,m}'
 
 end
