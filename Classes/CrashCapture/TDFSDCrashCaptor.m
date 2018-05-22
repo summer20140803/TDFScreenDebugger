@@ -480,7 +480,7 @@ static void applyForKeepingLifeCycle(void) {
         cacheCrashModels = @[].mutableCopy;
     }
     if (![cacheCrashModels containsObject:model]) {
-        [cacheCrashModels addObject:model];
+        [cacheCrashModels insertObject:model atIndex:0];
     }
     BOOL isSuccess = [NSKeyedArchiver archiveRootObject:cacheCrashModels toFile:cachePath];
     NSLog(@"[TDFScreenDebugger.CrashCaptor.SaveCrashLog] %@", isSuccess ? @"success" : @"failure");

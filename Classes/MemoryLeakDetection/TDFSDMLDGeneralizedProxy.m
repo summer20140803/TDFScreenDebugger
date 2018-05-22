@@ -14,7 +14,6 @@
 
 @property (nonatomic, weak, readwrite) id weakTarget;
 @property (nonatomic, assign) BOOL isOnWarnning;
-@property (nonatomic, assign) BOOL hasCheckLeakerLife;
 
 @end
 

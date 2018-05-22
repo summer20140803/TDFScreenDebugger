@@ -30,6 +30,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view setBackgroundColor:[UIColor whiteColor]];
+    [TDFSDMemoryLeakDetector sharedInstance].warnningType = SDMLDWarnningTypeException;
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {

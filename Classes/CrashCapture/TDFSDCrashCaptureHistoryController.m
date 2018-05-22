@@ -64,9 +64,13 @@
 
 - (NSArray<TDFSDFunctionMenuItem *> *)functionMenuItemsForFullScreenConsole {
     if (!self.menuItems) {
+        @weakify(self)
         return @[ [TDFSDFunctionMenuItem itemWithImage:SD_BUNDLE_IMAGE(@"icon_screenDebugger_trash")
                       actionHandler:^(TDFSDFunctionMenuItem *item) {
+                          @strongify(self)
                           [[TDFSDCrashCaptor sharedInstance] clearHistoryCrashLog];
+                          self.viewModels = @[];
+                          [self.crashHistoryListView sd_safeReloadDataIfUseCustomLayout];
                       }] ];
     }
     return self.menuItems;
