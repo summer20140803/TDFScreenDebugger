@@ -14,9 +14,10 @@
 		18AAC4CF208DD76800E26A9D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C5208DD76700E26A9D /* Main.storyboard */; };
 		18AAC4D0208DD76800E26A9D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4C7208DD76700E26A9D /* AppDelegate.m */; };
 		18AAC4D1208DD76800E26A9D /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4CA208DD76700E26A9D /* ViewController.m */; };
+		18B9B79C20AED12E00C0FC7B /* LeakingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18B9B79B20AED12E00C0FC7B /* LeakingViewController.m */; };
 		18FE4D831F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FE4D821F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m */; };
-		4EFECE230D24A8E5CE9678FB /* Pods_TDFScreenDebuggerExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E809A1ABCC8C67F0F85CF527 /* Pods_TDFScreenDebuggerExampleTests.framework */; };
-		B39E517821C6DC506C116CF0 /* Pods_TDFScreenDebuggerExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 464D7502C1DDEA59558C3DAC /* Pods_TDFScreenDebuggerExample.framework */; };
+		2B6CE2B8165932F724C903F4 /* libPods-TDFScreenDebuggerExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED12CAD71CD6C48BE99AFFFD /* libPods-TDFScreenDebuggerExampleTests.a */; };
+		9CF909C6C76EF6068A9FD31D /* libPods-TDFScreenDebuggerExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 141928149789253F6662EF99 /* libPods-TDFScreenDebuggerExample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		141928149789253F6662EF99 /* libPods-TDFScreenDebuggerExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TDFScreenDebuggerExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		18AAC4BF208DD76700E26A9D /* screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screenshot.png; sourceTree = "<group>"; };
 		18AAC4C0208DD76700E26A9D /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		18AAC4C1208DD76700E26A9D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -39,16 +41,17 @@
 		18AAC4C8208DD76700E26A9D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		18AAC4C9208DD76700E26A9D /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		18AAC4CA208DD76700E26A9D /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		18B9B79A20AED12E00C0FC7B /* LeakingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LeakingViewController.h; sourceTree = "<group>"; };
+		18B9B79B20AED12E00C0FC7B /* LeakingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LeakingViewController.m; sourceTree = "<group>"; };
 		18FE4D651F668AAA00ECAA1F /* TDFScreenDebuggerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TDFScreenDebuggerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18FE4D7E1F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TDFScreenDebuggerExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		18FE4D821F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFScreenDebuggerExampleTests.m; sourceTree = "<group>"; };
 		18FE4D841F668AAB00ECAA1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		464D7502C1DDEA59558C3DAC /* Pods_TDFScreenDebuggerExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TDFScreenDebuggerExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DACA1BF3BA3542650404285 /* Pods-TDFScreenDebuggerExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TDFScreenDebuggerExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TDFScreenDebuggerExample/Pods-TDFScreenDebuggerExample.debug.xcconfig"; sourceTree = "<group>"; };
 		743C3EF865C1CA22131DCD3B /* Pods-TDFScreenDebuggerExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TDFScreenDebuggerExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-TDFScreenDebuggerExample/Pods-TDFScreenDebuggerExample.release.xcconfig"; sourceTree = "<group>"; };
 		846AD959EE06E0A3C5FFF75B /* Pods-TDFScreenDebuggerExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TDFScreenDebuggerExampleTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TDFScreenDebuggerExampleTests/Pods-TDFScreenDebuggerExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C8017E828260D7790800667F /* Pods-TDFScreenDebuggerExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TDFScreenDebuggerExampleTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TDFScreenDebuggerExampleTests/Pods-TDFScreenDebuggerExampleTests.release.xcconfig"; sourceTree = "<group>"; };
-		E809A1ABCC8C67F0F85CF527 /* Pods_TDFScreenDebuggerExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TDFScreenDebuggerExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		ED12CAD71CD6C48BE99AFFFD /* libPods-TDFScreenDebuggerExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TDFScreenDebuggerExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,7 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B39E517821C6DC506C116CF0 /* Pods_TDFScreenDebuggerExample.framework in Frameworks */,
+				9CF909C6C76EF6068A9FD31D /* libPods-TDFScreenDebuggerExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,7 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4EFECE230D24A8E5CE9678FB /* Pods_TDFScreenDebuggerExampleTests.framework in Frameworks */,
+				2B6CE2B8165932F724C903F4 /* libPods-TDFScreenDebuggerExampleTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +114,8 @@
 				18AAC4BF208DD76700E26A9D /* screenshot.png */,
 				18AAC4C9208DD76700E26A9D /* ViewController.h */,
 				18AAC4CA208DD76700E26A9D /* ViewController.m */,
+				18B9B79A20AED12E00C0FC7B /* LeakingViewController.h */,
+				18B9B79B20AED12E00C0FC7B /* LeakingViewController.m */,
 			);
 			path = TDFScreenDebuggerExample;
 			sourceTree = "<group>";
@@ -138,8 +143,8 @@
 		AE8451437618AEB6F95E359A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				464D7502C1DDEA59558C3DAC /* Pods_TDFScreenDebuggerExample.framework */,
-				E809A1ABCC8C67F0F85CF527 /* Pods_TDFScreenDebuggerExampleTests.framework */,
+				141928149789253F6662EF99 /* libPods-TDFScreenDebuggerExample.a */,
+				ED12CAD71CD6C48BE99AFFFD /* libPods-TDFScreenDebuggerExampleTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -370,6 +375,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18B9B79C20AED12E00C0FC7B /* LeakingViewController.m in Sources */,
 				18AAC4D1208DD76800E26A9D /* ViewController.m in Sources */,
 				18AAC4D0208DD76800E26A9D /* AppDelegate.m in Sources */,
 				18AAC4CC208DD76800E26A9D /* main.m in Sources */,
@@ -515,9 +521,19 @@
 				GCC_INPUT_FILETYPE = automatic;
 				INFOPLIST_FILE = "$(SRCROOT)/TDFScreenDebuggerExample/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/AFNetworking\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/ICTextView\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Masonry\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/ReactiveObjC\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/TDFAPILogger\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/TDFScreenDebugger\"",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = szy.independent.TDFScreenDebuggerExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				USER_HEADER_SEARCH_PATHS = "$(PODS_ROOT)/**";
 			};
 			name = Debug;
 		};
@@ -535,6 +551,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = szy.independent.TDFScreenDebuggerExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				USER_HEADER_SEARCH_PATHS = "$(PODS_ROOT)/**";
 			};
 			name = Release;
 		};

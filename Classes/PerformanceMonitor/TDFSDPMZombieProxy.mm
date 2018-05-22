@@ -42,7 +42,7 @@
 #pragma mark - private
 - (void)zombieProxyBlew:(SEL)selector {
     @throw [NSException exceptionWithName:NSInternalInconsistencyException reason: \
-            [NSString stringWithFormat:@"[TDFScreenDebugger.PerformanceMonitor.WildPointerChecker] message(\" [%@ %@] \") was sent to a zombie object at address: %p", NSStringFromClass(self.originClass), NSStringFromSelector(selector), self] userInfo:nil];
+            [NSString stringWithFormat:@"[TDFScreenDebugger.PerformanceMonitor.WildPointerChecker] find a wild pointer error about \' message \" [%@ %@] \" was sent to a zombie object at address: %p \'", NSStringFromClass(self.originClass), NSStringFromSelector(selector), self] userInfo:nil];
 }
 
 @end

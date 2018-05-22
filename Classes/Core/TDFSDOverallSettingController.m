@@ -289,7 +289,7 @@ static id settingValueForIndexPath(NSIndexPath *indexPath) {
         } break;
         case 1:{ return @(ps.allowCatchAPIRecordFlag); } break;
         case 2:{ return @(ps.allowMonitorSystemLogFlag); } break;
-        case 3:{ return @(ps.limitSizeOfSingleSystemLogMessageData).stringValue; } break;
+        case 3:{ if (@available(iOS 10_0, *)) { return @(ps.limitSizeOfSingleSystemLogMessageData).stringValue; }} break;
         case 4:{ return @(ps.allowCrashCaptureFlag); } break;
         case 5:{ return @(ps.needCacheCrashLogToSandBox); } break;
         case 6:{ return @(ps.allowUILagsMonitoring); } break;
@@ -299,6 +299,7 @@ static id settingValueForIndexPath(NSIndexPath *indexPath) {
         case 10:{ return @(ps.allowScreenFPSMonitoring); } break;
         case 11:{ return @(ps.fpsWarnningThreshold).stringValue; } break;
         case 12:{ return @(ps.allowWildPointerMonitoring); } break;
+        case 13:{ return @(ps.allowMemoryLeaksDetectionFlag); } break;
     }
     return nil;
 }
@@ -315,7 +316,7 @@ static void updateSettingValueWithIndex(id newValue, NSInteger index) {
         } break;
         case 1:{ ps.allowCatchAPIRecordFlag = [newValue boolValue]; } break;
         case 2:{ ps.allowMonitorSystemLogFlag = [newValue boolValue]; } break;
-        case 3:{ ps.limitSizeOfSingleSystemLogMessageData = [(NSString *)newValue integerValue]; } break;
+        case 3:{ if (@available(iOS 10_0, *)) { ps.limitSizeOfSingleSystemLogMessageData = [(NSString *)newValue integerValue]; }} break;
         case 4:{ ps.allowCrashCaptureFlag = [newValue boolValue]; } break;
         case 5:{ ps.needCacheCrashLogToSandBox = [newValue boolValue]; } break;
         case 6:{ ps.allowUILagsMonitoring = [newValue boolValue]; } break;
@@ -325,6 +326,7 @@ static void updateSettingValueWithIndex(id newValue, NSInteger index) {
         case 10:{ ps.allowScreenFPSMonitoring = [newValue boolValue]; } break;
         case 11:{ ps.fpsWarnningThreshold = [(NSString *)newValue integerValue]; } break;
         case 12:{ ps.allowWildPointerMonitoring = [newValue boolValue]; } break;
+        case 13:{ ps.allowMemoryLeaksDetectionFlag = [newValue boolValue]; } break;
     }
 }
 

@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "TDFSDPMWildPointerChecker.h"
+#import "LeakingViewController.h"
+#import "TDFSDMemoryLeakDetector.h"
 
 @interface CustomObject : NSObject
 
@@ -28,7 +30,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    [[TDFSDPMWildPointerChecker sharedInstance] thaw];
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
@@ -42,6 +43,8 @@
 }
 
 - (IBAction)testAction2:(id)sender {
+    LeakingViewController *leakingVC = [[LeakingViewController alloc] init];
+    [self presentViewController:leakingVC animated:YES completion:nil];
 }
 
 @end

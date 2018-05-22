@@ -293,12 +293,20 @@ SD_CONSTRUCTOR_METHOD_DECLARE(SD_CONSTRUCTOR_METHOD_PRIORITY_PERFORMANCE_MONITOR
 })
 #endif
 
+static TDFSDPerformanceMonitor *sharedInstance = nil;
+
 + (instancetype)sharedInstance {
-    static TDFSDPerformanceMonitor *sharedInstance = nil;
     static dispatch_once_t once = 0;
     dispatch_once(&once, ^{
         sharedInstance = [[self alloc] init];
     });
+    return sharedInstance;
+}
+
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    if (!sharedInstance) {
+        sharedInstance = [super allocWithZone:zone];
+    }
     return sharedInstance;
 }
 

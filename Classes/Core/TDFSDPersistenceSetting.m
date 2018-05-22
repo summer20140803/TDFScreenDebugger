@@ -26,23 +26,32 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowScreenFPSMonitoring      
 static  NSString * kSDOverallSettingPersistenceKeyFpsWarnningThreshold                   =  @"fpsWarnningThreshold";
 static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring             =  @"allowWildPointerMonitoring";
 static  NSString * kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity                  =  @"maxZombiePoolCapacity";
+static  NSString * kSDOverallSettingPersistenceKeyAllowMemoryLeaksDetectionFlag          =  @"allowMemoryLeaksDetectionFlag";
 
 
 @synthesize functionList = _functionList;
 @synthesize settingList = _settingList;
 
+static TDFSDPersistenceSetting *sharedInstance = nil;
+
 + (instancetype)sharedInstance {
-    static TDFSDPersistenceSetting *setting = nil;
     static dispatch_once_t once = 0;
     dispatch_once(&once, ^{
         id unarchiver = [NSKeyedUnarchiver unarchiveObjectWithFile:SD_OVERALL_SETTING_CACHE_FIFLE_PATH];
         if (unarchiver) {
-            setting = unarchiver;
+            sharedInstance = unarchiver;
         } else {
-            setting = [[self alloc] init];
+            sharedInstance = [[self alloc] init];
         }
     });
-    return setting;
+    return sharedInstance;
+}
+
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    if (!sharedInstance) {
+        sharedInstance = [super allocWithZone:zone];
+    }
+    return sharedInstance;
 }
 
 - (instancetype)init {
@@ -61,6 +70,7 @@ static  NSString * kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity         
         _fpsWarnningThreshold = 30;
         _allowWildPointerMonitoring = NO;
         _maxZombiePoolCapacity = 8 * 1024 * 10;
+        _allowMemoryLeaksDetectionFlag = YES;
     }
     return self;
 }
@@ -111,19 +121,27 @@ static  NSString * kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity         
     
     TDFSDFunctionModel *model6 = [[TDFSDFunctionModel alloc] init];
     model6.index = 5;
-    model6.functionName = @"RetainCycle Monitor";
-    model6.functionIcon = @"icon_screenDebugger_RetainCycle";
-    model6.functionDescription = @"“ This is a tool which can help developer to find out retain-cycle nodes in project. ”";
+    model6.functionName = @"MemoryLeak Detector";
+    model6.functionIcon = @"icon_screenDebugger_MemoryLeak";
+    model6.functionDescription = @"“ This is a tool which can help developer to find out some suspicious memory leak points in project. ”";
     model6.quickLaunchDescrition = @"< not specified >";
     [functions addObject:model6];
     
     TDFSDFunctionModel *model7 = [[TDFSDFunctionModel alloc] init];
     model7.index = 6;
-    model7.functionName = @"关于使用";
-    model7.functionIcon = @"icon_screenDebugger_help";
-    model7.functionDescription = @"一些关于调试器使用的基本操作和数据选项说明";
-    model7.quickLaunchDescrition = @"< no quick launch available >";
+    model7.functionName = @"RetainCycle Monitor";
+    model7.functionIcon = @"icon_screenDebugger_RetainCycle";
+    model7.functionDescription = @"“ This is a tool which can help developer to find out retain-cycle nodes in project. ”";
+    model7.quickLaunchDescrition = @"< not specified >";
     [functions addObject:model7];
+    
+    TDFSDFunctionModel *model10 = [[TDFSDFunctionModel alloc] init];
+    model10.index = 7;
+    model10.functionName = @"Help";
+    model10.functionIcon = @"icon_screenDebugger_help";
+    model10.functionDescription = @"一些关于调试器使用的基本操作和数据选项说明";
+    model10.quickLaunchDescrition = @"< no quick launch available >";
+    [functions addObject:model10];
     
     return functions;
 }
@@ -154,6 +172,7 @@ static  NSString * kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity         
 //        _allowWildPointerMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring] boolValue];
         _allowWildPointerMonitoring = NO;
         _maxZombiePoolCapacity = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity] unsignedLongValue];
+        _allowMemoryLeaksDetectionFlag = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowMemoryLeaksDetectionFlag] boolValue];
     }
     return self;
 }
@@ -173,6 +192,7 @@ static  NSString * kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity         
     [aCoder encodeObject:@(_fpsWarnningThreshold) forKey:kSDOverallSettingPersistenceKeyFpsWarnningThreshold];
 //    [aCoder encodeObject:@(_allowWildPointerMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring];
     [aCoder encodeObject:@(_maxZombiePoolCapacity) forKey:kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity];
+    [aCoder encodeObject:@(_allowMemoryLeaksDetectionFlag) forKey:kSDOverallSettingPersistenceKeyAllowMemoryLeaksDetectionFlag];
 }
 
 @end

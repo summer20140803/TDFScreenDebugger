@@ -150,5 +150,13 @@
 		<key>type</key>
 		<integer>0</integer>
 	</dict>
+    <dict>
+        <key>title</key>
+        <string>allowMemoryLeaksDetectionFlag</string>
+        <key>description</key>
+        <string>a flag to tell the memory leak detector whether should detect memory leaks in project</string>
+        <key>type</key>
+        <integer>0</integer>
+    </dict>
 </array>
 </plist>

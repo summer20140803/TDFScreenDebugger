@@ -25,7 +25,7 @@ static const CGFloat kSDScrollPaddingRect            =  100.0f;
 static const CGFloat kSDScrollRefreshThreshold       =  50.0f;
 static const CGFloat kSDScrollResistanceCoefficient  =  1 / 600.0f;
 
--(void)setup{
+- (void)setup{
     _animator = [[UIDynamicAnimator alloc] initWithCollectionViewLayout:self];
     _visibleIndexPaths = [NSMutableSet set];
 }
@@ -161,6 +161,10 @@ static const CGFloat kSDScrollResistanceCoefficient  =  1 / 600.0f;
 - (void)resetLayout {
     [_animator removeAllBehaviors];
     [_visibleIndexPaths removeAllObjects];
+}
+
+- (void)dealloc {
+    NSLog(@"flowlayout dealloc");
 }
 
 @end

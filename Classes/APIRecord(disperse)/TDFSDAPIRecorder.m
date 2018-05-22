@@ -25,6 +25,8 @@
 
 @implementation TDFSDAPIRecorder
 
+static TDFSDAPIRecorder *sharedInstance = nil;
+
 #pragma mark - life cycle
 
 #if DEBUG
@@ -37,12 +39,18 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 #endif
 
 + (instancetype)sharedInstance {
-    static TDFSDAPIRecorder *recorder = nil;
     static dispatch_once_t once = 0;
     dispatch_once(&once, ^{
-        recorder = [[self alloc] init];
+        sharedInstance = [[self alloc] init];
     });
-    return recorder;
+    return sharedInstance;
+}
+
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    if (!sharedInstance) {
+        sharedInstance = [super allocWithZone:zone];
+    }
+    return sharedInstance;
 }
 
 - (instancetype)init {

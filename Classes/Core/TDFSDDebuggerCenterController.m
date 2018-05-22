@@ -22,7 +22,7 @@
                                              UICollectionViewDelegateFlowLayout>
 
 @property (nonatomic, strong) UICollectionView *functionCollectionView;
-@property (nonatomic, strong) TDFSDCustomizedFlowLayout *flowLayout;
+@property (nonatomic,   weak) TDFSDCustomizedFlowLayout *flowLayout;
 @property (nonatomic, strong) NSArray<TDFSDFunctionCollectionViewModel *> *viewModels;
 
 @end
@@ -107,7 +107,16 @@
 #pragma mark - getter
 - (UICollectionView *)functionCollectionView {
     if (!_functionCollectionView) {
-        _functionCollectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:self.flowLayout];
+        TDFSDCustomizedFlowLayout *flowLayout = [[TDFSDCustomizedFlowLayout alloc] init];
+        flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
+        CGFloat itemLineMargin = 20;
+        CGFloat itemCollectionEdgeMargin = 15;
+        flowLayout.minimumLineSpacing = itemLineMargin;
+        flowLayout.minimumInteritemSpacing = itemCollectionEdgeMargin;
+        flowLayout.sectionInset = UIEdgeInsetsMake(itemLineMargin, itemCollectionEdgeMargin, itemLineMargin, itemCollectionEdgeMargin);
+        self.flowLayout = flowLayout;
+        
+        _functionCollectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout];
         _functionCollectionView.backgroundColor = [UIColor clearColor];
         _functionCollectionView.showsVerticalScrollIndicator = NO;
         _functionCollectionView.showsHorizontalScrollIndicator = NO;
@@ -117,19 +126,6 @@
         _functionCollectionView.delegate = self;
     }
     return _functionCollectionView;
-}
-
-- (TDFSDCustomizedFlowLayout *)flowLayout {
-    if (!_flowLayout) {
-        _flowLayout = [[TDFSDCustomizedFlowLayout alloc] init];
-        _flowLayout.scrollDirection = UICollectionViewScrollDirectionVertical;
-        CGFloat itemLineMargin = 20;
-        CGFloat itemCollectionEdgeMargin = 15;
-        _flowLayout.minimumLineSpacing = itemLineMargin;
-        _flowLayout.minimumInteritemSpacing = itemCollectionEdgeMargin;
-        _flowLayout.sectionInset = UIEdgeInsetsMake(itemLineMargin, itemCollectionEdgeMargin, itemLineMargin, itemCollectionEdgeMargin);
-    }
-    return _flowLayout;
 }
 
 

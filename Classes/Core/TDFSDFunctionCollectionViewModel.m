@@ -42,7 +42,7 @@
                 case 2: target = [[TDFSDLogViewController alloc] init]; break;
                 case 3: target = [[TDFSDPerformanceMonitorToolController alloc] init]; break;
                 case 4: target = [[TDFSDCrashCaptureHistoryController alloc] init]; break;
-                case 6: target = [[TDFSDDeveloperGuideController alloc] init]; break;
+                case 7: target = [[TDFSDDeveloperGuideController alloc] init]; break;
                 default: target = [[TDFSDAboutFutureController alloc] init]; break;
             }
             

@@ -23,7 +23,7 @@
                                                   UICollectionViewDelegateFlowLayout>
 
 @property (nonatomic, strong) UICollectionView *apiRequestListView;
-@property (nonatomic, strong) TDFSDCustomizedFlowLayout *flowLayout;
+@property (nonatomic,   weak) TDFSDCustomizedFlowLayout *flowLayout;
 @property (nonatomic, strong) NSArray<TDFSDARCollectionViewModel *> *viewModels;
 
 @end
@@ -119,7 +119,16 @@
 #pragma mark - getter
 - (UICollectionView *)apiRequestListView {
     if (!_apiRequestListView) {
-        _apiRequestListView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:self.flowLayout];
+        TDFSDCustomizedFlowLayout *flowLayout = [[TDFSDCustomizedFlowLayout alloc] init];
+        [flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
+        CGFloat itemLineMargin = 10;
+        CGFloat itemCollectionEdgeMargin = 8;
+        flowLayout.minimumLineSpacing = itemLineMargin;
+        flowLayout.minimumInteritemSpacing = itemCollectionEdgeMargin;
+        flowLayout.sectionInset = UIEdgeInsetsMake(itemLineMargin, itemCollectionEdgeMargin, itemLineMargin, itemCollectionEdgeMargin);
+        self.flowLayout = flowLayout;
+        
+        _apiRequestListView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout];
         _apiRequestListView.backgroundColor = [UIColor clearColor];
         _apiRequestListView.showsVerticalScrollIndicator = YES;
         _apiRequestListView.showsHorizontalScrollIndicator = NO;
@@ -131,17 +140,5 @@
     return _apiRequestListView;
 }
 
-- (TDFSDCustomizedFlowLayout *)flowLayout {
-    if (!_flowLayout) {
-        _flowLayout = [[TDFSDCustomizedFlowLayout alloc] init];
-        [_flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
-        CGFloat itemLineMargin = 10;
-        CGFloat itemCollectionEdgeMargin = 8;
-        _flowLayout.minimumLineSpacing = itemLineMargin;
-        _flowLayout.minimumInteritemSpacing = itemCollectionEdgeMargin;
-        _flowLayout.sectionInset = UIEdgeInsetsMake(itemLineMargin, itemCollectionEdgeMargin, itemLineMargin, itemCollectionEdgeMargin);
-    }
-    return _flowLayout;
-}
 
 @end

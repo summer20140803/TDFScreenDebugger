@@ -12,6 +12,7 @@
 #import "TDFSDCrashCapturePresentationController.h"
 #import "TDFSDTransitionAnimator.h"
 #import "TDFSDQueueDispatcher.h"
+#import "UIViewController+ScreenDebugger.h"
 #import <ReactiveObjC/ReactiveObjC.h>
 #import <objc/runtime.h>
 #import <signal.h>
@@ -219,12 +220,20 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 })
 #endif
 
+static TDFSDCrashCaptor *sharedInstance = nil;
+
 + (instancetype)sharedInstance {
-    static TDFSDCrashCaptor *sharedInstance = nil;
     static dispatch_once_t once = 0;
     dispatch_once(&once, ^{
         sharedInstance = [[self alloc] init];
     });
+    return sharedInstance;
+}
+
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    if (!sharedInstance) {
+        sharedInstance = [super allocWithZone:zone];
+    }
     return sharedInstance;
 }
 
@@ -434,7 +443,7 @@ static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition)
         }
     }];
     p.transitioningDelegate = [TDFSDCrashCaptor sharedInstance];
-    UIViewController *topViewController = obtainTopViewController(effectiveWindow.rootViewController);
+    UIViewController *topViewController = [effectiveWindow.rootViewController sd_obtainTopViewController];
     [topViewController presentViewController:p animated:YES completion:nil];
 }
 
@@ -462,21 +471,6 @@ static void applyForKeepingLifeCycle(void) {
     }
     
     CFRelease(allModesRef);
-}
-
-static UIViewController * obtainTopViewController(UIViewController *rootViewController) {
-    if ([rootViewController isKindOfClass:[UINavigationController class]]) {
-        UINavigationController *navigationController = (UINavigationController *)rootViewController;
-        return obtainTopViewController([navigationController.viewControllers lastObject]);
-    }
-    if ([rootViewController isKindOfClass:[UITabBarController class]]) {
-        UITabBarController *tabController = (UITabBarController *)rootViewController;
-        return obtainTopViewController(tabController.selectedViewController);
-    }
-    if (rootViewController.presentedViewController) {
-        return obtainTopViewController(rootViewController.presentedViewController);
-    }
-    return rootViewController;
 }
 
 - (void)cacheCrashLog:(TDFSDCCCrashModel *)model {

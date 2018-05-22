@@ -95,4 +95,10 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
  */
 @property (nonatomic, assign) size_t maxZombiePoolCapacity;
 
+
+/**
+ a flag to tell the memory leak detector whether should detect memory leaks in project. default is YES
+ */
+@property (nonatomic, assign) BOOL allowMemoryLeaksDetectionFlag;
+
 @end

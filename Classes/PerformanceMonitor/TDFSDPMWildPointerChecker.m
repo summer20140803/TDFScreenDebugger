@@ -24,12 +24,21 @@
 
 @implementation TDFSDPMWildPointerChecker
 
+#pragma mark - life cycle
+static TDFSDPMWildPointerChecker *sharedInstance = nil;
+
 + (instancetype)sharedInstance {
-    static TDFSDPMWildPointerChecker *sharedInstance = nil;
     static dispatch_once_t once = 0;
     dispatch_once(&once, ^{
         sharedInstance = [[self alloc] init];
     });
+    return sharedInstance;
+}
+
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    if (!sharedInstance) {
+        sharedInstance = [super allocWithZone:zone];
+    }
     return sharedInstance;
 }
 
@@ -41,6 +50,7 @@
     return self;
 }
 
+#pragma mark - TDFSDFunctionIOControlProtocol
 - (void)thaw {
     @synchronized(self) {
         [self injectZombieProxy];

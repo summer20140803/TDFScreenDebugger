@@ -21,7 +21,7 @@ UICollectionViewDelegate,
 UICollectionViewDelegateFlowLayout>
 
 @property (nonatomic, strong) UICollectionView *cachedLagListView;
-@property (nonatomic, strong) TDFSDCustomizedFlowLayout *flowLayout;
+@property (nonatomic,   weak) TDFSDCustomizedFlowLayout *flowLayout;
 @property (nonatomic, strong) NSArray<TDFSDPMUILagCollectionViewModel *> *viewModels;
 
 @end
@@ -111,7 +111,15 @@ UICollectionViewDelegateFlowLayout>
 #pragma mark - getter
 - (UICollectionView *)cachedLagListView {
     if (!_cachedLagListView) {
-        _cachedLagListView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:self.flowLayout];
+        TDFSDCustomizedFlowLayout *flowLayout = [[TDFSDCustomizedFlowLayout alloc] init];
+        [flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
+        CGFloat itemLineMargin = 10;
+        CGFloat itemCollectionEdgeMargin = 8;
+        flowLayout.minimumLineSpacing = itemLineMargin;
+        flowLayout.minimumInteritemSpacing = itemCollectionEdgeMargin;
+        flowLayout.sectionInset = UIEdgeInsetsMake(itemLineMargin, itemCollectionEdgeMargin, itemLineMargin, itemCollectionEdgeMargin);
+        
+        _cachedLagListView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout];
         _cachedLagListView.backgroundColor = [UIColor clearColor];
         _cachedLagListView.showsVerticalScrollIndicator = YES;
         _cachedLagListView.showsHorizontalScrollIndicator = NO;
@@ -121,19 +129,6 @@ UICollectionViewDelegateFlowLayout>
         _cachedLagListView.delegate = self;
     }
     return _cachedLagListView;
-}
-
-- (TDFSDCustomizedFlowLayout *)flowLayout {
-    if (!_flowLayout) {
-        _flowLayout = [[TDFSDCustomizedFlowLayout alloc] init];
-        [_flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
-        CGFloat itemLineMargin = 10;
-        CGFloat itemCollectionEdgeMargin = 8;
-        _flowLayout.minimumLineSpacing = itemLineMargin;
-        _flowLayout.minimumInteritemSpacing = itemCollectionEdgeMargin;
-        _flowLayout.sectionInset = UIEdgeInsetsMake(itemLineMargin, itemCollectionEdgeMargin, itemLineMargin, itemCollectionEdgeMargin);
-    }
-    return _flowLayout;
 }
 
 @end

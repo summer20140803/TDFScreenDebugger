@@ -21,7 +21,7 @@
                                                   UICollectionViewDelegateFlowLayout>
 
 @property (nonatomic, strong) UICollectionView *crashHistoryListView;
-@property (nonatomic, strong) TDFSDCustomizedFlowLayout *flowLayout;
+@property (nonatomic,   weak) TDFSDCustomizedFlowLayout *flowLayout;
 @property (nonatomic, strong) NSArray<TDFSDCCCollectionViewModel *> *viewModels;
 
 @end
@@ -104,7 +104,16 @@
 #pragma mark - getter
 - (UICollectionView *)crashHistoryListView {
     if (!_crashHistoryListView) {
-        _crashHistoryListView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:self.flowLayout];
+        TDFSDCustomizedFlowLayout *flowLayout = [[TDFSDCustomizedFlowLayout alloc] init];
+        [flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
+        CGFloat itemLineMargin = 10;
+        CGFloat itemCollectionEdgeMargin = 8;
+        flowLayout.minimumLineSpacing = itemLineMargin;
+        flowLayout.minimumInteritemSpacing = itemCollectionEdgeMargin;
+        flowLayout.sectionInset = UIEdgeInsetsMake(itemLineMargin, itemCollectionEdgeMargin, itemLineMargin, itemCollectionEdgeMargin);
+        self.flowLayout = flowLayout;
+        
+        _crashHistoryListView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:flowLayout];
         _crashHistoryListView.backgroundColor = [UIColor clearColor];
         _crashHistoryListView.showsVerticalScrollIndicator = YES;
         _crashHistoryListView.showsHorizontalScrollIndicator = NO;
@@ -118,13 +127,7 @@
 
 - (TDFSDCustomizedFlowLayout *)flowLayout {
     if (!_flowLayout) {
-        _flowLayout = [[TDFSDCustomizedFlowLayout alloc] init];
-        [_flowLayout setScrollDirection:UICollectionViewScrollDirectionVertical];
-        CGFloat itemLineMargin = 10;
-        CGFloat itemCollectionEdgeMargin = 8;
-        _flowLayout.minimumLineSpacing = itemLineMargin;
-        _flowLayout.minimumInteritemSpacing = itemCollectionEdgeMargin;
-        _flowLayout.sectionInset = UIEdgeInsetsMake(itemLineMargin, itemCollectionEdgeMargin, itemLineMargin, itemCollectionEdgeMargin);
+        
     }
     return _flowLayout;
 }
