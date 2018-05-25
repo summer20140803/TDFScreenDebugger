@@ -120,7 +120,6 @@ static const CGFloat kSDSettingOptionPickerCellHeight  =  40.0f;
     TDFSDSettingCollectionViewModel *item = self.settingItems[self.currentPickerIndex];
     @weakify(self)
     [cell bindWithOptionTitle:item.optionalValues[indexPath.section] optionDidPickHandler:^(NSIndexPath *indexPath, NSString *pickValue) {
-        NSLog(@"%@", pickValue);
         @strongify(self)
         updateSettingValueWithIndex(pickValue, self.currentPickerIndex);
         [self popPickerView];
@@ -292,14 +291,29 @@ static id settingValueForIndexPath(NSIndexPath *indexPath) {
         case 3:{ if (@available(iOS 10_0, *)) { return @(ps.limitSizeOfSingleSystemLogMessageData).stringValue; }} break;
         case 4:{ return @(ps.allowCrashCaptureFlag); } break;
         case 5:{ return @(ps.needCacheCrashLogToSandBox); } break;
-        case 6:{ return @(ps.allowUILagsMonitoring); } break;
-        case 7:{ return [NSString stringWithFormat:@"%.2f", ps.tolerableLagThreshold]; } break;
-        case 8:{ return @(ps.allowApplicationCPUMonitoring); } break;
-        case 9:{ return @(ps.allowApplicationMemoryMonitoring); } break;
-        case 10:{ return @(ps.allowScreenFPSMonitoring); } break;
-        case 11:{ return @(ps.fpsWarnningThreshold).stringValue; } break;
-        case 12:{ return @(ps.allowWildPointerMonitoring); } break;
-        case 13:{ return @(ps.allowMemoryLeaksDetectionFlag); } break;
+        case 6:{ return @(ps.isSafeModeForCrashCapture); } break;
+        case 7:{ return @(ps.allowUILagsMonitoring); } break;
+        case 8:{ return [NSString stringWithFormat:@"%.2f", ps.tolerableLagThreshold]; } break;
+        case 9:{ return @(ps.allowApplicationCPUMonitoring); } break;
+        case 10:{ return @(ps.allowApplicationMemoryMonitoring); } break;
+        case 11:{ return @(ps.allowScreenFPSMonitoring); } break;
+        case 12:{ return @(ps.fpsWarnningThreshold).stringValue; } break;
+        case 13:{ return @(ps.allowWildPointerMonitoring); } break;
+        case 14:{ return @(ps.maxZombiePoolCapacity).stringValue; } break;
+        case 15:{ return @(ps.allowMemoryLeaksDetectionFlag); } break;
+        case 16:{
+            switch (ps.memoryLeakingWarningType) {
+                case SDMLDWarnningTypeAlert:{
+                    return @"alert";
+                } break;
+                case SDMLDWarnningTypeConsole:{
+                    return @"console";
+                } break;
+                case SDMLDWarnningTypeException:{
+                    return @"exception";
+                } break;
+            }
+        } break;
     }
     return nil;
 }
@@ -319,14 +333,25 @@ static void updateSettingValueWithIndex(id newValue, NSInteger index) {
         case 3:{ if (@available(iOS 10_0, *)) { ps.limitSizeOfSingleSystemLogMessageData = [(NSString *)newValue integerValue]; }} break;
         case 4:{ ps.allowCrashCaptureFlag = [newValue boolValue]; } break;
         case 5:{ ps.needCacheCrashLogToSandBox = [newValue boolValue]; } break;
-        case 6:{ ps.allowUILagsMonitoring = [newValue boolValue]; } break;
-        case 7:{ ps.tolerableLagThreshold = [(NSString *)newValue doubleValue]; } break;
-        case 8:{ ps.allowApplicationCPUMonitoring = [newValue boolValue]; } break;
-        case 9:{ ps.allowApplicationMemoryMonitoring = [newValue boolValue]; } break;
-        case 10:{ ps.allowScreenFPSMonitoring = [newValue boolValue]; } break;
-        case 11:{ ps.fpsWarnningThreshold = [(NSString *)newValue integerValue]; } break;
-        case 12:{ ps.allowWildPointerMonitoring = [newValue boolValue]; } break;
-        case 13:{ ps.allowMemoryLeaksDetectionFlag = [newValue boolValue]; } break;
+        case 6:{ ps.isSafeModeForCrashCapture = [newValue boolValue]; } break;
+        case 7:{ ps.allowUILagsMonitoring = [newValue boolValue]; } break;
+        case 8:{ ps.tolerableLagThreshold = [(NSString *)newValue doubleValue]; } break;
+        case 9:{ ps.allowApplicationCPUMonitoring = [newValue boolValue]; } break;
+        case 10:{ ps.allowApplicationMemoryMonitoring = [newValue boolValue]; } break;
+        case 11:{ ps.allowScreenFPSMonitoring = [newValue boolValue]; } break;
+        case 12:{ ps.fpsWarnningThreshold = [(NSString *)newValue integerValue]; } break;
+        case 13:{ ps.allowWildPointerMonitoring = [newValue boolValue]; } break;
+        case 14:{ ps.maxZombiePoolCapacity = [newValue integerValue]; } break;
+        case 15:{ ps.allowMemoryLeaksDetectionFlag = [newValue boolValue]; } break;
+        case 16:{
+            if ([newValue isEqualToString:@"alert"]) {
+                ps.memoryLeakingWarningType = SDMLDWarnningTypeAlert;
+            } else if ([newValue isEqualToString:@"console"]) {
+                ps.memoryLeakingWarningType = SDMLDWarnningTypeConsole;
+            } else if ([newValue isEqualToString:@"exception"]) {
+                ps.memoryLeakingWarningType = SDMLDWarnningTypeException;
+            }
+        } break;
     }
 }
 

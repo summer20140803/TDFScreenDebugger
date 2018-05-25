@@ -1,12 +1,12 @@
 //
-//  TDFSDPMWildPointerChecker.m
+//  TDFSDWildPointerChecker.m
 //  TDFScreenDebugger
 //
 //  Created by 开不了口的猫 on 2018/3/2.
 //
 
-#import "TDFSDPMWildPointerChecker.h"
-#import "TDFSDPMZombieProxy.h"
+#import "TDFSDWildPointerChecker.h"
+#import "TDFSDWPCZombieProxy.h"
 #import "TDFSDPersistenceSetting.h"
 #import <UIKit/UIKit.h>
 #import <objc/runtime.h>
@@ -14,7 +14,7 @@
 #import <malloc/malloc.h>
 
 
-@interface TDFSDPMWildPointerChecker ()
+@interface TDFSDWildPointerChecker ()
 
 @property (nonatomic, strong) NSArray<Class> *rootSwizzledClasses;
 @property (nonatomic, strong) NSDictionary<NSString *, NSValue *> *rootClassesOriginImps;
@@ -22,10 +22,10 @@
 
 @end
 
-@implementation TDFSDPMWildPointerChecker
+@implementation TDFSDWildPointerChecker
 
 #pragma mark - life cycle
-static TDFSDPMWildPointerChecker *sharedInstance = nil;
+static TDFSDWildPointerChecker *sharedInstance = nil;
 
 + (instancetype)sharedInstance {
     static dispatch_once_t once = 0;
@@ -81,8 +81,8 @@ static TDFSDPMWildPointerChecker *sharedInstance = nil;
             @synchronized(strong_self) {
                 Class currentClass = [target class];
                 
-                object_setClass(target, [TDFSDPMZombieProxy class]);
-                ((TDFSDPMZombieProxy *)target).originClass = currentClass;
+                object_setClass(target, [TDFSDWPCZombieProxy class]);
+                ((TDFSDWPCZombieProxy *)target).originClass = currentClass;
 
 //                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(30.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //                    object_setClass(target, currentClass);

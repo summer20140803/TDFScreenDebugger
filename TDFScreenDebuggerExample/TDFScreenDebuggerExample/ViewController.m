@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "TDFSDPMWildPointerChecker.h"
+#import "TDFSDWildPointerChecker.h"
 #import "LeakingViewController.h"
 #import "TDFSDMemoryLeakDetector.h"
 
@@ -30,7 +30,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view setBackgroundColor:[UIColor whiteColor]];
-    [TDFSDMemoryLeakDetector sharedInstance].warnningType = SDMLDWarnningTypeException;
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
@@ -40,7 +39,10 @@
 }
 
 - (IBAction)testAction:(id)sender {
-    NSLog(@"%@", self.obj);
+//    NSLog(@"%@", self.obj);
+    NSMutableArray *a = @[].mutableCopy;
+    NSObject *obj = nil;
+    [a addObject:obj];
 }
 
 - (IBAction)testAction2:(id)sender {

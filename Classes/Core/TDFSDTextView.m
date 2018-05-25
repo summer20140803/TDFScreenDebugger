@@ -15,7 +15,10 @@
         self.backgroundColor = [UIColor clearColor];
         self.editable = NO;
         self.selectable = YES;
+        self.alwaysBounceVertical = YES;
+        self.bounces = YES;
         self.indicatorStyle = UIScrollViewIndicatorStyleBlack;
+        self.textContainer.lineBreakMode = NSLineBreakByCharWrapping;
         self.allowsEditingTextAttributes = YES;
         self.showsVerticalScrollIndicator = YES;
         self.showsHorizontalScrollIndicator = NO;

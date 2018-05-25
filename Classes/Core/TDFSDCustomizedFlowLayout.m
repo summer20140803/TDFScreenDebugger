@@ -7,6 +7,7 @@
 //
 
 #import "TDFSDCustomizedFlowLayout.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface TDFSDCustomizedFlowLayout ()
 
@@ -26,8 +27,8 @@ static const CGFloat kSDScrollRefreshThreshold       =  50.0f;
 static const CGFloat kSDScrollResistanceCoefficient  =  1 / 600.0f;
 
 - (void)setup{
-    _animator = [[UIDynamicAnimator alloc] initWithCollectionViewLayout:self];
-    _visibleIndexPaths = [NSMutableSet set];
+    self.animator = [[UIDynamicAnimator alloc] initWithCollectionViewLayout:self];
+    self.visibleIndexPaths = [NSMutableSet set];
 }
 
 - (id)init {
@@ -52,10 +53,10 @@ static const CGFloat kSDScrollResistanceCoefficient  =  1 / 600.0f;
     CGPoint contentOffset = self.collectionView.contentOffset;
 
     // only refresh the set of UIAttachmentBehaviours if we've moved more than the scroll threshold since last load
-    if (fabs(contentOffset.y - _lastContentOffset.y) < kSDScrollRefreshThreshold && _visibleIndexPaths.count > 0){
+    if (fabs(contentOffset.y - self.lastContentOffset.y) < kSDScrollRefreshThreshold && self.visibleIndexPaths.count > 0){
         return;
     }
-    _lastContentOffset = contentOffset;
+    self.lastContentOffset = contentOffset;
 
     CGFloat padding = kSDScrollPaddingRect;
     CGRect currentRect = CGRectMake(0, contentOffset.y - padding, self.collectionView.frame.size.width, self.collectionView.frame.size.height + 3 * padding);
@@ -64,19 +65,20 @@ static const CGFloat kSDScrollResistanceCoefficient  =  1 / 600.0f;
     NSSet *indexPathsInVisibleRect = [NSSet setWithArray:[itemsInCurrentRect valueForKey:@"indexPath"]];
 
     // remove behaviours that are no longer visible
-    [_animator.behaviors enumerateObjectsUsingBlock:^(UIAttachmentBehavior *behaviour, NSUInteger idx, BOOL *stop) {
+    [self.animator.behaviors enumerateObjectsUsingBlock:^(UIAttachmentBehavior *behaviour, NSUInteger idx, BOOL *stop) {
+        
         NSIndexPath *indexPath = [(UICollectionViewLayoutAttributes *)[[behaviour items] firstObject] indexPath];
-
+        
         BOOL isInVisibleIndexPaths = [indexPathsInVisibleRect member:indexPath] != nil;
         if (!isInVisibleIndexPaths){
-            [_animator removeBehavior:behaviour];
-            [_visibleIndexPaths removeObject:indexPath];
+            [self.animator removeBehavior:behaviour];
+            [self.visibleIndexPaths removeObject:indexPath];
         }
     }];
 
     // find newly visible indexes
     NSArray *newVisibleItems = [itemsInCurrentRect filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(UICollectionViewLayoutAttributes *item, NSDictionary *bindings) {
-        BOOL isInVisibleIndexPaths = [_visibleIndexPaths member:item.indexPath] != nil;
+        BOOL isInVisibleIndexPaths = [self.visibleIndexPaths member:item.indexPath] != nil;
         return !isInVisibleIndexPaths;
     }]];
 
@@ -85,28 +87,31 @@ static const CGFloat kSDScrollResistanceCoefficient  =  1 / 600.0f;
         CGPoint fixedCenter = CGPointMake(round(attribute.center.x), attribute.center.y);
         UIAttachmentBehavior *spring = [[UIAttachmentBehavior alloc] initWithItem:attribute attachedToAnchor:fixedCenter];
         spring.length = 0;
-        spring.frequency = _frequency ?: 1;
-        spring.damping = _damping ?: 0.7;
+        spring.frequency = self.frequency ?: 1;
+        spring.damping = self.damping ?: 0.7;
         if (@available(iOS 9.0, *)) {
             spring.frictionTorque = CGFLOAT_MAX;
             spring.attachmentRange = UIFloatRangeZero;
         }
-        __weak UIAttachmentBehavior *weakSpring = spring;
+        @weakify(self)
+        @weakify(spring)
         spring.action = ^(void){
+            @strongify(spring)
+            @strongify(self)
             CGFloat delta = fabs(attribute.center.y - spring.anchorPoint.y);
             if (delta <= 1){
-                weakSpring.damping = 100;
+                spring.damping = 100;
             } else {
-                weakSpring.damping = _damping ?: 0.7;
+                spring.damping = self.damping ?: 0.7;
             }
         };
 
         // if our touchLocation is not (0,0), we need to adjust our item's center
-        if (_lastScrollDelta != 0) {
-            [self adjustSpring:spring centerForTouchPosition:_lastTouchLocation scrollDelta:_lastScrollDelta];
+        if (self.lastScrollDelta != 0) {
+            [self adjustSpring:spring centerForTouchPosition:self.lastTouchLocation scrollDelta:self.lastScrollDelta];
         }
-        [_animator addBehavior:spring];
-        [_visibleIndexPaths addObject:attribute.indexPath];
+        [self.animator addBehavior:spring];
+        [self.visibleIndexPaths addObject:attribute.indexPath];
     }];
 }
 
@@ -114,11 +119,11 @@ static const CGFloat kSDScrollResistanceCoefficient  =  1 / 600.0f;
     CGFloat padding = kSDScrollPaddingRect;
     rect.size.height += 3 * padding;
     rect.origin.y -= padding;
-    return [_animator itemsInRect:rect];
+    return [self.animator itemsInRect:rect];
 }
 
 - (UICollectionViewLayoutAttributes *)layoutAttributesForItemAtIndexPath:(NSIndexPath *)indexPath {
-    id layoutAttributes = [_animator layoutAttributesForCellAtIndexPath:indexPath];
+    id layoutAttributes = [self.animator layoutAttributesForCellAtIndexPath:indexPath];
     if (!layoutAttributes)
         layoutAttributes = [super layoutAttributesForItemAtIndexPath:indexPath];
     return layoutAttributes;
@@ -128,13 +133,13 @@ static const CGFloat kSDScrollResistanceCoefficient  =  1 / 600.0f;
     // https://objccn.io/issue-5-2/
 
     UIScrollView *scrollView = self.collectionView;
-    _lastScrollDelta = newBounds.origin.y - scrollView.bounds.origin.y;
+    self.lastScrollDelta = newBounds.origin.y - scrollView.bounds.origin.y;
 
-    _lastTouchLocation = [self.collectionView.panGestureRecognizer locationInView:self.collectionView];
+    self.lastTouchLocation = [self.collectionView.panGestureRecognizer locationInView:self.collectionView];
 
-    [_animator.behaviors enumerateObjectsUsingBlock:^(UIAttachmentBehavior *spring, NSUInteger idx, BOOL *stop) {
-        [self adjustSpring:spring centerForTouchPosition:_lastTouchLocation scrollDelta:_lastScrollDelta];
-        [_animator updateItemUsingCurrentState:[spring.items firstObject]];
+    [self.animator.behaviors enumerateObjectsUsingBlock:^(UIAttachmentBehavior *spring, NSUInteger idx, BOOL *stop) {
+        [self adjustSpring:spring centerForTouchPosition:self.lastTouchLocation scrollDelta:self.lastScrollDelta];
+        [self.animator updateItemUsingCurrentState:[spring.items firstObject]];
     }];
 
     return NO;
@@ -149,23 +154,20 @@ static const CGFloat kSDScrollResistanceCoefficient  =  1 / 600.0f;
 
     CGPoint fixedCenter = CGPointMake(round(center.x), center.y);
 
-    if (_lastScrollDelta < 0) {
-        fixedCenter.y += MAX(_lastScrollDelta, _lastScrollDelta * scrollResistance);
+    if (self.lastScrollDelta < 0) {
+        fixedCenter.y += MAX(self.lastScrollDelta, self.lastScrollDelta * scrollResistance);
     } else {
-        fixedCenter.y += MIN(_lastScrollDelta, _lastScrollDelta * scrollResistance);
+        fixedCenter.y += MIN(self.lastScrollDelta, self.lastScrollDelta * scrollResistance);
     }
 
     item.center = CGPointMake(round(fixedCenter.x), fixedCenter.y);
 }
 
 - (void)resetLayout {
-    [_animator removeAllBehaviors];
-    [_visibleIndexPaths removeAllObjects];
+    [self.animator removeAllBehaviors];
+    [self.visibleIndexPaths removeAllObjects];
 }
 
-- (void)dealloc {
-    NSLog(@"flowlayout dealloc");
-}
 
 @end
 

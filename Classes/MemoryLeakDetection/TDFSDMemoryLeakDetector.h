@@ -8,16 +8,9 @@
 #import <Foundation/Foundation.h>
 #import "TDFSDFunctionIOControlProtocol.h"
 
-typedef NS_ENUM(NSUInteger, SDMLDWarnningType) {
-    SDMLDWarnningTypeAlert,
-    SDMLDWarnningTypeConsole,
-    SDMLDWarnningTypeException,
-};
-
 @interface TDFSDMemoryLeakDetector : NSObject <TDFSDFunctionIOControlProtocol>
 
 @property (nonatomic, strong, readonly) NSArray<NSString *> *cacheSingletonClassNames;
-@property (nonatomic, assign) SDMLDWarnningType warnningType;
 @property (nonatomic,   copy) BOOL (^customizedObjectIsLeakingLogicHandler)(id obj);
 
 + (instancetype)sharedInstance;

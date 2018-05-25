@@ -1,14 +1,14 @@
 //
-//  TDFSDPMZombieProxy.m
+//  TDFSDWPCZombieProxy.m
 //  TDFScreenDebuggerExample
 //
 //  Created by 开不了口的猫 on 2018/4/4.
 //  Copyright © 2018年 TDF. All rights reserved.
 //
 
-#import "TDFSDPMZombieProxy.h"
+#import "TDFSDWPCZombieProxy.h"
 
-@implementation TDFSDPMZombieProxy
+@implementation TDFSDWPCZombieProxy
 
 #define __ZombieBlew  [self zombieProxyBlew:_cmd]
 #define __ZombieBlewWithSelector(selector)  [self zombieProxyBlew:selector]

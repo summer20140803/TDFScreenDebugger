@@ -1,5 +1,5 @@
 //
-//  TDFSDPMZombieProxy.h
+//  TDFSDWPCZombieProxy.h
 //  TDFScreenDebuggerExample
 //
 //  Created by 开不了口的猫 on 2018/4/4.
@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface TDFSDPMZombieProxy : NSProxy
+@interface TDFSDWPCZombieProxy : NSProxy
 
 @property (nonatomic, assign) Class originClass;
 

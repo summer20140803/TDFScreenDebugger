@@ -29,7 +29,7 @@
     [super viewDidAppear:animated];
     SD_DELAY_HANDLER(0.50f, {
         [self.tipView sd_fadeAnimationWithDuration:0.20f];
-        self.tipView.text = @"Stay tuned...";
+        self.tipView.text = @"\n\nStay tuned ...";
     })
 }
 
@@ -47,7 +47,8 @@
     if (!_tipView) {
         _tipView = [[TDFSDTextView alloc] init];
         _tipView.textColor = [UIColor whiteColor];
-        _tipView.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:40];
+        _tipView.textAlignment = NSTextAlignmentCenter;
+        _tipView.font = [UIFont fontWithName:@"PingFangSC-Semibold" size:36];
         _tipView.showsVerticalScrollIndicator = NO;
     }
     return _tipView;

@@ -10,7 +10,7 @@
 #import "TDFScreenDebuggerDefine.h"
 #import "TDFSDPMExtraToolModel.h"
 #import "TDFSDPMToolCollectionCell.h"
-#import "TDFSDPMWildPointerChecker.h"
+#import "TDFSDWildPointerChecker.h"
 #import "UIView+ScreenDebugger.h"
 #import "TDFSDCustomizedFlowLayout.h"
 #import "UICollectionView+ScreenDebugger.h"
@@ -48,7 +48,7 @@ UICollectionViewDelegateFlowLayout>
     tool.name = @"Wild Pointer Checker";
     tool.toolDescription = @"Help you find out more info about wild pointer causes";
     tool.isOn = [TDFSDPersistenceSetting sharedInstance].allowWildPointerMonitoring;
-    tool.realizer = [TDFSDPMWildPointerChecker sharedInstance];
+    tool.realizer = [TDFSDWildPointerChecker sharedInstance];
     
     self.toolModels = @[ tool ];
 }

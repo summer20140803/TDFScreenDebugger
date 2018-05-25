@@ -18,6 +18,7 @@ static  NSString * kSDOverallSettingPersistenceKeyAllowMonitorSystemLogFlag     
 static  NSString * kSDOverallSettingPersistenceKeyLimitSizeOfSingleSystemLogMessageData  =  @"limitSizeOfSingleSystemLogMessageData";
 static  NSString * kSDOverallSettingPersistenceKeyAllowCrashCaptureFlag                  =  @"allowCrashCaptureFlag";
 static  NSString * kSDOverallSettingPersistenceKeyNeedCacheCrashLogToSandBox             =  @"needCacheCrashLogToSandBox";
+static  NSString * kSDOverallSettingPersistenceKeyIsSafeModeForCrashCapture              =  @"isSafeModeForCrashCapture";
 static  NSString * kSDOverallSettingPersistenceKeyAllowUILagsMonitoring                  =  @"allowUILagsMonitoring";
 static  NSString * kSDOverallSettingPersistenceKeyTolerableLagThreshold                  =  @"tolerableLagThreshold";
 static  NSString * kSDOverallSettingPersistenceKeyAllowApplicationCPUMonitoring          =  @"allowApplicationCPUMonitoring";
@@ -27,6 +28,7 @@ static  NSString * kSDOverallSettingPersistenceKeyFpsWarnningThreshold          
 static  NSString * kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring             =  @"allowWildPointerMonitoring";
 static  NSString * kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity                  =  @"maxZombiePoolCapacity";
 static  NSString * kSDOverallSettingPersistenceKeyAllowMemoryLeaksDetectionFlag          =  @"allowMemoryLeaksDetectionFlag";
+static  NSString * kSDOverallSettingPersistenceKeyMemoryLeakingWarningType               =  @"memoryLeakingWarningType";
 
 
 @synthesize functionList = _functionList;
@@ -60,6 +62,7 @@ static TDFSDPersistenceSetting *sharedInstance = nil;
         _allowCatchAPIRecordFlag = YES;
         _allowCrashCaptureFlag = YES;
         _needCacheCrashLogToSandBox = YES;
+        _isSafeModeForCrashCapture = NO;
         _allowMonitorSystemLogFlag = YES;
         _limitSizeOfSingleSystemLogMessageData = 1024 * 8;
         _allowUILagsMonitoring = YES;
@@ -71,6 +74,7 @@ static TDFSDPersistenceSetting *sharedInstance = nil;
         _allowWildPointerMonitoring = NO;
         _maxZombiePoolCapacity = 8 * 1024 * 10;
         _allowMemoryLeaksDetectionFlag = YES;
+        _memoryLeakingWarningType = SDMLDWarnningTypeAlert;
     }
     return self;
 }
@@ -129,14 +133,22 @@ static TDFSDPersistenceSetting *sharedInstance = nil;
     
     TDFSDFunctionModel *model7 = [[TDFSDFunctionModel alloc] init];
     model7.index = 6;
-    model7.functionName = @"RetainCycle Monitor";
+    model7.functionName = @"WildPointer Checker";
     model7.functionIcon = @"icon_screenDebugger_RetainCycle";
-    model7.functionDescription = @"“ This is a tool which can help developer to find out retain-cycle nodes in project. ”";
+    model7.functionDescription = @"“ This is a tool which can help developer to find out some wild pointer errors in project. ”";
     model7.quickLaunchDescrition = @"< not specified >";
     [functions addObject:model7];
     
+    TDFSDFunctionModel *model8 = [[TDFSDFunctionModel alloc] init];
+    model8.index = 7;
+    model8.functionName = @"RetainCycle Monitor";
+    model8.functionIcon = @"icon_screenDebugger_RetainCycle";
+    model8.functionDescription = @"“ This is a tool which can help developer to find out retain-cycle nodes in project. ”";
+    model8.quickLaunchDescrition = @"< not specified >";
+    [functions addObject:model8];
+    
     TDFSDFunctionModel *model10 = [[TDFSDFunctionModel alloc] init];
-    model10.index = 7;
+    model10.index = 8;
     model10.functionName = @"Help";
     model10.functionIcon = @"icon_screenDebugger_help";
     model10.functionDescription = @"一些关于调试器使用的基本操作和数据选项说明";
@@ -163,6 +175,7 @@ static TDFSDPersistenceSetting *sharedInstance = nil;
         _limitSizeOfSingleSystemLogMessageData = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyLimitSizeOfSingleSystemLogMessageData] integerValue];
         _allowCrashCaptureFlag = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowCrashCaptureFlag] boolValue];
         _needCacheCrashLogToSandBox = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyNeedCacheCrashLogToSandBox] boolValue];
+        _isSafeModeForCrashCapture = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyIsSafeModeForCrashCapture] boolValue];
         _allowUILagsMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowUILagsMonitoring] boolValue];
         _tolerableLagThreshold = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyTolerableLagThreshold] doubleValue];
         _allowApplicationCPUMonitoring = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowApplicationCPUMonitoring] boolValue];
@@ -173,6 +186,7 @@ static TDFSDPersistenceSetting *sharedInstance = nil;
         _allowWildPointerMonitoring = NO;
         _maxZombiePoolCapacity = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity] unsignedLongValue];
         _allowMemoryLeaksDetectionFlag = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyAllowMemoryLeaksDetectionFlag] boolValue];
+        _memoryLeakingWarningType = [[aDecoder decodeObjectForKey:kSDOverallSettingPersistenceKeyMemoryLeakingWarningType] unsignedIntegerValue];
     }
     return self;
 }
@@ -184,6 +198,7 @@ static TDFSDPersistenceSetting *sharedInstance = nil;
     [aCoder encodeObject:@(_limitSizeOfSingleSystemLogMessageData) forKey:kSDOverallSettingPersistenceKeyLimitSizeOfSingleSystemLogMessageData];
     [aCoder encodeObject:@(_allowCrashCaptureFlag) forKey:kSDOverallSettingPersistenceKeyAllowCrashCaptureFlag];
     [aCoder encodeObject:@(_needCacheCrashLogToSandBox) forKey:kSDOverallSettingPersistenceKeyNeedCacheCrashLogToSandBox];
+    [aCoder encodeObject:@(_isSafeModeForCrashCapture) forKey:kSDOverallSettingPersistenceKeyIsSafeModeForCrashCapture];
     [aCoder encodeObject:@(_allowUILagsMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowUILagsMonitoring];
     [aCoder encodeObject:@(_tolerableLagThreshold) forKey:kSDOverallSettingPersistenceKeyTolerableLagThreshold];
     [aCoder encodeObject:@(_allowApplicationCPUMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowApplicationCPUMonitoring];
@@ -193,6 +208,7 @@ static TDFSDPersistenceSetting *sharedInstance = nil;
 //    [aCoder encodeObject:@(_allowWildPointerMonitoring) forKey:kSDOverallSettingPersistenceKeyAllowWildPointerMonitoring];
     [aCoder encodeObject:@(_maxZombiePoolCapacity) forKey:kSDOverallSettingPersistenceKeyMaxZombiePoolCapacity];
     [aCoder encodeObject:@(_allowMemoryLeaksDetectionFlag) forKey:kSDOverallSettingPersistenceKeyAllowMemoryLeaksDetectionFlag];
+    [aCoder encodeObject:@(_memoryLeakingWarningType) forKey:kSDOverallSettingPersistenceKeyMemoryLeakingWarningType];
 }
 
 @end

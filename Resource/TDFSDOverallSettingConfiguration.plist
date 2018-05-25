@@ -34,13 +34,13 @@
 	<dict>
 		<key>options</key>
 		<array>
-			<string>128</string>
-			<string>256</string>
-			<string>512</string>
 			<string>1024</string>
 			<string>2048</string>
-			<string>5120</string>
-			<string>10240</string>
+			<string>4096</string>
+			<string>8192</string>
+			<string>16384</string>
+			<string>40960</string>
+			<string>81920</string>
 		</array>
 		<key>title</key>
 		<string>limitSizeOfSingleSystemLogMessageData</string>
@@ -65,6 +65,14 @@
 		<key>type</key>
 		<integer>0</integer>
 	</dict>
+    <dict>
+        <key>title</key>
+        <string>isSafeModeForCrashCapture</string>
+        <key>description</key>
+        <string>a flag to tell the crash captor which capture strategy to use, if the value is set to YES, the capture report page will not pop up in time, the crash notification will be postponed until the app restart. If the value is set to NO, the captor will notify developer in time, but at this time the program is already in an unstable state, we call some unsafe api to achieve it. default is NO</string>
+        <key>type</key>
+        <integer>0</integer>
+    </dict>
 	<dict>
 		<key>title</key>
 		<string>allowUILagsMonitoring</string>
@@ -151,12 +159,41 @@
 		<integer>0</integer>
 	</dict>
     <dict>
+        <key>options</key>
+        <array>
+            <string>81920</string>
+            <string>245760</string>
+            <string>409600</string>
+            <string>819200</string>
+        </array>
+        <key>title</key>
+        <string>maxZombiePoolCapacity</string>
+        <key>description</key>
+        <string>we use the establishment of a no-dealloc target pool to manage, we will kill all targets in pool when the pool size exceeds this threshold, default is 10MB</string>
+        <key>type</key>
+        <integer>1</integer>
+    </dict>
+    <dict>
         <key>title</key>
         <string>allowMemoryLeaksDetectionFlag</string>
         <key>description</key>
         <string>a flag to tell the memory leak detector whether should detect memory leaks in project</string>
         <key>type</key>
         <integer>0</integer>
+    </dict>
+    <dict>
+        <key>options</key>
+        <array>
+            <string>alert</string>
+            <string>console</string>
+            <string>exception</string>
+        </array>
+        <key>title</key>
+        <string>memoryLeakingWarningType</string>
+        <key>description</key>
+        <string>when a memory leak occurs, it depends on which way you choose to remind developers. default is alert</string>
+        <key>type</key>
+        <integer>1</integer>
     </dict>
 </array>
 </plist>

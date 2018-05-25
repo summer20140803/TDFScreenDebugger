@@ -10,8 +10,14 @@
 @class TDFSDFunctionModel;
 
 typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
-    SDMessageRemindTypeAPIRecord     =  0,
-    SDMessageRemindTypeSystemLog     =  1,
+    SDMessageRemindTypeAPIRecord,
+    SDMessageRemindTypeSystemLog,
+};
+
+typedef NS_ENUM(NSUInteger, SDMLDWarnningType) {
+    SDMLDWarnningTypeAlert,
+    SDMLDWarnningTypeConsole,
+    SDMLDWarnningTypeException,
 };
 
 @interface TDFSDPersistenceSetting : NSObject <NSCoding>
@@ -57,6 +63,13 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
  cached file can be look over again in history-list. default is YES
  */
 @property (nonatomic, assign) BOOL needCacheCrashLogToSandBox;
+/**
+ a flag to tell the crash captor which capture strategy to use,
+ if the value is set to YES, the capture report page will not pop up in time, the crash notification will be postponed until the app restart.
+ if the value is set to NO, the captor will notify developer in time, but at this time the program is already in an unstable state, we call some unsafe api to achieve it.
+ default is NO
+ */
+@property (nonatomic, assign) BOOL isSafeModeForCrashCapture;
 
 
 /**
@@ -85,6 +98,8 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
  fps component will born a warnning for user. default is `30`
  */
 @property (nonatomic, assign) NSUInteger fpsWarnningThreshold;
+
+
 /**
  a flag to tell the performance monitor whether should monitor the error caused by wild pointer. default is NO
  In addition, when restart app, the value will restored to 'NO' automatically
@@ -100,5 +115,9 @@ typedef NS_ENUM(NSUInteger, SDMessageRemindType) {
  a flag to tell the memory leak detector whether should detect memory leaks in project. default is YES
  */
 @property (nonatomic, assign) BOOL allowMemoryLeaksDetectionFlag;
+/**
+ when a memory leak occurs, it depends on which way you choose to remind developers. default is SDMLDWarnningTypeAlert
+ */
+@property (nonatomic, assign) SDMLDWarnningType memoryLeakingWarningType;
 
 @end

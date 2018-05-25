@@ -112,7 +112,7 @@ static NSString *mld_warnningMessage(id leaker) {
     TDFSDMLDGeneralizedProxy *proxy = [aNotification object];
     id leaker = proxy.weakTarget;
     if (leaker) {
-        switch ([TDFSDMemoryLeakDetector sharedInstance].warnningType) {
+        switch ([TDFSDPersistenceSetting sharedInstance].memoryLeakingWarningType) {
             case SDMLDWarnningTypeAlert : {
                 @weakify(self)
                 UIAlertController *alertC = [UIAlertController alertControllerWithTitle:@"memory leak warnning" message:mld_warnningMessage(leaker) preferredStyle:UIAlertControllerStyleAlert];

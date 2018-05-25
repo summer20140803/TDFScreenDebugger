@@ -10,6 +10,7 @@
 #import "TDFScreenDebuggerDefine.h"
 #import "TDFSDCCCrashModel.h"
 #import "TDFSDCrashCapturePresentationController.h"
+#import "TDFSDCrashCaptureDetailController.h"
 #import "TDFSDTransitionAnimator.h"
 #import "TDFSDQueueDispatcher.h"
 #import "UIViewController+ScreenDebugger.h"
@@ -20,6 +21,7 @@
 
 static BOOL _needApplyForKeepingLifeCycle = NO;
 static void ocExceptionHandler(NSException *e);
+static const NSString *kCrashModelExistKeyForSafeMode  =  @"sd_cc_crash_model_exist_key_for_safe_mode";
 
 @interface TDFSDCCKVOStub : NSObject
 
@@ -187,6 +189,46 @@ static const CGFloat  keepAliveReloadRenderingInterval  = 1 / 60.0f;
 #pragma mark - life cycle
 
 #if DEBUG
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        __weak NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        __block id noti_observer = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+            SD_DELAY_HANDLER(1.0f, {
+                if ([[TDFSDPersistenceSetting sharedInstance] isSafeModeForCrashCapture]) {
+                    if ([[[NSUserDefaults standardUserDefaults] objectForKey:(NSString *)kCrashModelExistKeyForSafeMode] boolValue]) {
+                        [[NSUserDefaults standardUserDefaults] setObject:@(NO) forKey:(NSString *)kCrashModelExistKeyForSafeMode];
+                        [[NSUserDefaults standardUserDefaults] synchronize];
+                        
+                        NSString *cachePath = SD_CRASH_CAPTOR_CACHE_MODEL_ARCHIVE_PATH;
+                        NSArray *cacheCrashModels = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
+                        
+                        if (cacheCrashModels.count) {
+                            TDFSDCCCrashModel *crashModel = cacheCrashModels.firstObject;
+
+                            UIAlertController *alertC = [UIAlertController alertControllerWithTitle:@"⚠️" message:@"you have an unread crash message" preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
+                            UIAlertAction *detailAction = [UIAlertAction actionWithTitle:@"detail" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                                UIWindow *effectiveWindow = currentEffectiveWindow();
+                                
+                                TDFSDCrashCaptureDetailController *detailPage = [[TDFSDCrashCaptureDetailController alloc] init];
+                                detailPage.crash = crashModel;
+                                detailPage.transitioningDelegate = [TDFSDCrashCaptor sharedInstance];
+                                UIViewController *topViewController = [effectiveWindow.rootViewController sd_obtainTopViewController];
+                                [topViewController presentViewController:detailPage animated:YES completion:nil];
+                            }];
+                            [alertC addAction:cancelAction];
+                            [alertC addAction:detailAction];
+                            [[[UIApplication sharedApplication].keyWindow.rootViewController sd_obtainTopViewController] presentViewController:alertC animated:YES completion:nil];
+                        }
+                    }
+                }
+            })
+            [center removeObserver:noti_observer];
+        }];
+    });
+}
+
 SD_CONSTRUCTOR_METHOD_DECLARE \
 (SD_CONSTRUCTOR_METHOD_PRIORITY_BUILD_CACHE_CRASH_CAPTOR, {
     // build exclusive crash folder in sdk's root folder
@@ -312,12 +354,19 @@ static void machSignalExceptionHandler(int signal) {
     
     NSLog(@"%@", crash.debugDescription);
     
-    if ([[TDFSDPersistenceSetting sharedInstance] needCacheCrashLogToSandBox]) {
+    if ([[TDFSDPersistenceSetting sharedInstance] needCacheCrashLogToSandBox] || [[TDFSDPersistenceSetting sharedInstance] isSafeModeForCrashCapture]) {
         [[TDFSDCrashCaptor sharedInstance] performSelectorOnMainThread:@selector(cacheCrashLog:) withObject:crash waitUntilDone:YES];
     }
     
-    showFriendlyCrashPresentation(crash, @(signal));
-    applyForKeepingLifeCycle();
+    if ([[TDFSDPersistenceSetting sharedInstance] isSafeModeForCrashCapture]) {
+        if (crash) {
+            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:(NSString *)kCrashModelExistKeyForSafeMode];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
+    } else {
+        showFriendlyCrashPresentation(crash, @(signal));
+        applyForKeepingLifeCycle();
+    }
 }
 
 static void ocExceptionHandler(NSException *exception) {
@@ -331,15 +380,22 @@ static void ocExceptionHandler(NSException *exception) {
 
     NSLog(@"%@", crash.debugDescription);
 
-    if ([[TDFSDPersistenceSetting sharedInstance] needCacheCrashLogToSandBox]) {
+    if ([[TDFSDPersistenceSetting sharedInstance] needCacheCrashLogToSandBox] || [[TDFSDPersistenceSetting sharedInstance] isSafeModeForCrashCapture]) {
         [[TDFSDCrashCaptor sharedInstance] performSelectorOnMainThread:@selector(cacheCrashLog:) withObject:crash waitUntilDone:YES];
     }
 
-    showFriendlyCrashPresentation(crash, exception);
-    if (_needApplyForKeepingLifeCycle) {
-        applyForKeepingLifeCycle();
+    if ([[TDFSDPersistenceSetting sharedInstance] isSafeModeForCrashCapture]) {
+        if (crash) {
+            [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:(NSString *)kCrashModelExistKeyForSafeMode];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
     } else {
-        _needApplyForKeepingLifeCycle = YES;
+        showFriendlyCrashPresentation(crash, exception);
+        if (_needApplyForKeepingLifeCycle) {
+            applyForKeepingLifeCycle();
+        } else {
+            _needApplyForKeepingLifeCycle = YES;
+        }
     }
 }
 
@@ -399,22 +455,27 @@ static NSString *crashFuzzyLocalization(NSArray<NSString *> *callStackSymbols) {
     return fuzzyLocalization ?: crashCallStackSymbolLocalizationFailDescription;
 }
 
-static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition) {
+static UIWindow *currentEffectiveWindow() {
     // find out the toppest and useable window
     NSArray<UIWindow *> *windows = [[UIApplication sharedApplication] windows];
     UIWindow *effectiveWindow = [[[[windows.rac_sequence
-    filter:^BOOL(id  _Nullable value) {
-        return ![(UIWindow *)value isHidden] && [(UIWindow *)value alpha] != 0;
-    }]
-    array]
-    sortedArrayUsingComparator:^NSComparisonResult(UIWindow * _Nonnull obj1, UIWindow * _Nonnull obj2) {
-        if (obj1.windowLevel > obj2.windowLevel) {
-            return NSOrderedAscending;
-        } else {
-            return NSOrderedDescending;
-        }
-    }]
-    firstObject];
+                                    filter:^BOOL(id  _Nullable value) {
+                                        return ![(UIWindow *)value isHidden] && [(UIWindow *)value alpha] != 0;
+                                    }]
+                                    array]
+                                sortedArrayUsingComparator:^NSComparisonResult(UIWindow * _Nonnull obj1, UIWindow * _Nonnull obj2) {
+                                    if (obj1.windowLevel > obj2.windowLevel) {
+                                        return NSOrderedAscending;
+                                    } else {
+                                        return NSOrderedDescending;
+                                    }
+                                }]
+                                firstObject];
+    return effectiveWindow;
+}
+
+static void showFriendlyCrashPresentation(TDFSDCCCrashModel *crash, id addition) {
+    UIWindow *effectiveWindow = currentEffectiveWindow();
     
     TDFSDCrashCapturePresentationController *p = [[TDFSDCrashCapturePresentationController alloc] init];
     p.crashInfo = crash;
