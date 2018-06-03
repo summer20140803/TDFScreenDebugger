@@ -8,6 +8,7 @@
 #import "NSObject+SDMemoryLeakDetection.h"
 #import "TDFSDMLDGeneralizedProxy.h"
 #import "TDFSDMemoryLeakDetector.h"
+#import "NSBundle+ScreenDebugger.h"
 #import <objc/runtime.h>
 
 @implementation NSObject (SDMemoryLeakDetection)
@@ -21,7 +22,7 @@
     
     // skip system classes
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    if (![bundle isEqual:[NSBundle mainBundle]]) {
+    if ([bundle isAppleClassesBundle]) {
         return;
     }
 
@@ -60,12 +61,13 @@
 - (void)trackAllStrongPropsLeaks {
     Class class = [self class];
     NSBundle *bundle = [NSBundle bundleForClass:class];
-    if (![bundle isEqual:[NSBundle mainBundle]]) {
+    
+    if ([bundle isAppleClassesBundle]) {
         return;
     }
     
     NSMutableArray *allStrongProps = @[].mutableCopy;
-    while ([[NSBundle bundleForClass:class] isEqual:[NSBundle mainBundle]]) {
+    while (![[NSBundle bundleForClass:class] isAppleClassesBundle]) {
         NSArray *strongProps = [self mld_getAllPropertyNames:class];
         [allStrongProps addObjectsFromArray:strongProps];
         class = [class superclass];
@@ -73,7 +75,7 @@
     
     [allStrongProps enumerateObjectsUsingBlock:^(NSString * _Nonnull propName, NSUInteger idx, BOOL * _Nonnull stop) {
         id obj = [self valueForKey:propName];
-        if (obj) {
+        if (obj && [obj mld_proxy] == nil) {
             [obj bindWithProxy];
             [obj mld_proxy].weakTargetOwner = self;
             Class class = [self class];
@@ -93,7 +95,7 @@
 - (NSArray *)mld_getAllPropertyNames:(Class)cls {
     unsigned int i, count = 0;
     
-    objc_property_t *properties = class_copyPropertyList(cls, &count );
+    objc_property_t *properties = class_copyPropertyList(cls, &count);
     
     if (count == 0) {
         free(properties);
@@ -117,9 +119,38 @@
             // such as ` @"T@\n"NSTimer\"" `, we filter out some classes which we don't need to detect
             NSString *className = [typeName substringWithRange:NSMakeRange(3, typeName.length - 4)];
             Class propClass = NSClassFromString(className);
+            
             if (propClass != NULL) {
                 NSBundle *bundle = [NSBundle bundleForClass:propClass];
-                if (![bundle isEqual:[NSBundle mainBundle]]) {
+                
+                if ([bundle isAppleClassesBundle]) {
+                    if ([propClass conformsToProtocol:@protocol(NSFastEnumeration)] && [propClass conformsToProtocol:@protocol(NSObject)]) {
+                        // skip NSPointerArray/NSMapTable/NSHashTable..
+                        if ([className isEqualToString:@"NSPointerArray"] ||
+                            [className isEqualToString:@"NSMapTable"]     ||
+                            [className isEqualToString:@"NSHashTable"]) {
+                            continue;
+                        }
+                        NSString *name = [NSString stringWithUTF8String:property_getName(property)];
+                        id<NSFastEnumeration, NSObject> set = [self valueForKey:name];
+                        
+                        for (id obj in ([set isKindOfClass:[NSDictionary class]] ? [(NSDictionary *)set allValues] : set)) {
+                            if (obj && [obj mld_proxy] == nil) {
+                                [obj bindWithProxy];
+                                [obj mld_proxy].weakTargetOwner = self;
+                                Class class = [self class];
+                                if ([class isKindOfClass:[UIViewController class]]) {
+                                    UIViewController *vc = (UIViewController *)self;
+                                    [obj mld_proxy].weakViewControllerOwnerClassName = NSStringFromClass([vc class]);
+                                    [obj mld_proxy].weakViewControllerOwnerTitle = vc.title;
+                                } else {
+                                    [obj mld_proxy].weakTargetOwnerName = NSStringFromClass([self class]);
+                                }
+                                
+                                [obj trackAllStrongPropsLeaks];
+                            }
+                        }
+                    }
                     continue;
                 }
             }

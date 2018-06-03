@@ -1,16 +1,14 @@
 //
-//  UIWindow+ScreenDebugger.m
-//  TDFScreenDebuggerExample
+//  UIApplication+ScreenDebugger.m
+//  TDFScreenDebugger
 //
-//  Created by 开不了口的猫 on 2017/9/13.
-//  Copyright © 2017年 TDF. All rights reserved.
+//  Created by 开不了口的猫 on 2018/6/2.
 //
 
-#import "UIWindow+ScreenDebugger.h"
-#import "TDFSDManager.h"
+#import "UIApplication+ScreenDebugger.h"
 #import <objc/runtime.h>
 
-@implementation UIWindow (ScreenDebugger)
+@implementation UIApplication (ScreenDebugger)
 
 #if DEBUG
 + (void)load {
@@ -45,16 +43,7 @@
 
 - (void)sd_motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event {
     [self sd_motionBegan:motion withEvent:event];
-    
-    if ([TDFSDManager manager].disableForShakingLaunch) return;
-    
-    if ([TDFSDManager manager].screenDebuggerWindow.hidden) {
-        [[TDFSDManager manager] showDebugger];
-    } else {
-        [[TDFSDManager manager] hideDebugger];
-    }
 }
 #endif
-
 
 @end

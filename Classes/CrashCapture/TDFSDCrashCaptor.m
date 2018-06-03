@@ -14,6 +14,7 @@
 #import "TDFSDTransitionAnimator.h"
 #import "TDFSDQueueDispatcher.h"
 #import "UIViewController+ScreenDebugger.h"
+#import "NSBundle+ScreenDebugger.h"
 #import <ReactiveObjC/ReactiveObjC.h>
 #import <objc/runtime.h>
 #import <signal.h>
@@ -206,9 +207,9 @@ static const CGFloat  keepAliveReloadRenderingInterval  = 1 / 60.0f;
                         if (cacheCrashModels.count) {
                             TDFSDCCCrashModel *crashModel = cacheCrashModels.firstObject;
 
-                            UIAlertController *alertC = [UIAlertController alertControllerWithTitle:@"⚠️" message:@"you have an unread crash message" preferredStyle:UIAlertControllerStyleAlert];
-                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"cancel" style:UIAlertActionStyleCancel handler:nil];
-                            UIAlertAction *detailAction = [UIAlertAction actionWithTitle:@"detail" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                            UIAlertController *alertC = [UIAlertController alertControllerWithTitle:@"⚠️" message:SD_STRING(@"you have an unread crash message") preferredStyle:UIAlertControllerStyleAlert];
+                            UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:SD_STRING(@"cancel") style:UIAlertActionStyleCancel handler:nil];
+                            UIAlertAction *detailAction = [UIAlertAction actionWithTitle:SD_STRING(@"detail") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                                 UIWindow *effectiveWindow = currentEffectiveWindow();
                                 
                                 TDFSDCrashCaptureDetailController *detailPage = [[TDFSDCrashCaptureDetailController alloc] init];
@@ -442,7 +443,7 @@ static NSString *crashFuzzyLocalization(NSArray<NSString *> *callStackSymbols) {
                 NSBundle *bundle = [NSBundle bundleForClass:NSClassFromString(className)];
                 
                 // filter out system class
-                if ([bundle isEqual:[NSBundle mainBundle]]) {
+                if (![bundle isAppleClassesBundle]) {
                     fuzzyLocalization = callStackSymbolMsg;
                 }
                 *stop = YES;

@@ -35,7 +35,7 @@
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
 - (NSString *)titleForFullScreenConsole {
-    return @"Specified Lag Detail";
+    return SD_STRING(@"Specified Lag Detail");
 }
 
 - (__kindof UIView *)contentViewForFullScreenConsole {

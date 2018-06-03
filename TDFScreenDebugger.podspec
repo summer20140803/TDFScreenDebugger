@@ -17,8 +17,9 @@ Pod::Spec.new do |s|
 s.ios.deployment_target = '8.0'
 s.source_files = 'Classes/**/*.{h,m,mm}'
 s.resource_bundle = {
-    'TDFScreenDebuggerBundle' => ['Resource/**/*.{png,jpg,jpeg,xcassets,plist}']
+    'TDFScreenDebuggerBundle' => ['Resource/**/*.{png,jpg,jpeg,xcassets,plist,lproj}']
 }
+#s.public_header_files = '**/*.h'
 
 s.dependency 'TDFAPILogger'
 s.dependency 'Masonry'

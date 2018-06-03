@@ -36,6 +36,11 @@
     return self;
 }
 
+- (void)dealloc {
+    [self.previousProxy sendCompleted];
+    [self.nextProxy sendCompleted];
+}
+
 - (UIButton *)previousButton {
     if (!_previousButton) {
         _previousButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -44,7 +49,9 @@
         @weakify(self)
         _previousButton.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
             @strongify(self)
-            !self.previousProxy ?: [self.previousProxy sendNext:input];
+            if (self.previousProxy) {
+                [self.previousProxy sendNext:input];
+            }
             return [RACSignal empty];
         }];
     }
@@ -59,7 +66,9 @@
         @weakify(self)
         _nextButton.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
             @strongify(self)
-            !self.nextProxy ?: [self.nextProxy sendNext:input];
+            if (self.nextProxy) {
+                [self.nextProxy sendNext:input];
+            }
             return [RACSignal empty];
         }];
     }
@@ -180,7 +189,7 @@ const CGFloat SDSearchBarInputAccessoryHeight  = 130.f;
     if (self = [super init]) {
         self.barStyle = UIBarStyleBlack;
         self.searchBarStyle = UISearchBarStyleMinimal;
-        self.placeholder = @"enter keywords to search";
+        self.placeholder = SD_STRING(@"enter keywords to search");
         self.translucent = YES;
         self.tintColor = [UIColor lightTextColor];
         [self.inputAccessoryContainer setFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, SDSearchBarInputAccessoryHeight)];

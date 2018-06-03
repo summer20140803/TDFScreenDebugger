@@ -7,9 +7,9 @@
 //
 
 #import "ViewController.h"
-#import "TDFSDWildPointerChecker.h"
 #import "LeakingViewController.h"
-#import "TDFSDMemoryLeakDetector.h"
+#import "TDFSDManager.h"
+#import <ReactiveObjC/ReactiveObjC.h>
 
 @interface CustomObject : NSObject
 
@@ -22,6 +22,7 @@
 @interface ViewController ()
 
 @property (nonatomic, unsafe_unretained) CustomObject *obj;
+@property (nonatomic, strong) UIView *cusview;
 
 @end
 
@@ -30,12 +31,26 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.view setBackgroundColor:[UIColor whiteColor]];
+    
+    
+    self.cusview = [[UIView alloc] init];
+    self.cusview.backgroundColor = [UIColor blueColor];
+    self.cusview.frame = CGRectMake(200, 400, 100, 100);
+    UILongPressGestureRecognizer *longpress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressToQuickLaunch)];
+    longpress.minimumPressDuration = 1.5;
+    [self.cusview addGestureRecognizer:longpress];
+    [self.view addSubview:self.cusview];
+    
+    // add quick launch..
+    [[TDFSDManager manager] registerQuickLaunchGesture:longpress forSubTool:SDSubToolTypeCrashCaptor];
+}
+
+- (void)longPressToQuickLaunch {
+    NSLog(@"OJBK");
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    CustomObject *obj = [[CustomObject alloc] init];
-    NSLog(@"%@", obj);
-    self.obj = obj;
+
 }
 
 - (IBAction)testAction:(id)sender {

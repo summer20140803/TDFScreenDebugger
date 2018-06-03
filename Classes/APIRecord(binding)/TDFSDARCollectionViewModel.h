@@ -8,8 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreGraphics/CoreGraphics.h>
-#import "TDFALRequestModel.h"
-
+#import <TDFAPILogger/TDFALRequestModel.h>
 
 @interface TDFSDARCollectionViewModel : NSObject
 

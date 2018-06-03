@@ -23,8 +23,8 @@
 
 - (instancetype)initWithSettingDictionary:(NSDictionary *)settingDictionary {
     if (self = [super init]) {
-        _settingTitle = settingDictionary[@"title"];
-        _settingDescription = settingDictionary[@"description"];
+        _settingTitle = SD_STRING(settingDictionary[@"title"]);
+        _settingDescription = SD_STRING(settingDictionary[@"description"]);
         _type = [settingDictionary[@"type"] unsignedIntegerValue];
         _optionalValues = settingDictionary[@"options"];
         _cellHeight = [self preCellHeight];

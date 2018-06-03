@@ -91,7 +91,7 @@ typedef NS_ENUM(NSUInteger, SDAllReadNotificationContentType) {
 
 #define SD_BUNDLE  \
 ({   \
-    NSString *bundlePath = [[NSBundle bundleForClass:[self class]].resourcePath   \
+    NSString *bundlePath = [[NSBundle bundleForClass:NSClassFromString(@"TDFSDManager")].resourcePath   \
     stringByAppendingPathComponent:@"TDFScreenDebuggerBundle.bundle"];   \
     NSBundle *resource_bundle = [NSBundle bundleWithPath:bundlePath] ?: [NSBundle mainBundle];   \
     resource_bundle;  \
@@ -107,5 +107,7 @@ typedef NS_ENUM(NSUInteger, SDAllReadNotificationContentType) {
 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(DELAY_TIME * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{  \
     __VA_ARGS__  \
 });
+
+#define SD_STRING(KEY)  NSLocalizedStringFromTableInBundle(KEY, @"TDFScreenDebugger", SD_BUNDLE, nil)
 
 #endif /* TDFScreenDebuggerDefine_h */

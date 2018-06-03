@@ -252,7 +252,7 @@
         _centerEnterBtn.titleLabel.textAlignment = NSTextAlignmentCenter;
         _centerEnterBtn.titleLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:12];
         [_centerEnterBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [_centerEnterBtn setTitle:@"Tap to Debugger Center" forState:UIControlStateNormal];
+        [_centerEnterBtn setTitle:SD_STRING(@"Tap to Debugger Center") forState:UIControlStateNormal];
         @weakify(self)
         _centerEnterBtn.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
             @strongify(self)

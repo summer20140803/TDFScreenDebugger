@@ -12,7 +12,7 @@
 
 @interface TDFSDFunctionCollectionViewModel : NSObject
 
-@property (nonatomic, strong) TDFSDFunctionModel *function;
+@property (nonatomic, weak) TDFSDFunctionModel *function;
 @property (nonatomic, assign, readonly) CGFloat cellHeight;
 @property (nonatomic, assign, readonly) CGFloat cellWidth;
 @property (nonatomic, strong) RACCommand *jumpCommand;

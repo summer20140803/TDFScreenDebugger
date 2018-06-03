@@ -8,6 +8,7 @@
 
 #import "TDFSDARCollectionViewCell.h"
 #import "TDFSDARCollectionViewModel.h"
+#import "TDFScreenDebuggerDefine.h"
 #import <Masonry/Masonry.h>
 
 @interface TDFSDARCollectionViewCell ()
@@ -40,9 +41,9 @@
 
 #pragma mark - interface methods
 - (void)bindWithViewModel:(TDFSDARCollectionViewModel *)viewModel {
-    self.timeLabel.text = [viewModel.requestModel.milestoneTime stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: @"Not set";
-    self.descriptionLabel.text = [viewModel.requestModel.taskDescription stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: @"Not set";
-    self.validURLLabel.text = [viewModel.requestModel.validURL stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: @"Not set";
+    self.timeLabel.text = [viewModel.requestModel.milestoneTime stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: SD_STRING(@"Not set");
+    self.descriptionLabel.text = [viewModel.requestModel.taskDescription stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: SD_STRING(@"Not set");
+    self.validURLLabel.text = [viewModel.requestModel.validURL stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: SD_STRING(@"Not set");
 }
 
 #pragma mark - getter

@@ -59,7 +59,7 @@ static const CGFloat kSDSettingOptionPickerCellHeight  =  40.0f;
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
 - (NSString *)titleForFullScreenConsole {
-    return @"Debugger Settings";
+    return SD_STRING(@"Debugger Settings");
 }
 
 - (UIView *)contentViewForFullScreenConsole {
@@ -73,9 +73,9 @@ static const CGFloat kSDSettingOptionPickerCellHeight  =  40.0f;
         return @[ [TDFSDFunctionMenuItem itemWithImage:SD_BUNDLE_IMAGE(@"icon_screenDebugger_update_setting")
                                          actionHandler:^(TDFSDFunctionMenuItem *item) {
                                              @strongify(self)
-                                             [self presentLoadingHUDWithText:@"save to sandbox..." syncTransaction:^NSString *{
+                                             [self presentLoadingHUDWithText:SD_STRING(@"save to sandbox...") syncTransaction:^NSString *{
                                                  [NSKeyedArchiver archiveRootObject:weak_setting toFile:SD_OVERALL_SETTING_CACHE_FIFLE_PATH];
-                                                 return @"success";
+                                                 return SD_STRING(@"success");
                                              }];
                                          }] ];
     }
@@ -119,7 +119,7 @@ static const CGFloat kSDSettingOptionPickerCellHeight  =  40.0f;
     TDFSDSettingOptionPickerCell *cell = [TDFSDSettingOptionPickerCell cellWithTableView:tableView indexPath:indexPath];
     TDFSDSettingCollectionViewModel *item = self.settingItems[self.currentPickerIndex];
     @weakify(self)
-    [cell bindWithOptionTitle:item.optionalValues[indexPath.section] optionDidPickHandler:^(NSIndexPath *indexPath, NSString *pickValue) {
+    [cell bindWithOptionTitle:SD_STRING(item.optionalValues[indexPath.section]) optionDidPickHandler:^(NSIndexPath *indexPath, NSString *pickValue) {
         @strongify(self)
         updateSettingValueWithIndex(pickValue, self.currentPickerIndex);
         [self popPickerView];
@@ -279,10 +279,10 @@ static id settingValueForIndexPath(NSIndexPath *indexPath) {
         case 0:{
             switch (ps.messageRemindType) {
                 case SDMessageRemindTypeAPIRecord:{
-                    return @"api record";
+                    return SD_STRING(@"api record");
                 } break;
                 case SDMessageRemindTypeSystemLog:{
-                    return @"system log";
+                    return SD_STRING(@"system log");
                 } break;
             }
         } break;
@@ -304,13 +304,13 @@ static id settingValueForIndexPath(NSIndexPath *indexPath) {
         case 16:{
             switch (ps.memoryLeakingWarningType) {
                 case SDMLDWarnningTypeAlert:{
-                    return @"alert";
+                    return SD_STRING(@"alert");
                 } break;
                 case SDMLDWarnningTypeConsole:{
-                    return @"console";
+                    return SD_STRING(@"console");
                 } break;
                 case SDMLDWarnningTypeException:{
-                    return @"exception";
+                    return SD_STRING(@"exception");
                 } break;
             }
         } break;
@@ -322,9 +322,9 @@ static void updateSettingValueWithIndex(id newValue, NSInteger index) {
     TDFSDPersistenceSetting *ps = [TDFSDPersistenceSetting sharedInstance];
     switch (index) {
         case 0:{
-            if ([newValue isEqualToString:@"api record"]) {
+            if ([newValue isEqualToString:SD_STRING(@"api record")]) {
                 ps.messageRemindType = SDMessageRemindTypeAPIRecord;
-            } else if ([newValue isEqualToString:@"system log"]) {
+            } else if ([newValue isEqualToString:SD_STRING(@"system log")]) {
                 ps.messageRemindType = SDMessageRemindTypeSystemLog;
             }
         } break;
@@ -344,11 +344,11 @@ static void updateSettingValueWithIndex(id newValue, NSInteger index) {
         case 14:{ ps.maxZombiePoolCapacity = [newValue integerValue]; } break;
         case 15:{ ps.allowMemoryLeaksDetectionFlag = [newValue boolValue]; } break;
         case 16:{
-            if ([newValue isEqualToString:@"alert"]) {
+            if ([newValue isEqualToString:SD_STRING(@"alert")]) {
                 ps.memoryLeakingWarningType = SDMLDWarnningTypeAlert;
-            } else if ([newValue isEqualToString:@"console"]) {
+            } else if ([newValue isEqualToString:SD_STRING(@"console")]) {
                 ps.memoryLeakingWarningType = SDMLDWarnningTypeConsole;
-            } else if ([newValue isEqualToString:@"exception"]) {
+            } else if ([newValue isEqualToString:SD_STRING(@"exception")]) {
                 ps.memoryLeakingWarningType = SDMLDWarnningTypeException;
             }
         } break;

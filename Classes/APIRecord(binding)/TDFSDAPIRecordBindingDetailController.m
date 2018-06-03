@@ -10,6 +10,7 @@
 #import "TDFSDAPIRecorder.h"
 #import "TDFSDTextView.h"
 #import "UIView+ScreenDebugger.h"
+#import "TDFScreenDebuggerDefine.h"
 #import <Masonry/Masonry.h>
 #import <ReactiveObjC/ReactiveObjC.h>
 
@@ -39,7 +40,7 @@ typedef NS_ENUM(NSUInteger, kSDARCurrentContentType) {
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
 - (NSString *)titleForFullScreenConsole {
-    return @"Specified API Detail";
+    return SD_STRING(@"Specified API Detail");
 }
 
 - (__kindof UIView *)contentViewForFullScreenConsole {
@@ -72,7 +73,7 @@ typedef NS_ENUM(NSUInteger, kSDARCurrentContentType) {
             self.bindingContentView.text = self.req.selfDescription;
         } break;
         case kSDARCurrentContentTypeResponse: {
-            self.bindingContentView.text = self.resp ? self.resp.selfDescription : @"The response from the server has not been received yet";
+            self.bindingContentView.text = self.resp ? self.resp.selfDescription : SD_STRING(@"The response from the server has not been received yet");
         } break;
     }
     if (@available(iOS 10.0, *)) {
@@ -115,7 +116,7 @@ typedef NS_ENUM(NSUInteger, kSDARCurrentContentType) {
 
 - (UISegmentedControl *)segmentedControl {
     if (!_segmentedControl) {
-        _segmentedControl = [[UISegmentedControl alloc] initWithItems:@[@"Request", @"Response"]];
+        _segmentedControl = [[UISegmentedControl alloc] initWithItems:@[SD_STRING(@"Request"), SD_STRING(@"Response")]];
         _segmentedControl.tintColor = [UIColor whiteColor];
         _segmentedControl.selectedSegmentIndex = 0;
         @weakify(self)

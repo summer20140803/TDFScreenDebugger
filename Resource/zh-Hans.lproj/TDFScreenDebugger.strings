@@ -1,0 +1,115 @@
+/* 
+  TDFScreenDebugger.strings
+  Pods
+
+  Created by 开不了口的猫 on 2018/5/28.
+  
+*/
+
+"Specified API Detail" = "API信息";
+"The response from the server has not been received yet" = "暂时未收到来自服务端的响应";
+"Request" = "请求";
+"Response" = "响应";
+"API Record" = "API历史";
+"Not set" = "未设置";
+"\n\n\nStay tuned ..." = "\n\n\n敬请期待...";
+"Feature In Future" = "这是一个待实现功能";
+"Debugger Center" = "调试中心";
+"Performance Monitor" = "应用性能监控器";
+"MemoryLeak Detector" = "内存泄漏探测器";
+"WildPointer Checker" = "野指针检查器";
+"The follwing params could be setted by developers\n\n" = "下面列出来的参数可以由开发者自由配置\n\n";
+"\n\tThis is a tool which can monitor the main thread and find out some caton nodes will correspond to the stack trace feedback to the developers, it can also monitor app CPU/Memory usage, detecting current UI FPS and more performance data for developers.\n\n" = "\n\t这是一款能在UI线程常驻的子工具，如果发现有发生超过限定阈值时间的卡顿，将会抓取即时的堆栈信息并反馈给开发者，不仅如此，工具还能帮你监控本应用在手机设备上的CPU和内存占用情况、当前页面的实时FPS帧数，甚至能提供更多的性能数据给开发者。\n\n";
+"\n\tThis is a tool which can help developer to find out some suspicious memory leak points in project, it will loop through all strongly referenced nodes of each controller, but does not include objects that may be singletons, then give developers friendly tips for some suspicious leakers.\n\n" = "\n\t这是一款能帮助开发者更好地查找工程中内存泄漏结点的子工具，它将遍历每一个有效控制器所有的强引用结点，但不包括那些被视为单例的对象，然后对于这些可疑的泄漏结点，会提供给开发者一些友好的提示或建议。\n\n";
+"\n\tThis is a tool which can help developer to find out some wild pointer errors in project. However, turning on checking will cause a continuous increase in memory usage, so this feature will be reset to the off state when the application is killed by default.\n\n" = "\n\t这是一款帮助开发者检测并发现工程中野指针错误的子工具，然而，如果长时间开启检测可能会造成应用内存的持续增涨，所以这个功能默认会在应用杀死后重置为关闭状态。\n\n";
+"Go Setting" = "去设置";
+"save to sandbox..." = "保存设置项到沙盒...";
+"success" = "成功";
+"api record" = "API日志";
+"system log" = "系统日志";
+"alert" = "弹框";
+"console" = "控制台";
+"exception" = "异常";
+"API Recorder(disperse)" = "API日志(离散)";
+"API Recorder(binding)" = "API日志(绑定)";
+"“ This is a convenient developer's real-time view disperse API log tool, support for keyword searches. ”" = "“ 方便开发者实时浏览离散的API日志，支持关键字搜索。 ”";
+"“ This is a convenient developer's real-time view binding API log tool, support for keyword searches. ”" = "“ 方便开发者实时浏览被绑定的API日志，支持关键字搜索。 ”";
+"Log Viewer" = "系统日志";
+"“ This is a convenient developer's real-time view system log tool, content filtering can be configured. ”" = "“ 方便开发者实时浏览系统日志，可以筛选过滤内容。 ”";
+"Performance Monitor" = "性能监控";
+"“ This is a tool which can monitor the main thread and find out some caton nodes will correspond to the stack trace feedback to the developers. ”" = "“ 帮助开发者获取当前应用的多项性能数据，对于UI线程中发生的卡顿，将会生成携带对应堆栈信息的日志汇报给开发者。 ”";
+"Crash Captor" = "崩溃捕获";
+"“ This is a tool which can help device to capture the crash and simply locate the crash information. ”" = "“ 帮助开发者更快更精准地捕获并定位到异常崩溃信息以及根源。 ”";
+"MemoryLeak Detector" = "内存泄漏检测";
+"“ This is a tool which can help developer to find out some suspicious memory leak points in project. ”" = "“ 帮助开发者查找出工程中的可疑内存泄漏者。 ”";
+"WildPointer Checker" = "野指针检查";
+"“ This is a tool which can help developer to find out some wild pointer errors in project. ”" = "“ 帮助开发者查找出工程中的野指针错误。 ”";
+"RetainCycle Monitor" = "循环引用监控";
+"“ This is a tool which can help developer to find out retain-cycle nodes in project. ”" = "“ 帮助开发者查找出工程中的循环引用结点。 ”";
+"“ Introduce some basic operations and data options about how using the debugger. ”" = "” 介绍一些关于调试器使用的基本操作和数据选项说明。 “";
+"< not specified >" = "< 无指定 >";
+"< no quick launch available >" = "< 没有可用的快速启动 >";
+"enter keywords to search" = "输入关键词搜索";
+"you have an unread crash message" = "收到一条未读的崩溃信息";
+"cancel" = "取消";
+"detail" = "详情";
+"Specified Crash Detail" = "捕获的崩溃详情";
+"Crash History" = "崩溃历史";
+"Log View" = "系统日志";
+"memory leak warnning" = "内存泄漏警告";
+"Info" = "详情";
+"OK" = "知道了";
+"info" = "详情";
+"Specified Lag Detail" = "卡顿详情";
+"UI Thread Lags" = "视图卡顿历史";
+"Tap to Debugger Center" = "点击进入调试中心";
+"How to use" = "关于使用";
+"Help" = "帮助";
+"Debugger Settings" = "调试参数设置";
+"messageRemindType" = "消息提醒类型";
+"a setting which decides the type of the remind number. default is api count" = "决定消息提醒的具体类型，默认是当前未读的API日志的数量";
+"allowCatchAPIRecord" = "允许抓取API日志";
+"a flag to tell the api recorder whether should catch API records" = "影响API日志浏览器是否应该抓取API日志的行为";
+"allowMonitorSystemLog" = "允许监控系统日志";
+"a flag to tell the log viewer whether should monitor system logs" = "影响系统日志浏览器是否应该监控系统日志的行为";
+"limitSizeOfSingleSystemLogMessageData" = "单次系统日志消息的接收限制大小";
+"when log viewer receives a system log message data, we create buffer according to given max-size. if over, will cut out the data to given max-size. default is 1024 * 10, just be avaliable for iOS 10.0+" = "当系统日志浏览器接收到一条系统日志消息数据时，我们会根据这项参数设定的最大值创建buffer流，如果超过这个阈值，我们将会裁剪数据到合适的大小，默认值为10MB，仅仅适用于iOS10及以上系统";
+"allowCrashCapture" = "允许捕获崩溃";
+"a flag to tell the crash captor whether should capture crash" = "影响崩溃捕获器是否应该捕获崩溃的行为";
+"needCacheCrashLogToSandBox" = "缓存崩溃日志到沙盒";
+"a flag to tell the crash captor whether need cache crash-log to local file, cached file can be look over again in history-list" = "当崩溃被捕获时，是否需要缓存崩溃日志文件到沙盒中，被缓存的文件可以到`崩溃日志历史`中再次被查阅";
+"isSafeModeForCrashCapture" = "捕获崩溃于安全模式";
+"a flag to tell the crash captor which capture strategy to use, if the value is set to YES, the capture report page will not pop up in time, the crash notification will be postponed until the app restart. If the value is set to NO, the captor will notify developer in time, but at this time the program is already in an unstable state, we call some unsafe api to achieve it. default is NO" = "决定了崩溃捕获器的捕获策略，如果安全模式开启，崩溃发生时崩溃捕获的汇报视图将不会及时呈现，崩溃的通知将被推迟到应用重启后发生。如果安全模式关闭，捕获器会在崩溃发生时立刻通知开发者，但是此时程序可能已经处于不稳定状态，但我们不得不为此通过一些非线程安全的api去实现通知效果。默认是关闭安全模式的";
+"allowUILagsMonitoring" = "允许视图卡顿监控";
+"a flag to tell the performance monitor whether should monitor lags which may occurred by UI Thread" = "影响性能监控器是否应该监控来自UI线程卡顿的行为";
+"tolerableLagThreshold" = "卡顿忍受阈值";
+"when a lag has occurred, it is captured if the transaction delayed response time, which is dispatched to the main thread, exceeds this threshold. default is `0.2s`" = "当一次卡顿发生时，如果在主线程处理事务导致处理结果的响应返回延迟超过了这个阈值，则会被性能监控器捕获";
+"allowApplicationCPUMonitoring" = "允许应用CPU使用监控";
+"a flag to tell the performance monitor whether should monitor application CPU usage" = "影响性能监控器是否应该监控应用CPU使用情况的行为";
+"allowApplicationMemoryMonitoring" = "允许应用内存使用监控";
+"a flag to tell the performance monitor whether should monitor application Memory usage" = "影响性能监控器是否应该监控应用内存使用情况的行为";
+"allowScreenFPSMonitoring" = "允许屏幕FPS变化监控";
+"a flag to tell the performance monitor whether should monitor device screen fps" = "影响性能监控器是否应该监控设备屏幕FPS变化的行为";
+"fpsWarnningThreshold" = "FPS的警告阈值";
+"when fps is monitoring, if fps value exceeds this threshold, fps component will born a warnning for user. default is `30`" = "当屏幕FPS变化被允许监控时，如果当前FPS值超过了这个阈值，FPS监控组件将会生成一次警告给用户。默认为`30`";
+"allowWildPointerCheck" = "允许野指针检查";
+"a flag to tell the wild pointer checker whether should check the error caused by wild pointer. default is NO. In addition, when restart app, the value will restored to `NO` automatically" = "通知野指针检查器是否需要检查由野指针所引发的错误。默认关闭。另外需要注意的是，每当应用重启后，野指针检查会自动被重置为关闭状态";
+"maxZombiePoolCapacity" = "僵尸对象池最大容量";
+"we use the establishment of a no-dealloc target pool to manage, we will kill all targets in pool when the pool size exceeds this threshold. default is 10MB" = "我们通过建立一个未被正常释放的对象池去帮助我们更好的管理内存，我们将会在池容量超过了这个设定值后清空池内的所有对象。默认容量为10MB";
+"allowMemoryLeaksDetectionFlag" = "允许内存泄漏检测";
+"a flag to tell the memory leak detector whether should detect memory leaks in project" = "影响内存泄漏检测器是否应该检测内存泄漏的行为";
+"memoryLeakingWarningType" = "内存泄漏警告类型";
+"when a memory leak occurs, it depends on which way you choose to remind developers. default is alert" = "当内存泄漏发生时，该设定决定了使用哪种方式去提醒开发者。默认类型是`弹窗`";
+"👆🏻 tap gesture to quick launch" = "👆🏻 快速启动-轻击";
+"👆🏻 swipe gesture to quick launch" = "👆🏻 快速启动-轻扫";
+"👆🏻 long press gesture to quick launch" = "👆🏻 快速启动-长按";
+"👆🏻 pan gesture to quick launch" = "👆🏻 快速启动-平移";
+"👆🏻 pinch gesture to quick launch" = "👆🏻 快速启动-捏合缩放";
+"👆🏻 rotation gesture to quick launch" = "👆🏻 快速启动-旋转";
+"👆🏻 screen-edge pan gesture to quick launch" = "👆🏻 快速启动-屏幕边缘平移";
+"👆🏻 custom gesture to quick launch" = "👆🏻 快速启动-自定义手势";
+
+
+
+
+

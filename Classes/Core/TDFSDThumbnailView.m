@@ -85,9 +85,9 @@
 - (void)addSpecificMessageRemindObserve {
     @weakify(self)
     self.disposable = \
-    [RACObserve([TDFSDLogViewer sharedInstance], logs) subscribeNext:^(NSArray<TDFSDLVLogModel *> * _Nullable logModel) {
+    [RACObserve([TDFSDLogViewer sharedInstance], logs) subscribeNext:^(NSArray<TDFSDLVLogModel *> * _Nullable logModels) {
         
-        NSUInteger unreadCount = [[[logModel.rac_sequence
+        NSUInteger unreadCount = [[[logModels.rac_sequence
         filter:^BOOL(TDFALRequestModel * _Nullable requestDesModel) {
             return !requestDesModel.messageIsRead;
         }]
@@ -129,6 +129,11 @@
         [self addAllReadNoticationObserve];
     }
     return self;
+}
+
+- (void)dealloc {
+    [self.tapProxy sendCompleted];
+    [self.longPressProxy sendCompleted];
 }
 
 #pragma mark - event

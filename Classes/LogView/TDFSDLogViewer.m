@@ -123,11 +123,13 @@ static TDFSDLogViewer *sharedInstance = nil;
         
         dispatch_source_set_event_handler(source_t, ^{
             @autoreleasepool {
-                char buffer[[[TDFSDPersistenceSetting sharedInstance] limitSizeOfSingleSystemLogMessageData]];
-                ssize_t size = read(fd, (void*)buffer, (size_t)(sizeof(buffer)));
-                
-                [receivedData setLength:0];
-                [receivedData appendBytes:buffer length:size];
+                if (@available(iOS 10_0, *)) {
+                    char buffer[[[TDFSDPersistenceSetting sharedInstance] limitSizeOfSingleSystemLogMessageData]];
+                    ssize_t size = read(fd, (void*)buffer, (size_t)(sizeof(buffer)));
+                    
+                    [receivedData setLength:0];
+                    [receivedData appendBytes:buffer length:size];
+                }
                 
                 NSString *logMessage = [[NSString alloc] initWithData:receivedData encoding:NSUTF8StringEncoding];
                 if (logMessage) {

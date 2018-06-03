@@ -19,7 +19,7 @@
 		<key>title</key>
 		<string>allowCatchAPIRecord</string>
 		<key>description</key>
-		<string>a flag to tell the log viewer whether should catch API records</string>
+		<string>a flag to tell the api recorder whether should catch API records</string>
 		<key>type</key>
 		<integer>0</integer>
 	</dict>
@@ -100,7 +100,7 @@
 		<key>title</key>
 		<string>tolerableLagThreshold</string>
 		<key>description</key>
-		<string>when a lag has occurred, it is captured if the transaction&apos;s delayed response time, which is dispatched to the main thread, exceeds this threshold. default is `0.2s`</string>
+		<string>when a lag has occurred, it is captured if the transaction delayed response time, which is dispatched to the main thread, exceeds this threshold. default is `0.2s`</string>
 		<key>type</key>
 		<integer>1</integer>
 	</dict>
@@ -152,9 +152,9 @@
 	</dict>
 	<dict>
 		<key>title</key>
-		<string>allowWildPointerMonitoring</string>
+		<string>allowWildPointerCheck</string>
 		<key>description</key>
-		<string>a flag to tell the performance monitor whether should monitor the error caused by wild pointer. default is NO. In addition, when restart app, the value will restored to `NO` automatically</string>
+		<string>a flag to tell the wild pointer checker whether should check the error caused by wild pointer. default is NO. In addition, when restart app, the value will restored to `NO` automatically</string>
 		<key>type</key>
 		<integer>0</integer>
 	</dict>
@@ -169,7 +169,7 @@
         <key>title</key>
         <string>maxZombiePoolCapacity</string>
         <key>description</key>
-        <string>we use the establishment of a no-dealloc target pool to manage, we will kill all targets in pool when the pool size exceeds this threshold, default is 10MB</string>
+        <string>we use the establishment of a no-dealloc target pool to manage, we will kill all targets in pool when the pool size exceeds this threshold. default is 10MB</string>
         <key>type</key>
         <integer>1</integer>
     </dict>

@@ -29,13 +29,13 @@
     [super viewDidAppear:animated];
     SD_DELAY_HANDLER(0.50f, {
         [self.tipView sd_fadeAnimationWithDuration:0.20f];
-        self.tipView.text = @"\n\nStay tuned ...";
+        self.tipView.text = SD_STRING(@"\n\n\nStay tuned ...");
     })
 }
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
 - (NSString *)titleForFullScreenConsole {
-    return @"Feature In Future";
+    return SD_STRING(@"Feature In Future");
 }
 
 - (__kindof UIView *)contentViewForFullScreenConsole {

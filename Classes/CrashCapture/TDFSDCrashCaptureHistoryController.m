@@ -55,7 +55,7 @@
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
 - (NSString *)titleForFullScreenConsole {
-    return @"Crash History";
+    return SD_STRING(@"Crash History");
 }
 
 - (UIView *)contentViewForFullScreenConsole {

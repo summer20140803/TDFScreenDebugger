@@ -52,7 +52,7 @@
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
 - (NSString *)titleForFullScreenConsole {
-    return @"API Record";
+    return SD_STRING(@"API Record");
 }
 
 - (UIView *)contentViewForFullScreenConsole {

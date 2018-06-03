@@ -51,7 +51,7 @@
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
 - (NSString *)titleForFullScreenConsole {
-    return @"Log View";
+    return SD_STRING(@"Log View");
 }
 
 - (UIView *)contentViewForFullScreenConsole {
@@ -194,8 +194,7 @@
                 }]
                 foldLeftWithStart:[[NSMutableAttributedString alloc] initWithString:@""]
                 reduce:^id _Nullable(NSMutableAttributedString * _Nullable accumulator, NSAttributedString * _Nullable value) {
-                    return ([accumulator appendAttributedString:value],
-                            accumulator);
+                    return ((void)([accumulator appendAttributedString:value]), accumulator);
                 }];
     }]
     deliverOnMainThread];
@@ -222,6 +221,7 @@
     self.logOutputView.attributedText = \
     [[[[TDFSDLogViewer sharedInstance] logs].rac_sequence
     map:^id _Nullable(TDFSDLVLogModel * _Nullable value) {
+        [value setMessageRead:YES];
         return ({
             NSMutableAttributedString *mas = [[NSMutableAttributedString alloc] initWithString:value.description];
             [mas addAttributes:@{NSFontAttributeName:[UIFont fontWithName:@"PingFang SC" size:11], NSForegroundColorAttributeName:[UIColor whiteColor]} range:NSMakeRange(0, value.description.length)];
@@ -229,8 +229,7 @@
         });
     }]
     foldLeftWithStart:[[NSMutableAttributedString alloc] initWithString:@""] reduce:^id _Nullable(NSMutableAttributedString * _Nullable accumulator, NSAttributedString * _Nullable value) {
-        return ([accumulator appendAttributedString:value],
-                accumulator);
+        return ((void)([accumulator appendAttributedString:value]), accumulator);
     }];
 }
 

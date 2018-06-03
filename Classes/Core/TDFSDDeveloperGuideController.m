@@ -66,7 +66,7 @@
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
 - (NSString *)titleForFullScreenConsole {
-    return @"关于使用";
+    return SD_STRING(@"How to use");
 }
 
 - (__kindof UIView *)contentViewForFullScreenConsole {

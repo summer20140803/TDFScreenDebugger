@@ -56,7 +56,7 @@
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
 - (NSString *)titleForFullScreenConsole {
-    return @"Debugger Center";
+    return SD_STRING(@"Debugger Center");
 }
 
 - (__kindof UIView *)contentViewForFullScreenConsole {

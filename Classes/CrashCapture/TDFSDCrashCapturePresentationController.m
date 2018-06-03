@@ -61,6 +61,11 @@ static const NSString *kSDCCTerminateButtonTitle  =  @"Terminate";
     })
 }
 
+- (void)dealloc {
+    [self.exportProxy sendCompleted];
+    [self.terminateProxy sendCompleted];
+}
+
 #pragma mark - private
 - (void)layoutPageSubviews {
     [self.view addSubview:self.effectView];

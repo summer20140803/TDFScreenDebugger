@@ -9,8 +9,22 @@
 #import "TDFSDManager.h"
 #import "TDFSDViewController.h"
 #import "TDFScreenDebuggerDefine.h"
+#import "TDFSDFunctionModel.h"
+#import "TDFSDPersistenceSetting.h"
+#import "UIViewController+ScreenDebugger.h"
+#import "TDFSDTransitionAnimator.h"
 
-@interface TDFSDManager () <TDFSDWindowDelegate>
+#import "TDFSDAPIRecordConsoleController.h"
+#import "TDFSDAPIRecordSelectableController.h"
+#import "TDFSDCrashCaptureHistoryController.h"
+#import "TDFSDLogViewController.h"
+#import "TDFSDFunctionPageController.h"
+#import "TDFSDAboutFutureController.h"
+
+#import <ReactiveObjC/ReactiveObjC.h>
+#import <objc/runtime.h>
+
+@interface TDFSDManager () <TDFSDWindowDelegate, UIViewControllerTransitioningDelegate>
 
 // this window is use for store app's origin window and we operate it in the future if need
 @property (nonatomic, strong) UIWindow *originWindow;
@@ -22,6 +36,8 @@
 @end
 
 @implementation TDFSDManager
+
+const char *kGestureAssociatedToolTypeKey  =  "gestureAssociatedToolTypeKey";
 
 #if DEBUG
 SD_CONSTRUCTOR_METHOD_DECLARE \
@@ -62,6 +78,9 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 
 #pragma mark - interface methods
 - (void)showDebugger {
+    if (!self.sd_canBecomeKeyWindow) {
+        [self applyForAcceptKeyInput];
+    }
     self.screenDebuggerWindow.hidden = NO;
 }
 
@@ -73,11 +92,9 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 }
 
 - (void)applyForAcceptKeyInput {
-    
     UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
     
     if (keyWindow != self.screenDebuggerWindow) {
-        
         self.originWindow = keyWindow;
         [keyWindow resignFirstResponder];
         
@@ -87,15 +104,64 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 }
 
 - (void)revokeApply {
-    
     UIWindow *keyWindow = [[UIApplication sharedApplication] keyWindow];
     
     if (keyWindow == self.screenDebuggerWindow) {
-        
         [keyWindow resignFirstResponder];
         
         self.sd_canBecomeKeyWindow = NO;
         [self.originWindow makeKeyWindow];
+    }
+}
+
+- (void)registerQuickLaunchGesture:(__kindof UIGestureRecognizer *)launchGesture forSubTool:(SDSubToolType)subTool {
+    NSParameterAssert(launchGesture);
+    
+    NSString *gestureDes = [self gestureDescriptionWithGesture:launchGesture];
+    TDFSDFunctionModel *funcModel = [[TDFSDPersistenceSetting sharedInstance].functionList objectAtIndex:subTool];
+    funcModel.quickLaunchDescrition = gestureDes;
+    
+    NSNumber *subToolType = @(subTool);
+    objc_setAssociatedObject(launchGesture, kGestureAssociatedToolTypeKey, subToolType, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    [launchGesture addTarget:self action:@selector(gestureToQuickLaunchFunctionPage:)];
+}
+
+- (void)gestureToQuickLaunchFunctionPage:(__kindof UIGestureRecognizer *)gesture {
+    if (gesture.state != UIGestureRecognizerStateBegan) return;
+    
+    SDSubToolType toolType = [objc_getAssociatedObject(gesture, kGestureAssociatedToolTypeKey) unsignedIntegerValue];
+    
+    UIViewController *dest = nil;
+    switch (toolType) {
+        case SDSubToolTypeDisperseAPIRecord: {
+            dest = [[TDFSDAPIRecordConsoleController alloc] init];
+        } break;
+        case SDSubToolTypeBindingAPIRecord: {
+            dest = [[TDFSDAPIRecordSelectableController alloc] init];
+        } break;
+        case SDSubToolTypeSystemLogView: {
+            dest = [[TDFSDLogViewController alloc] init];
+        } break;
+        case SDSubToolTypeCrashCaptor: {
+            dest = [[TDFSDCrashCaptureHistoryController alloc] init];
+        } break;
+        case SDSubToolTypePerformanceMonitor:
+        case SDSubToolTypeMemoryLeakDetector:
+        case SDSubToolTypeWildPointerChecker: {
+            dest = [[TDFSDFunctionPageController alloc] init];
+            TDFSDFunctionModel *funcModel = [[TDFSDPersistenceSetting sharedInstance].functionList objectAtIndex:toolType];
+            [(TDFSDFunctionPageController *)dest setFunctionModel:funcModel];
+        } break;
+        case SDSubToolTypeRetainCycleMonitor: {
+            dest = [[TDFSDAboutFutureController alloc] init];
+        } break;
+    }
+    
+    if (dest) {
+        dest.transitioningDelegate = self;
+        UIWindow *effectiveWindow = currentEffectiveWindow();
+        [[effectiveWindow.rootViewController sd_obtainTopViewController] presentViewController:dest animated:YES completion:nil];
     }
 }
 
@@ -124,6 +190,55 @@ SD_CONSTRUCTOR_METHOD_DECLARE \
 
 - (BOOL)canBecomeKeyWindow:(TDFSDWindow *)window {
     return self.sd_canBecomeKeyWindow;
+}
+
+#pragma mark - UIViewControllerTransitioningDelegate
+- (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForPresentedController:(UIViewController *)presented presentingController:(UIViewController *)presenting sourceController:(UIViewController *)source {
+    return [TDFSDTransitionAnimator new];
+}
+
+- (nullable id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:(UIViewController *)dismissed {
+    return [TDFSDTransitionAnimator new];
+}
+
+#pragma mark - private
+- (NSString *)gestureDescriptionWithGesture:(__kindof UIGestureRecognizer *)gesture {
+    if ([gesture isKindOfClass:[UITapGestureRecognizer class]]) {
+        return SD_STRING(@"👆🏻 tap gesture to quick launch");
+    } else if ([gesture isKindOfClass:[UISwipeGestureRecognizer class]]) {
+        return SD_STRING(@"👆🏻 swipe gesture to quick launch");
+    } else if ([gesture isKindOfClass:[UILongPressGestureRecognizer class]]) {
+        return SD_STRING(@"👆🏻 long press gesture to quick launch");
+    } else if ([gesture isKindOfClass:[UIPanGestureRecognizer class]]) {
+        return SD_STRING(@"👆🏻 pan gesture to quick launch");
+    } else if ([gesture isKindOfClass:[UIPinchGestureRecognizer class]]) {
+        return SD_STRING(@"👆🏻 pinch gesture to quick launch");
+    } else if ([gesture isKindOfClass:[UIRotationGestureRecognizer class]]) {
+        return SD_STRING(@"👆🏻 rotation gesture to quick launch");
+    } else if ([gesture isKindOfClass:[UIScreenEdgePanGestureRecognizer class]]) {
+        return SD_STRING(@"👆🏻 screen-edge pan gesture to quick launch");
+    } else {
+        return SD_STRING(@"👆🏻 custom gesture to quick launch");
+    }
+}
+
+static UIWindow *currentEffectiveWindow() {
+    // find out the toppest and useable window
+    NSArray<UIWindow *> *windows = [[UIApplication sharedApplication] windows];
+    UIWindow *effectiveWindow = [[[[windows.rac_sequence
+                                    filter:^BOOL(id  _Nullable value) {
+                                        return ![(UIWindow *)value isHidden] && [(UIWindow *)value alpha] != 0;
+                                    }]
+                                   array]
+                                  sortedArrayUsingComparator:^NSComparisonResult(UIWindow * _Nonnull obj1, UIWindow * _Nonnull obj2) {
+                                      if (obj1.windowLevel > obj2.windowLevel) {
+                                          return NSOrderedAscending;
+                                      } else {
+                                          return NSOrderedDescending;
+                                      }
+                                  }]
+                                 firstObject];
+    return effectiveWindow;
 }
 
 @end

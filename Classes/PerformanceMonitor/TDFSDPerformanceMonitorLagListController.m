@@ -62,7 +62,7 @@ UICollectionViewDelegateFlowLayout>
 
 #pragma mark - TDFSDFullScreenConsoleControllerInheritProtocol
 - (NSString *)titleForFullScreenConsole {
-    return @"UI Thread Lags";
+    return SD_STRING(@"UI Thread Lags");
 }
 
 - (UIView *)contentViewForFullScreenConsole {

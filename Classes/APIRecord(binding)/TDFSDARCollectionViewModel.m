@@ -9,6 +9,7 @@
 #import "TDFSDARCollectionViewModel.h"
 #import "TDFSDFullScreenConsoleController.h"
 #import "NSString+ScreenDebugger.h"
+#import "TDFScreenDebuggerDefine.h"
 
 @interface TDFSDARCollectionViewModel ()
 
@@ -44,10 +45,10 @@
     
     CGFloat timeLabelHeight = 15;
     
-    NSString *taskDescription = [requestModel.taskDescription stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: @"Not set";
+    NSString *taskDescription = [requestModel.taskDescription stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: SD_STRING(@"Not set");
     CGFloat taskDescriptionHeight = [taskDescription sd_heightForFont:[UIFont fontWithName:@"PingFang SC" size:12] size:CGSizeMake(validURLWidth, MAXFLOAT) mode:NSLineBreakByCharWrapping];
     
-    NSString *validURL = [requestModel.validURL stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: @"Not set";
+    NSString *validURL = [requestModel.validURL stringByReplacingOccurrencesOfString:@"\n" withString:@""] ?: SD_STRING(@"Not set");
     CGFloat validURLHeight = [validURL sd_heightForFont:[UIFont fontWithName:@"PingFang SC" size:12] size:CGSizeMake(validURLWidth, MAXFLOAT) mode:NSLineBreakByCharWrapping];
     
     CGFloat finalHeight = 8 + timeLabelHeight + 4 + taskDescriptionHeight + 3 + validURLHeight + 8;

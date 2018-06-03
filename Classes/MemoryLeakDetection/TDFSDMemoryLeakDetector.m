@@ -11,6 +11,7 @@
 #import "NSObject+SDMemoryLeakDetection.h"
 #import "TDFSDQueueDispatcher.h"
 #import "TDFSDPersistenceSetting.h"
+#import "TDFScreenDebuggerDefine.h"
 #import "UIViewController+ScreenDebugger.h"
 #import <ReactiveObjC/ReactiveObjC.h>
 
@@ -115,16 +116,16 @@ static NSString *mld_warnningMessage(id leaker) {
         switch ([TDFSDPersistenceSetting sharedInstance].memoryLeakingWarningType) {
             case SDMLDWarnningTypeAlert : {
                 @weakify(self)
-                UIAlertController *alertC = [UIAlertController alertControllerWithTitle:@"memory leak warnning" message:mld_warnningMessage(leaker) preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertController *alertC = [UIAlertController alertControllerWithTitle:SD_STRING(@"memory leak warnning") message:mld_warnningMessage(leaker) preferredStyle:UIAlertControllerStyleAlert];
                 @weakify(alertC)
-                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:SD_STRING(@"OK") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                     @strongify(alertC)
                     [alertC dismissViewControllerAnimated:YES completion:nil];
                 }];
-                UIAlertAction *infoAction = [UIAlertAction actionWithTitle:@"Info" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                UIAlertAction *infoAction = [UIAlertAction actionWithTitle:SD_STRING(@"Info") style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                     @strongify(self)
-                    UIAlertController *infoAlertC = [UIAlertController alertControllerWithTitle:@"info" message:[self trackInfoWithLeakerProxy:proxy] preferredStyle:UIAlertControllerStyleAlert];
-                    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+                    UIAlertController *infoAlertC = [UIAlertController alertControllerWithTitle:SD_STRING(@"info") message:[self trackInfoWithLeakerProxy:proxy] preferredStyle:UIAlertControllerStyleAlert];
+                    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:SD_STRING(@"OK") style:UIAlertActionStyleCancel handler:nil];
                     [infoAlertC addAction:cancelAction];
                     [[[UIApplication sharedApplication].keyWindow.rootViewController sd_obtainTopViewController] presentViewController:infoAlertC animated:YES completion:nil];
                 }];

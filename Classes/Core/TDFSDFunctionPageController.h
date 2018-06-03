@@ -6,10 +6,10 @@
 //
 
 #import "TDFSDFullScreenConsoleController.h"
+@class TDFSDFunctionModel;
 
 @interface TDFSDFunctionPageController : TDFSDFullScreenConsoleController
 
-@property (nonatomic, copy) NSString *pageTitle;
-@property (nonatomic, copy) NSAttributedString *pageContent;
+@property (nonatomic, weak) TDFSDFunctionModel *functionModel;
 
 @end
