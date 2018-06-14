@@ -12,7 +12,7 @@
 
 @interface TDFSDARCollectionViewModel : NSObject
 
-@property (nonatomic, strong) TDFALRequestModel *requestModel;
+@property (nonatomic,  weak) TDFALRequestModel *requestModel;
 @property (nonatomic, assign, readonly) CGFloat cellHeight;
 @property (nonatomic, assign, readonly) CGFloat cellWidth;
 

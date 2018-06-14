@@ -13,6 +13,7 @@
 
 @implementation NSObject (SDMemoryLeakDetection)
 
+static const short kSDMLDStrongPropsTrackingHierarchyMaxLevel  =  3;
 @dynamic mld_proxy;
 
 + (void)prepareForDetection {}
@@ -58,7 +59,11 @@
     }
 }
 
-- (void)trackAllStrongPropsLeaks {
+- (void)trackAllStrongPropsLeaks:(int)level {
+    if (level > kSDMLDStrongPropsTrackingHierarchyMaxLevel) {
+        return;
+    }
+    
     Class class = [self class];
     NSBundle *bundle = [NSBundle bundleForClass:class];
     
@@ -87,7 +92,7 @@
                 [obj mld_proxy].weakTargetOwnerName = NSStringFromClass([self class]);
             }
             
-            [obj trackAllStrongPropsLeaks];
+            [obj trackAllStrongPropsLeaks:level+1];
         }
     }];
 }
@@ -147,7 +152,7 @@
                                     [obj mld_proxy].weakTargetOwnerName = NSStringFromClass([self class]);
                                 }
                                 
-                                [obj trackAllStrongPropsLeaks];
+                                [obj trackAllStrongPropsLeaks:kSDMLDStrongPropsTrackingHierarchyMaxLevel];
                             }
                         }
                     }

@@ -26,7 +26,7 @@
 
 - (void)sd_mld_viewDidAppear:(BOOL)animated {
     [self sd_mld_viewDidAppear:animated];
-    [self trackAllStrongPropsLeaks];
+    [self trackAllStrongPropsLeaks:0];
 }
 
 - (BOOL)isSuspiciousLeaker {

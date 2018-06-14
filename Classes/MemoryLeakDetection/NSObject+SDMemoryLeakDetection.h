@@ -13,6 +13,6 @@
 
 @property (nonatomic, strong, readonly) TDFSDMLDGeneralizedProxy *mld_proxy;
 
-- (void)trackAllStrongPropsLeaks;
+- (void)trackAllStrongPropsLeaks:(int)level;
 
 @end
