@@ -334,7 +334,7 @@ static void machSignalExceptionHandler(int signal) {
     names[SIGBUS] = "SIGBUS";
     names[SIGFPE] = "SIGFPE";
     names[SIGILL] = "SIGILL";
-    names[SIGPIPE] = "SIGPIPE";
+    names[SIGTRAP] = "SIGTRAP";
     names[SIGSEGV] = "SIGSEGV";
     
     const char* reasons[NSIG];
@@ -342,7 +342,7 @@ static void machSignalExceptionHandler(int signal) {
     reasons[SIGBUS] = "bus error";
     reasons[SIGFPE] = "floating point exception";
     reasons[SIGILL] = "illegal instruction (not reset when caught)";
-    reasons[SIGPIPE] = "write on a pipe with no one to read it";
+    reasons[SIGTRAP] = "breakpoint or other trap instruction";
     reasons[SIGSEGV] = "segmentation violation";
     
     TDFSDCCCrashModel *crash = [[TDFSDCCCrashModel alloc] init];
@@ -363,6 +363,8 @@ static void machSignalExceptionHandler(int signal) {
         if (crash) {
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:(NSString *)kCrashModelExistKeyForSafeMode];
             [[NSUserDefaults standardUserDefaults] synchronize];
+            // pass the exception to the previous registrant
+            [[TDFSDCrashCaptor sharedInstance] freeze];
         }
     } else {
         showFriendlyCrashPresentation(crash, @(signal));
@@ -389,6 +391,8 @@ static void ocExceptionHandler(NSException *exception) {
         if (crash) {
             [[NSUserDefaults standardUserDefaults] setObject:@(YES) forKey:(NSString *)kCrashModelExistKeyForSafeMode];
             [[NSUserDefaults standardUserDefaults] synchronize];
+            // pass the exception to the previous registrant
+            [[TDFSDCrashCaptor sharedInstance] freeze];
         }
     } else {
         showFriendlyCrashPresentation(crash, exception);
@@ -406,7 +410,7 @@ static NSArray<NSNumber *> * exSignals(void) {
             @(SIGBUS),
             @(SIGFPE),
             @(SIGILL),
-            @(SIGPIPE),
+            @(SIGTRAP),
             @(SIGSEGV)
            ];
 }

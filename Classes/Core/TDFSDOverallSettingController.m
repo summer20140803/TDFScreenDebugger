@@ -12,6 +12,7 @@
 #import "TDFSDCustomizedFlowLayout.h"
 #import "TDFSDSettingCollectionViewModel.h"
 #import "TDFSDSettingOptionPickerCell.h"
+#import "TDFSDWildPointerChecker.h"
 #import "UICollectionView+ScreenDebugger.h"
 #import <ReactiveObjC/ReactiveObjC.h>
 #import <Masonry/Masonry.h>
@@ -340,7 +341,14 @@ static void updateSettingValueWithIndex(id newValue, NSInteger index) {
         case 10:{ ps.allowApplicationMemoryMonitoring = [newValue boolValue]; } break;
         case 11:{ ps.allowScreenFPSMonitoring = [newValue boolValue]; } break;
         case 12:{ ps.fpsWarnningThreshold = [(NSString *)newValue integerValue]; } break;
-        case 13:{ ps.allowWildPointerMonitoring = [newValue boolValue]; } break;
+        case 13:{
+            ps.allowWildPointerMonitoring = [newValue boolValue];
+            if ([newValue boolValue]) {
+                [[TDFSDWildPointerChecker sharedInstance] thaw];
+            } else  {
+                [[TDFSDWildPointerChecker sharedInstance] freeze];
+            }
+        } break;
         case 14:{ ps.maxZombiePoolCapacity = [newValue integerValue]; } break;
         case 15:{ ps.allowMemoryLeaksDetectionFlag = [newValue boolValue]; } break;
         case 16:{

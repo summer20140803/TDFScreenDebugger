@@ -88,13 +88,10 @@ static TDFSDLogViewer *sharedInstance = nil;
 #pragma mark - private
 - (void)setPortToMonitorAppleLogs {
     // asl is replaced by os_log after ios 10.0, so we should judge system version
-    //        if (NSFoundationVersionNumber >= NSFoundationVersionNumber10_0) {
-    //
-    //        }
-    if ([[[UIDevice currentDevice] systemVersion] doubleValue] >= 10.0f) {
+    if (@available(iOS 10_0, *)) {
         // https://stackoverflow.com/questions/40272910/read-logs-using-the-new-swift-os-log-api
         // in a word, os_log can not let us query system logs like asl
-        // for the above reason, so we decide to use GCD to put log stream into pipe and then monitor them
+        // for the above reason, we decide to use GCD to put log stream into pipe and then monitor them
         if (self.source_t) {
             dispatch_cancel(self.source_t);
         }
@@ -102,6 +99,7 @@ static TDFSDLogViewer *sharedInstance = nil;
         int fd = STDERR_FILENO;
         int origianlFD = fd;
         int originalStdHandle = dup(fd); // save the original for reset
+        
         int fildes[2];
         pipe(fildes);  // [0] is read end of pipe while [1] is write end
         dup2(fildes[1], fd);  // duplicate write end of pipe "onto" fd (this closes fd)
@@ -123,14 +121,12 @@ static TDFSDLogViewer *sharedInstance = nil;
         
         dispatch_source_set_event_handler(source_t, ^{
             @autoreleasepool {
-                if (@available(iOS 10_0, *)) {
-                    char buffer[[[TDFSDPersistenceSetting sharedInstance] limitSizeOfSingleSystemLogMessageData]];
-                    ssize_t size = read(fd, (void*)buffer, (size_t)(sizeof(buffer)));
-                    
-                    [receivedData setLength:0];
-                    [receivedData appendBytes:buffer length:size];
-                }
+                char buffer[[[TDFSDPersistenceSetting sharedInstance] limitSizeOfSingleSystemLogMessageData]];
+                ssize_t size = read(fd, (void*)buffer, (size_t)(sizeof(buffer)));
                 
+                [receivedData setLength:0];
+                [receivedData appendBytes:buffer length:size];
+            
                 NSString *logMessage = [[NSString alloc] initWithData:receivedData encoding:NSUTF8StringEncoding];
                 if (logMessage) {
                     TDFSDLVLogModel *log = [[TDFSDLVLogModel alloc] init];

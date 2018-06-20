@@ -50,14 +50,12 @@
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-
+    NSObject *obj = [NSObject new];
+    self.obj = obj;
 }
 
 - (IBAction)testAction:(id)sender {
-//    NSLog(@"%@", self.obj);
-    NSMutableArray *a = @[].mutableCopy;
-    NSObject *obj = nil;
-    [a addObject:obj];
+    NSLog(@"%@", self.obj);
 }
 
 - (IBAction)testAction2:(id)sender {
