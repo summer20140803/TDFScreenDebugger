@@ -54,9 +54,9 @@ static SharedInstanceClass *sharedInstance = nil;
 @interface LeakingViewController ()
 
 @property (nonatomic, strong) NSTimer *timer;
-@property (nonatomic, strong) CustonView *customView;
+//@property (nonatomic, strong) CustonView *customView;
 //@property (nonatomic, strong) SharedInstanceClass *shared;
-@property (nonatomic, strong) id obj;
+//@property (nonatomic, strong) id obj;
 
 @end
 

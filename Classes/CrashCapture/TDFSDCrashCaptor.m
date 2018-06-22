@@ -365,6 +365,7 @@ static void machSignalExceptionHandler(int signal) {
             [[NSUserDefaults standardUserDefaults] synchronize];
             // pass the exception to the previous registrant
             [[TDFSDCrashCaptor sharedInstance] freeze];
+            kill(getpid(), signal);
         }
     } else {
         showFriendlyCrashPresentation(crash, @(signal));
@@ -393,6 +394,7 @@ static void ocExceptionHandler(NSException *exception) {
             [[NSUserDefaults standardUserDefaults] synchronize];
             // pass the exception to the previous registrant
             [[TDFSDCrashCaptor sharedInstance] freeze];
+            @throw exception;
         }
     } else {
         showFriendlyCrashPresentation(crash, exception);

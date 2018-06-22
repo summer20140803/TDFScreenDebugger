@@ -15,7 +15,7 @@ PODS:
   - AFNetworking/UIKit (3.1.0.1):
     - AFNetworking/NSURLSession
   - ICTextView (2.0.1)
-  - Masonry (1.0.1.1)
+  - Masonry (1.1.0)
   - ReactiveObjC (2.1.0.4)
   - TDFAPILogger (0.0.7):
     - AFNetworking
@@ -35,11 +35,11 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AFNetworking: 032062ffb24bf902c3040070304569831ee6eeea
   ICTextView: 6f53febd62a0ccf2858967a4a5599be4aaceb6b8
-  Masonry: 05666589d973e2a8624b5c6134b2e1015f3dfdac
+  Masonry: 34afc06a8c34f8a4958de258dca1732dab49e8fe
   ReactiveObjC: 5b6952495a73242167f201ee017c335daa802574
   TDFAPILogger: 605819ea1e829ca511b1a41ff42452ddca6330e1
   TDFScreenDebugger: 3469f0f970b24a6a9704d2ecbd96577c4f567f03
 
-PODFILE CHECKSUM: c9e1f9fbd8046cd3cfefea8ea9c354dba3ee8a92
+PODFILE CHECKSUM: 94dfd2e1be500c3a739c7c2bf148f8de609c0a7a
 
 COCOAPODS: 1.4.0

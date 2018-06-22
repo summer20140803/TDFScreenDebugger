@@ -7,9 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		04BF3700B30109D3D4DD4A94 /* Pods_TDFScreenDebuggerExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AAFD394FB134B8355C24389 /* Pods_TDFScreenDebuggerExampleTests.framework */; };
+		18523DAF20DB5A46009553CD /* TDFPresentationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DAE20DB5A46009553CD /* TDFPresentationController.m */; };
+		18523DB220DB5D85009553CD /* TDFAppleSystemLogDemoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DB120DB5D85009553CD /* TDFAppleSystemLogDemoPage.m */; };
+		18523DB520DB5D9C009553CD /* TDFCrashDemoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DB420DB5D9C009553CD /* TDFCrashDemoPage.m */; };
+		18523DBB20DB5E08009553CD /* TDFPerformanceDemoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DBA20DB5E08009553CD /* TDFPerformanceDemoPage.m */; };
+		18523DBE20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DBD20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m */; };
+		18523DC120DB5E43009553CD /* TDFWildPointerErrorDemoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DC020DB5E43009553CD /* TDFWildPointerErrorDemoPage.m */; };
 		188D295E20BD1080009D3ED1 /* LeakingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 188D295D20BD1080009D3ED1 /* LeakingViewController.m */; };
-		18AAC4CB208DD76800E26A9D /* screenshot.png in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4BF208DD76700E26A9D /* screenshot.png */; };
 		18AAC4CC208DD76800E26A9D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4C0208DD76700E26A9D /* main.m */; };
 		18AAC4CD208DD76800E26A9D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C1208DD76700E26A9D /* Info.plist */; };
 		18AAC4CE208DD76800E26A9D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C3208DD76700E26A9D /* LaunchScreen.storyboard */; };
@@ -17,7 +21,8 @@
 		18AAC4D0208DD76800E26A9D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4C7208DD76700E26A9D /* AppDelegate.m */; };
 		18AAC4D1208DD76800E26A9D /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4CA208DD76700E26A9D /* ViewController.m */; };
 		18FE4D831F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FE4D821F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m */; };
-		9BB4E05147B6E11F61B2270A /* Pods_TDFScreenDebuggerExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1FC8537C0EF29C66C3726198 /* Pods_TDFScreenDebuggerExample.framework */; };
+		86BA6B88573E61A9BD5D6E41 /* libPods-TDFScreenDebuggerExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F65040064E50E2CF4601FE /* libPods-TDFScreenDebuggerExampleTests.a */; };
+		C40A474B701025729DD8E11A /* libPods-TDFScreenDebuggerExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 276C24FB71B18A9E1F7DE857 /* libPods-TDFScreenDebuggerExample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +36,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		18523DAD20DB5A46009553CD /* TDFPresentationController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDFPresentationController.h; sourceTree = "<group>"; };
+		18523DAE20DB5A46009553CD /* TDFPresentationController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFPresentationController.m; sourceTree = "<group>"; };
+		18523DB020DB5D85009553CD /* TDFAppleSystemLogDemoPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDFAppleSystemLogDemoPage.h; sourceTree = "<group>"; };
+		18523DB120DB5D85009553CD /* TDFAppleSystemLogDemoPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFAppleSystemLogDemoPage.m; sourceTree = "<group>"; };
+		18523DB320DB5D9C009553CD /* TDFCrashDemoPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDFCrashDemoPage.h; sourceTree = "<group>"; };
+		18523DB420DB5D9C009553CD /* TDFCrashDemoPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFCrashDemoPage.m; sourceTree = "<group>"; };
+		18523DB920DB5E08009553CD /* TDFPerformanceDemoPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDFPerformanceDemoPage.h; sourceTree = "<group>"; };
+		18523DBA20DB5E08009553CD /* TDFPerformanceDemoPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFPerformanceDemoPage.m; sourceTree = "<group>"; };
+		18523DBC20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDFMemoryLeakingDemoPage.h; sourceTree = "<group>"; };
+		18523DBD20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFMemoryLeakingDemoPage.m; sourceTree = "<group>"; };
+		18523DBF20DB5E43009553CD /* TDFWildPointerErrorDemoPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDFWildPointerErrorDemoPage.h; sourceTree = "<group>"; };
+		18523DC020DB5E43009553CD /* TDFWildPointerErrorDemoPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFWildPointerErrorDemoPage.m; sourceTree = "<group>"; };
 		188D294C20BBE404009D3ED1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		188D294D20BBE404009D3ED1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		188D295D20BD1080009D3ED1 /* LeakingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeakingViewController.m; sourceTree = "<group>"; };
@@ -40,7 +57,6 @@
 		188D296820BFCBC1009D3ED1 /* ReactiveObjC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ReactiveObjC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		188D296A20BFCBC1009D3ED1 /* TDFAPILogger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TDFAPILogger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		188D296C20BFCBC1009D3ED1 /* TDFScreenDebugger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TDFScreenDebugger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		18AAC4BF208DD76700E26A9D /* screenshot.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = screenshot.png; sourceTree = "<group>"; };
 		18AAC4C0208DD76700E26A9D /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		18AAC4C1208DD76700E26A9D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		18AAC4C4208DD76700E26A9D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -54,12 +70,12 @@
 		18FE4D7E1F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TDFScreenDebuggerExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		18FE4D821F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFScreenDebuggerExampleTests.m; sourceTree = "<group>"; };
 		18FE4D841F668AAB00ECAA1F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1FC8537C0EF29C66C3726198 /* Pods_TDFScreenDebuggerExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TDFScreenDebuggerExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6AAFD394FB134B8355C24389 /* Pods_TDFScreenDebuggerExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TDFScreenDebuggerExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		276C24FB71B18A9E1F7DE857 /* libPods-TDFScreenDebuggerExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TDFScreenDebuggerExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DACA1BF3BA3542650404285 /* Pods-TDFScreenDebuggerExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TDFScreenDebuggerExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TDFScreenDebuggerExample/Pods-TDFScreenDebuggerExample.debug.xcconfig"; sourceTree = "<group>"; };
 		743C3EF865C1CA22131DCD3B /* Pods-TDFScreenDebuggerExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TDFScreenDebuggerExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-TDFScreenDebuggerExample/Pods-TDFScreenDebuggerExample.release.xcconfig"; sourceTree = "<group>"; };
 		846AD959EE06E0A3C5FFF75B /* Pods-TDFScreenDebuggerExampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TDFScreenDebuggerExampleTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TDFScreenDebuggerExampleTests/Pods-TDFScreenDebuggerExampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		C8017E828260D7790800667F /* Pods-TDFScreenDebuggerExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TDFScreenDebuggerExampleTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TDFScreenDebuggerExampleTests/Pods-TDFScreenDebuggerExampleTests.release.xcconfig"; sourceTree = "<group>"; };
+		F3F65040064E50E2CF4601FE /* libPods-TDFScreenDebuggerExampleTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TDFScreenDebuggerExampleTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,7 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9BB4E05147B6E11F61B2270A /* Pods_TDFScreenDebuggerExample.framework in Frameworks */,
+				C40A474B701025729DD8E11A /* libPods-TDFScreenDebuggerExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,13 +91,32 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04BF3700B30109D3D4DD4A94 /* Pods_TDFScreenDebuggerExampleTests.framework in Frameworks */,
+				86BA6B88573E61A9BD5D6E41 /* libPods-TDFScreenDebuggerExampleTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		18523DAC20DB5A21009553CD /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				18523DAD20DB5A46009553CD /* TDFPresentationController.h */,
+				18523DAE20DB5A46009553CD /* TDFPresentationController.m */,
+				18523DB020DB5D85009553CD /* TDFAppleSystemLogDemoPage.h */,
+				18523DB120DB5D85009553CD /* TDFAppleSystemLogDemoPage.m */,
+				18523DB320DB5D9C009553CD /* TDFCrashDemoPage.h */,
+				18523DB420DB5D9C009553CD /* TDFCrashDemoPage.m */,
+				18523DB920DB5E08009553CD /* TDFPerformanceDemoPage.h */,
+				18523DBA20DB5E08009553CD /* TDFPerformanceDemoPage.m */,
+				18523DBC20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.h */,
+				18523DBD20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m */,
+				18523DBF20DB5E43009553CD /* TDFWildPointerErrorDemoPage.h */,
+				18523DC020DB5E43009553CD /* TDFWildPointerErrorDemoPage.m */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
 		18AAC4C2208DD76700E26A9D /* Base.lproj */ = {
 			isa = PBXGroup;
 			children = (
@@ -114,12 +149,12 @@
 		18FE4D671F668AAA00ECAA1F /* TDFScreenDebuggerExample */ = {
 			isa = PBXGroup;
 			children = (
+				18523DAC20DB5A21009553CD /* Presentation */,
 				18AAC4C8208DD76700E26A9D /* AppDelegate.h */,
 				18AAC4C7208DD76700E26A9D /* AppDelegate.m */,
 				18AAC4C2208DD76700E26A9D /* Base.lproj */,
 				18AAC4C1208DD76700E26A9D /* Info.plist */,
 				18AAC4C0208DD76700E26A9D /* main.m */,
-				18AAC4BF208DD76700E26A9D /* screenshot.png */,
 				18AAC4C9208DD76700E26A9D /* ViewController.h */,
 				18AAC4CA208DD76700E26A9D /* ViewController.m */,
 				18B9B79A20AED12E00C0FC7B /* LeakingViewController.h */,
@@ -157,8 +192,8 @@
 				188D296820BFCBC1009D3ED1 /* ReactiveObjC.framework */,
 				188D296A20BFCBC1009D3ED1 /* TDFAPILogger.framework */,
 				188D296C20BFCBC1009D3ED1 /* TDFScreenDebugger.framework */,
-				1FC8537C0EF29C66C3726198 /* Pods_TDFScreenDebuggerExample.framework */,
-				6AAFD394FB134B8355C24389 /* Pods_TDFScreenDebuggerExampleTests.framework */,
+				276C24FB71B18A9E1F7DE857 /* libPods-TDFScreenDebuggerExample.a */,
+				F3F65040064E50E2CF4601FE /* libPods-TDFScreenDebuggerExampleTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -255,7 +290,6 @@
 			files = (
 				18AAC4CE208DD76800E26A9D /* LaunchScreen.storyboard in Resources */,
 				18AAC4CD208DD76800E26A9D /* Info.plist in Resources */,
-				18AAC4CB208DD76800E26A9D /* screenshot.png in Resources */,
 				18AAC4CF208DD76800E26A9D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -389,10 +423,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18523DB520DB5D9C009553CD /* TDFCrashDemoPage.m in Sources */,
 				188D295E20BD1080009D3ED1 /* LeakingViewController.m in Sources */,
 				18AAC4D1208DD76800E26A9D /* ViewController.m in Sources */,
+				18523DAF20DB5A46009553CD /* TDFPresentationController.m in Sources */,
+				18523DBE20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m in Sources */,
+				18523DBB20DB5E08009553CD /* TDFPerformanceDemoPage.m in Sources */,
 				18AAC4D0208DD76800E26A9D /* AppDelegate.m in Sources */,
+				18523DC120DB5E43009553CD /* TDFWildPointerErrorDemoPage.m in Sources */,
 				18AAC4CC208DD76800E26A9D /* main.m in Sources */,
+				18523DB220DB5D85009553CD /* TDFAppleSystemLogDemoPage.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

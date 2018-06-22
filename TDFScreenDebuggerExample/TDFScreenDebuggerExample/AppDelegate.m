@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "TDFPresentationController.h"
 
 @interface AppDelegate ()
 
@@ -17,6 +18,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    _window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    _window.backgroundColor = [UIColor whiteColor];
+    _window.rootViewController = [[TDFPresentationController alloc] init];
+    [_window makeKeyAndVisible];
     return YES;
 }
 
