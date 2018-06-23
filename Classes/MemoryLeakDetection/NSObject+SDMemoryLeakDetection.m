@@ -21,9 +21,8 @@ static const short kSDMLDStrongPropsTrackingHierarchyMaxLevel  =  3;
 - (void)bindWithProxy {
     if (self.mld_proxy) return;
     
-    // skip system classes
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    if ([bundle isAppleClassesBundle]) {
+    if ([bundle isAppleClassesBundle] && ![self isKindOfClass:[NSTimer class]]) {
         return;
     }
 
@@ -127,8 +126,7 @@ static const short kSDMLDStrongPropsTrackingHierarchyMaxLevel  =  3;
             
             if (propClass != NULL) {
                 NSBundle *bundle = [NSBundle bundleForClass:propClass];
-                
-                if ([bundle isAppleClassesBundle]) {
+                if ([bundle isAppleClassesBundle] && ![className isEqualToString:@"NSTimer"]) {
                     if ([propClass conformsToProtocol:@protocol(NSFastEnumeration)] && [propClass conformsToProtocol:@protocol(NSObject)]) {
                         // skip NSPointerArray/NSMapTable/NSHashTable..
                         if ([className isEqualToString:@"NSPointerArray"] ||

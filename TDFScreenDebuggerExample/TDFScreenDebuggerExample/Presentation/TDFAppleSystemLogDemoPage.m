@@ -7,8 +7,12 @@
 //
 
 #import "TDFAppleSystemLogDemoPage.h"
+#import <Masonry/Masonry.h>
 
 @interface TDFAppleSystemLogDemoPage ()
+
+@property (nonatomic, strong) UITextField *textField;
+@property (nonatomic, strong) UIButton *printButton;
 
 @end
 
@@ -16,22 +20,61 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    [self.view setBackgroundColor:[UIColor whiteColor]];
+    
+    [self.view addSubview:self.textField];
+    [self.view addSubview:self.printButton];
+    [self.textField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(100);
+        make.left.equalTo(self.view).with.offset(44);
+        make.centerX.equalTo(self.view);
+        make.height.equalTo(@40);
+    }];
+    [self.printButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.view).with.offset(-100);
+        make.left.equalTo(self.view).with.offset(100);
+        make.centerX.equalTo(self.view);
+        make.height.equalTo(@40);
+    }];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (UITextField *)textField {
+    if (!_textField) {
+        _textField = [[UITextField alloc] init];
+        _textField.textAlignment = NSTextAlignmentCenter;
+        _textField.placeholder = @"enter any words you want..";
+        _textField.borderStyle = UITextBorderStyleRoundedRect;
+    }
+    return _textField;
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (UIButton *)printButton {
+    if (!_printButton) {
+        _printButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_printButton setBackgroundColor:[UIColor blueColor]];
+        _printButton.titleLabel.textAlignment = NSTextAlignmentCenter;
+        _printButton.titleLabel.font = [UIFont boldSystemFontOfSize:18];
+        [_printButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_printButton setTitle:@"NSLog to print" forState:UIControlStateNormal];
+        [_printButton.layer setCornerRadius:10.];
+        [_printButton.layer masksToBounds];
+        [_printButton addTarget:self action:@selector(nslogToPrint:) forControlEvents:UIControlEventTouchUpInside];
+    }
+    return _printButton;
 }
-*/
+
+#pragma mark - event
+- (void)nslogToPrint:(UIButton *)sender {
+    NSLog(@"%@", self.textField.text);
+    self.textField.text = @"";
+    [sender setBackgroundColor:[UIColor grayColor]];
+    [sender setTitle:@"print done!" forState:UIControlStateNormal];
+    sender.enabled = NO;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [sender setBackgroundColor:[UIColor blueColor]];
+        [sender setTitle:@"NSLog to print" forState:UIControlStateNormal];
+        sender.enabled = YES;
+    });
+}
 
 @end

@@ -13,7 +13,7 @@
 @interface TDFSDMLDGeneralizedProxy ()
 
 @property (nonatomic, weak, readwrite) id weakTarget;
-@property (nonatomic, assign) BOOL isOnWarnning;
+@property (nonatomic, assign) BOOL isOnFollowObservation;
 
 @end
 
@@ -43,10 +43,12 @@ const CGFloat kSDMLDMemoryLeakDetectionLeakerConfirmingInterval =   1.0f;
 #pragma mark - private
 - (void)detectTargetLeak {
     if (self.weakTarget == nil)  return;
-    if (self.isOnWarnning)  return;
+    if (self.isOnFollowObservation)  return;
     
     BOOL isSuspicious = [self.weakTarget isSuspiciousLeaker];
     if (isSuspicious) {
+        self.isOnFollowObservation = YES;
+        
         // filter out target who might be a singleton instance
         Class class = [self.weakTarget class];
         
@@ -63,16 +65,15 @@ const CGFloat kSDMLDMemoryLeakDetectionLeakerConfirmingInterval =   1.0f;
         // check & confirm the suspicious leaker later
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kSDMLDMemoryLeakDetectionLeakerConfirmingInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             if (self.weakTarget == nil)  return;
-            if (self.isOnWarnning)  return;
             
             BOOL isSuspicious = [self.weakTarget isSuspiciousLeaker];
             
             if (isSuspicious) {
-                self.isOnWarnning = YES;
-                
                 sd_dispatch_async_to_main_queue(^{
                     [[NSNotificationCenter defaultCenter] postNotificationName:(NSString *)SDMLDMemoryLeakDetectionDidFindSuspiciousLeakerNotificationName object:self];
                 });
+            } else {
+                self.isOnFollowObservation = NO;
             }
         });
     }

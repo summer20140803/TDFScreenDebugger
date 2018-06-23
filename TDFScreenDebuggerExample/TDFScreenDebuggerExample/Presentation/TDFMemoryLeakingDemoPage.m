@@ -7,8 +7,12 @@
 //
 
 #import "TDFMemoryLeakingDemoPage.h"
+#import <Masonry/Masonry.h>
 
 @interface TDFMemoryLeakingDemoPage ()
+
+@property (nonatomic, strong) NSTimer *timer;
+@property (nonatomic, strong) UILabel *tipLabel;
 
 @end
 
@@ -16,22 +20,36 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    [self.view setBackgroundColor:[UIColor whiteColor]];
+    
+    [self.view addSubview:self.tipLabel];
+    [self.tipLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+    
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerHandler) userInfo:nil repeats:YES];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (UILabel *)tipLabel {
+    if (!_tipLabel) {
+        _tipLabel = [[UILabel alloc] init];
+        [_tipLabel setBackgroundColor:[UIColor clearColor]];
+        _tipLabel.textAlignment = NSTextAlignmentCenter;
+        _tipLabel.numberOfLines = 1;
+        _tipLabel.textColor = [UIColor lightGrayColor];
+        _tipLabel.font = [UIFont systemFontOfSize:14];
+        _tipLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        _tipLabel.text = @"now we create a timer for causing a leaking..";
+    }
+    return _tipLabel;
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)dealloc {
+    NSLog(@"page invoke dealloc");
 }
-*/
+
+- (void)timerHandler {
+    NSLog(@"timer is still alive");
+}
 
 @end

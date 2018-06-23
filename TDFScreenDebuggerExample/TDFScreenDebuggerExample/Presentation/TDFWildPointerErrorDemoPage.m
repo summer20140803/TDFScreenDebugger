@@ -7,8 +7,12 @@
 //
 
 #import "TDFWildPointerErrorDemoPage.h"
+#import <Masonry/Masonry.h>
 
 @interface TDFWildPointerErrorDemoPage ()
+
+@property (nonatomic, strong) UILabel *tipLabel;
+@property (nonatomic, unsafe_unretained) id unsafeObject;
 
 @end
 
@@ -16,22 +20,33 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    [self.view setBackgroundColor:[UIColor whiteColor]];
+    
+    [self.view addSubview:self.tipLabel];
+    [self.tipLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    NSObject *obj = [NSObject new];
+    self.unsafeObject = obj;
+    obj = nil;
+    NSLog(@"%@", self.unsafeObject);
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (UILabel *)tipLabel {
+    if (!_tipLabel) {
+        _tipLabel = [[UILabel alloc] init];
+        [_tipLabel setBackgroundColor:[UIColor clearColor]];
+        _tipLabel.textAlignment = NSTextAlignmentCenter;
+        _tipLabel.numberOfLines = 1;
+        _tipLabel.textColor = [UIColor lightGrayColor];
+        _tipLabel.font = [UIFont systemFontOfSize:14];
+        _tipLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        _tipLabel.text = @"please tap screen to cause a wild pointer error..";
+    }
+    return _tipLabel;
 }
-*/
 
 @end
