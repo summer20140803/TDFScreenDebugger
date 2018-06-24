@@ -13,13 +13,11 @@
 		18523DBB20DB5E08009553CD /* TDFPerformanceDemoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DBA20DB5E08009553CD /* TDFPerformanceDemoPage.m */; };
 		18523DBE20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DBD20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m */; };
 		18523DC120DB5E43009553CD /* TDFWildPointerErrorDemoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DC020DB5E43009553CD /* TDFWildPointerErrorDemoPage.m */; };
-		188D295E20BD1080009D3ED1 /* LeakingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 188D295D20BD1080009D3ED1 /* LeakingViewController.m */; };
 		18AAC4CC208DD76800E26A9D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4C0208DD76700E26A9D /* main.m */; };
 		18AAC4CD208DD76800E26A9D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C1208DD76700E26A9D /* Info.plist */; };
 		18AAC4CE208DD76800E26A9D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C3208DD76700E26A9D /* LaunchScreen.storyboard */; };
 		18AAC4CF208DD76800E26A9D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C5208DD76700E26A9D /* Main.storyboard */; };
 		18AAC4D0208DD76800E26A9D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4C7208DD76700E26A9D /* AppDelegate.m */; };
-		18AAC4D1208DD76800E26A9D /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4CA208DD76700E26A9D /* ViewController.m */; };
 		18FE4D831F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FE4D821F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m */; };
 		86BA6B88573E61A9BD5D6E41 /* libPods-TDFScreenDebuggerExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F65040064E50E2CF4601FE /* libPods-TDFScreenDebuggerExampleTests.a */; };
 		C40A474B701025729DD8E11A /* libPods-TDFScreenDebuggerExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 276C24FB71B18A9E1F7DE857 /* libPods-TDFScreenDebuggerExample.a */; };
@@ -50,7 +48,6 @@
 		18523DC020DB5E43009553CD /* TDFWildPointerErrorDemoPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFWildPointerErrorDemoPage.m; sourceTree = "<group>"; };
 		188D294C20BBE404009D3ED1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		188D294D20BBE404009D3ED1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "../zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
-		188D295D20BD1080009D3ED1 /* LeakingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeakingViewController.m; sourceTree = "<group>"; };
 		188D296220BFCBC1009D3ED1 /* AFNetworking.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AFNetworking.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		188D296420BFCBC1009D3ED1 /* ICTextView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ICTextView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		188D296620BFCBC1009D3ED1 /* Masonry.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Masonry.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -63,9 +60,6 @@
 		18AAC4C6208DD76700E26A9D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		18AAC4C7208DD76700E26A9D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		18AAC4C8208DD76700E26A9D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		18AAC4C9208DD76700E26A9D /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		18AAC4CA208DD76700E26A9D /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		18B9B79A20AED12E00C0FC7B /* LeakingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LeakingViewController.h; sourceTree = "<group>"; };
 		18FE4D651F668AAA00ECAA1F /* TDFScreenDebuggerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TDFScreenDebuggerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18FE4D7E1F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TDFScreenDebuggerExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		18FE4D821F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFScreenDebuggerExampleTests.m; sourceTree = "<group>"; };
@@ -155,10 +149,6 @@
 				18AAC4C2208DD76700E26A9D /* Base.lproj */,
 				18AAC4C1208DD76700E26A9D /* Info.plist */,
 				18AAC4C0208DD76700E26A9D /* main.m */,
-				18AAC4C9208DD76700E26A9D /* ViewController.h */,
-				18AAC4CA208DD76700E26A9D /* ViewController.m */,
-				18B9B79A20AED12E00C0FC7B /* LeakingViewController.h */,
-				188D295D20BD1080009D3ED1 /* LeakingViewController.m */,
 			);
 			path = TDFScreenDebuggerExample;
 			sourceTree = "<group>";
@@ -424,8 +414,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				18523DB520DB5D9C009553CD /* TDFCrashDemoPage.m in Sources */,
-				188D295E20BD1080009D3ED1 /* LeakingViewController.m in Sources */,
-				18AAC4D1208DD76800E26A9D /* ViewController.m in Sources */,
 				18523DAF20DB5A46009553CD /* TDFPresentationController.m in Sources */,
 				18523DBE20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m in Sources */,
 				18523DBB20DB5E08009553CD /* TDFPerformanceDemoPage.m in Sources */,
