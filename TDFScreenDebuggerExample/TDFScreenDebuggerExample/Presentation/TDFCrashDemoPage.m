@@ -31,6 +31,19 @@
     }];
 }
 
+- (void)casueOCException {
+    NSMutableArray *a  = @[].mutableCopy;
+    NSObject *obj = nil;
+    [a addObject:obj];
+}
+
+- (void)casueSignalException {
+    NSObject *obj = [NSObject new];
+    self.unsafeProp = obj;
+    obj = nil;
+    NSLog(@"%@", self.unsafeProp);
+}
+
 #pragma mark - getter
 - (UITableView *)tableView {
     if (!_tableView) {
@@ -65,16 +78,11 @@
     
     if (indexPath.row == 0)
     {
-        NSMutableArray *a  = @[].mutableCopy;
-        NSObject *obj = nil;
-        [a addObject:obj];
+        [self performSelectorOnMainThread:@selector(casueOCException) withObject:nil waitUntilDone:YES];
     }
     else if (indexPath.row == 1)
     {
-        NSObject *obj = [NSObject new];
-        self.unsafeProp = obj;
-        obj = nil;
-        NSLog(@"%@", self.unsafeProp);
+        [self performSelectorOnMainThread:@selector(casueSignalException) withObject:nil waitUntilDone:YES];
     }
 }
 
