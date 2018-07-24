@@ -49,7 +49,6 @@ const CGFloat kSDMLDMemoryLeakDetectionLeakerConfirmingInterval =   1.0f;
     if (isSuspicious) {
         self.isOnFollowObservation = YES;
         
-        /*
         // filter out target who might be a singleton instance
         Class class = [self.weakTarget class];
         
@@ -62,7 +61,6 @@ const CGFloat kSDMLDMemoryLeakDetectionLeakerConfirmingInterval =   1.0f;
             BOOL isSingleton = [self isSingletonClass:class];
             if (isSingleton) return;
         } @catch(NSException *e) {}
-        */
       
         // check & confirm the suspicious leaker later
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kSDMLDMemoryLeakDetectionLeakerConfirmingInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
