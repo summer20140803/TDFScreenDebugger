@@ -37,6 +37,8 @@ static NSString *mld_warnningMessage(id leaker) {
 }
 
 #pragma mark - life cycle
+
+#if DEBUG
 + (void)load {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -49,6 +51,7 @@ static NSString *mld_warnningMessage(id leaker) {
         }];
     });
 }
+#endif
 
 + (instancetype)sharedInstance {
     static dispatch_once_t once = 0;

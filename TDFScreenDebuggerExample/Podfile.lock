@@ -17,9 +17,9 @@ PODS:
   - ICTextView (2.0.1)
   - Masonry (1.1.0)
   - ReactiveObjC (2.1.0.4)
-  - TDFAPILogger (0.0.7):
+  - TDFAPILogger (0.0.8):
     - AFNetworking
-  - TDFScreenDebugger (0.0.5):
+  - TDFScreenDebugger (0.0.6):
     - ICTextView
     - Masonry
     - ReactiveObjC
@@ -37,8 +37,8 @@ SPEC CHECKSUMS:
   ICTextView: 6f53febd62a0ccf2858967a4a5599be4aaceb6b8
   Masonry: 34afc06a8c34f8a4958de258dca1732dab49e8fe
   ReactiveObjC: 5b6952495a73242167f201ee017c335daa802574
-  TDFAPILogger: 605819ea1e829ca511b1a41ff42452ddca6330e1
-  TDFScreenDebugger: 3469f0f970b24a6a9704d2ecbd96577c4f567f03
+  TDFAPILogger: bb6acf548cffda00d20f954d1412ee0913410ae4
+  TDFScreenDebugger: 6a0a21b575f72bc0da6b8ebdbb9c4641cd129a8c
 
 PODFILE CHECKSUM: 94dfd2e1be500c3a739c7c2bf148f8de609c0a7a
 
