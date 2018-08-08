@@ -16,7 +16,36 @@
 static const short kSDMLDStrongPropsTrackingHierarchyMaxLevel  =  3;
 @dynamic mld_proxy;
 
-+ (void)prepareForDetection {}
++ (void)prepareForDetection {
+    Class class = [self class];
+    SEL originSEL = @selector(valueForUndefinedKey:);
+    SEL newSEL = @selector(sd_mld_valueForUndefinedKey:);
+    Method originMethod = class_getInstanceMethod(class, originSEL);
+    Method newMethod = class_getInstanceMethod(class, newSEL);
+    
+    BOOL addMethodSuccess = class_addMethod(class, originSEL, method_getImplementation(newMethod), method_getTypeEncoding(newMethod));
+    if (addMethodSuccess) {
+        class_replaceMethod(class, newSEL, method_getImplementation(originMethod), method_getTypeEncoding(originMethod));
+    } else {
+        method_exchangeImplementations(originMethod, newMethod);
+    }
+}
+
+- (id)sd_mld_valueForUndefinedKey:(NSString *)key {
+    if ([self isProtected]) {
+        return nil;
+    } else {
+        return [self sd_mld_valueForUndefinedKey:key];
+    }
+}
+
+- (BOOL)isProtected {
+    return [objc_getAssociatedObject(self, _cmd) boolValue];
+}
+
+- (void)setProtected:(BOOL)protected {
+    objc_setAssociatedObject(self, @selector(isProtected), @(protected), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
 
 - (void)bindWithProxy {
     if (self.mld_proxy) return;
@@ -78,7 +107,10 @@ static const short kSDMLDStrongPropsTrackingHierarchyMaxLevel  =  3;
     }
     
     [allStrongProps enumerateObjectsUsingBlock:^(NSString * _Nonnull propName, NSUInteger idx, BOOL * _Nonnull stop) {
-        id obj = [self valueForKey:propName];
+        [self setProtected:YES];
+        id obj = [self valueForKey:[NSString stringWithFormat:@"_%@", propName]];
+        [self setProtected:NO];
+        
         if (obj && [obj mld_proxy] == nil) {
             [obj bindWithProxy];
             [obj mld_proxy].weakTargetOwner = self;
@@ -135,7 +167,11 @@ static const short kSDMLDStrongPropsTrackingHierarchyMaxLevel  =  3;
                             continue;
                         }
                         NSString *name = [NSString stringWithUTF8String:property_getName(property)];
-                        id<NSFastEnumeration, NSObject> set = [self valueForKey:name];
+                        
+                        [self setProtected:YES];
+                        id<NSFastEnumeration, NSObject> set = [self valueForKey:[NSString stringWithFormat:@"_%@", name]];
+                        [self setProtected:NO];
+                        if (!set) continue;
                         
                         for (id obj in ([set isKindOfClass:[NSDictionary class]] ? [(NSDictionary *)set allValues] : set)) {
                             if (obj && [obj mld_proxy] == nil) {

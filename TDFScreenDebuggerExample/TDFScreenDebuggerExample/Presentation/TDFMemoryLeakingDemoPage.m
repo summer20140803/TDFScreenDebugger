@@ -7,7 +7,36 @@
 //
 
 #import "TDFMemoryLeakingDemoPage.h"
+#import "TDFMemoryLeakingDemoPage+Cate.h"
 #import <Masonry/Masonry.h>
+
+@interface Shared : NSObject
+
++ (instancetype)sharedInstance;
+@property (nonatomic, strong) id obj;
+
+@end
+
+@implementation Shared
+
+static Shared *sharedInstance = nil;
+
++ (instancetype)sharedInstance {
+    static dispatch_once_t once = 0;
+    dispatch_once(&once, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
+
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+    if (!sharedInstance) {
+        sharedInstance = [super allocWithZone:zone];
+    }
+    return sharedInstance;
+}
+
+@end
 
 @interface TDFMemoryLeakingDemoPage ()
 
@@ -26,6 +55,9 @@
     [self.tipLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
+    
+    self.obj = [MyObject new];
+    [Shared sharedInstance].obj = self.obj;
     
     self.timer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerHandler) userInfo:nil repeats:YES];
 }

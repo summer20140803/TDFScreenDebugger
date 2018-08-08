@@ -73,7 +73,7 @@ static TDFSDPersistenceSetting *sharedInstance = nil;
         _fpsWarnningThreshold = 30;
         _allowWildPointerMonitoring = NO;
         _maxZombiePoolCapacity = 8 * 1024 * 10;
-        _allowMemoryLeaksDetectionFlag = YES;
+        _allowMemoryLeaksDetectionFlag = NO;
         _memoryLeakingWarningType = SDMLDWarnningTypeAlert;
     }
     return self;

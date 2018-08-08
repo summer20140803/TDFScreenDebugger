@@ -82,6 +82,7 @@ static NSString *mld_warnningMessage(id leaker) {
 
 #pragma mark - TDFSDFunctionIOControlProtocol
 - (void)thaw {
+    [NSObject prepareForDetection];
     [UINavigationController prepareForDetection];
     [UIViewController prepareForDetection];
     [UIView prepareForDetection];

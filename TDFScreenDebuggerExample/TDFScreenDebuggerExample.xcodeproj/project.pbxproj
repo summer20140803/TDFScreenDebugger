@@ -18,6 +18,7 @@
 		18AAC4CE208DD76800E26A9D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C3208DD76700E26A9D /* LaunchScreen.storyboard */; };
 		18AAC4CF208DD76800E26A9D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C5208DD76700E26A9D /* Main.storyboard */; };
 		18AAC4D0208DD76800E26A9D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4C7208DD76700E26A9D /* AppDelegate.m */; };
+		18ED1598211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18ED1597211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.m */; };
 		18FE4D831F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FE4D821F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m */; };
 		86BA6B88573E61A9BD5D6E41 /* libPods-TDFScreenDebuggerExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F65040064E50E2CF4601FE /* libPods-TDFScreenDebuggerExampleTests.a */; };
 		C40A474B701025729DD8E11A /* libPods-TDFScreenDebuggerExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 276C24FB71B18A9E1F7DE857 /* libPods-TDFScreenDebuggerExample.a */; };
@@ -60,6 +61,8 @@
 		18AAC4C6208DD76700E26A9D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		18AAC4C7208DD76700E26A9D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		18AAC4C8208DD76700E26A9D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		18ED1596211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TDFMemoryLeakingDemoPage+Cate.h"; sourceTree = "<group>"; };
+		18ED1597211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "TDFMemoryLeakingDemoPage+Cate.m"; sourceTree = "<group>"; };
 		18FE4D651F668AAA00ECAA1F /* TDFScreenDebuggerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TDFScreenDebuggerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18FE4D7E1F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TDFScreenDebuggerExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		18FE4D821F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDFScreenDebuggerExampleTests.m; sourceTree = "<group>"; };
@@ -107,6 +110,8 @@
 				18523DBD20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m */,
 				18523DBF20DB5E43009553CD /* TDFWildPointerErrorDemoPage.h */,
 				18523DC020DB5E43009553CD /* TDFWildPointerErrorDemoPage.m */,
+				18ED1596211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.h */,
+				18ED1597211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.m */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -413,6 +418,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18ED1598211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.m in Sources */,
 				18523DB520DB5D9C009553CD /* TDFCrashDemoPage.m in Sources */,
 				18523DAF20DB5A46009553CD /* TDFPresentationController.m in Sources */,
 				18523DBE20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m in Sources */,
