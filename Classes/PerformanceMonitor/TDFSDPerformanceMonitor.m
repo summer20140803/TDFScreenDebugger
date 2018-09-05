@@ -169,8 +169,11 @@ static const uint64_t        kSDDispatchSourceInterval  =  1 * NSEC_PER_SEC;
     if (![TDFSDPersistenceSetting sharedInstance].allowUILagsMonitoring) return;
     
     static dispatch_once_t onceToken;
+    
+    @weakify(self)
     dispatch_once(&onceToken, ^{
-        _semaphore = dispatch_semaphore_create(0);
+        @strongify(self)
+        self->_semaphore = dispatch_semaphore_create(0);
         
         sd_dispatch_async_by_qos_user_initiated(^{
             while ([TDFSDPersistenceSetting sharedInstance].allowUILagsMonitoring) {
@@ -178,9 +181,10 @@ static const uint64_t        kSDDispatchSourceInterval  =  1 * NSEC_PER_SEC;
                 // dispatch a transaction to UI thread..
                 __block BOOL pm_timeout = YES;
                 sd_dispatch_async_to_main_queue(^{
+                    @strongify(self)
                     @synchronized(self) {
                         pm_timeout = NO;
-                        dispatch_semaphore_signal(_semaphore);
+                        dispatch_semaphore_signal(self->_semaphore);
                     }
                 });
                 [NSThread sleepForTimeInterval:[TDFSDPersistenceSetting sharedInstance].tolerableLagThreshold];
@@ -196,7 +200,8 @@ static const uint64_t        kSDDispatchSourceInterval  =  1 * NSEC_PER_SEC;
                         !self.didMonitorNewUILagHandler ?: self.didMonitorNewUILagHandler(lag);
                     });
                 }
-                dispatch_wait(_semaphore, DISPATCH_TIME_FOREVER);
+                @strongify(self)
+                dispatch_wait(self->_semaphore, DISPATCH_TIME_FOREVER);
             }
         });
     });

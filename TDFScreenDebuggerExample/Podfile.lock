@@ -1,25 +1,25 @@
 PODS:
-  - AFNetworking (3.1.0.1):
-    - AFNetworking/NSURLSession (= 3.1.0.1)
-    - AFNetworking/Reachability (= 3.1.0.1)
-    - AFNetworking/Security (= 3.1.0.1)
-    - AFNetworking/Serialization (= 3.1.0.1)
-    - AFNetworking/UIKit (= 3.1.0.1)
-  - AFNetworking/NSURLSession (3.1.0.1):
+  - AFNetworking (3.2.1):
+    - AFNetworking/NSURLSession (= 3.2.1)
+    - AFNetworking/Reachability (= 3.2.1)
+    - AFNetworking/Security (= 3.2.1)
+    - AFNetworking/Serialization (= 3.2.1)
+    - AFNetworking/UIKit (= 3.2.1)
+  - AFNetworking/NSURLSession (3.2.1):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (3.1.0.1)
-  - AFNetworking/Security (3.1.0.1)
-  - AFNetworking/Serialization (3.1.0.1)
-  - AFNetworking/UIKit (3.1.0.1):
+  - AFNetworking/Reachability (3.2.1)
+  - AFNetworking/Security (3.2.1)
+  - AFNetworking/Serialization (3.2.1)
+  - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
   - ICTextView (2.0.1)
   - Masonry (1.1.0)
-  - ReactiveObjC (2.1.0.4)
-  - TDFAPILogger (0.0.8):
+  - ReactiveObjC (3.1.0)
+  - TDFAPILogger (1.0.0):
     - AFNetworking
-  - TDFScreenDebugger (0.0.7):
+  - TDFScreenDebugger (1.0.0):
     - ICTextView
     - Masonry
     - ReactiveObjC
@@ -28,18 +28,26 @@ PODS:
 DEPENDENCIES:
   - TDFScreenDebugger (from `../`)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - AFNetworking
+    - ICTextView
+    - Masonry
+    - ReactiveObjC
+    - TDFAPILogger
+
 EXTERNAL SOURCES:
   TDFScreenDebugger:
-    :path: ../
+    :path: "../"
 
 SPEC CHECKSUMS:
-  AFNetworking: 032062ffb24bf902c3040070304569831ee6eeea
-  ICTextView: 6f53febd62a0ccf2858967a4a5599be4aaceb6b8
-  Masonry: 34afc06a8c34f8a4958de258dca1732dab49e8fe
-  ReactiveObjC: 5b6952495a73242167f201ee017c335daa802574
-  TDFAPILogger: bb6acf548cffda00d20f954d1412ee0913410ae4
-  TDFScreenDebugger: 22811f74241b35b17caa6518edc229e3007574c1
+  AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
+  ICTextView: 937aca5dd49e39e9cca41ababe8c55bf99c634fc
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  ReactiveObjC: 2a38ea15335de4119d8b17caf1db1484f61db902
+  TDFAPILogger: 93bc9072e8359b7bc34f85bd8c4fa0801e6cdb48
+  TDFScreenDebugger: 4ad6ceca91c0d0df981a4ccccfede3889f10a9ec
 
-PODFILE CHECKSUM: 94dfd2e1be500c3a739c7c2bf148f8de609c0a7a
+PODFILE CHECKSUM: 0bccb8cca66e309c1f96c1f4004d43f498684d32
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.3

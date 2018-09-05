@@ -18,6 +18,7 @@
 		18AAC4CE208DD76800E26A9D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C3208DD76700E26A9D /* LaunchScreen.storyboard */; };
 		18AAC4CF208DD76800E26A9D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C5208DD76700E26A9D /* Main.storyboard */; };
 		18AAC4D0208DD76800E26A9D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4C7208DD76700E26A9D /* AppDelegate.m */; };
+		18D71C92213FB2F10033F18D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18D71C91213FB2F10033F18D /* Assets.xcassets */; };
 		18ED1598211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18ED1597211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.m */; };
 		18FE4D831F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 18FE4D821F668AAB00ECAA1F /* TDFScreenDebuggerExampleTests.m */; };
 		86BA6B88573E61A9BD5D6E41 /* libPods-TDFScreenDebuggerExampleTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F3F65040064E50E2CF4601FE /* libPods-TDFScreenDebuggerExampleTests.a */; };
@@ -61,6 +62,7 @@
 		18AAC4C6208DD76700E26A9D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		18AAC4C7208DD76700E26A9D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		18AAC4C8208DD76700E26A9D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		18D71C91213FB2F10033F18D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		18ED1596211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TDFMemoryLeakingDemoPage+Cate.h"; sourceTree = "<group>"; };
 		18ED1597211A879C00BFF959 /* TDFMemoryLeakingDemoPage+Cate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "TDFMemoryLeakingDemoPage+Cate.m"; sourceTree = "<group>"; };
 		18FE4D651F668AAA00ECAA1F /* TDFScreenDebuggerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TDFScreenDebuggerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -154,6 +156,7 @@
 				18AAC4C2208DD76700E26A9D /* Base.lproj */,
 				18AAC4C1208DD76700E26A9D /* Info.plist */,
 				18AAC4C0208DD76700E26A9D /* main.m */,
+				18D71C91213FB2F10033F18D /* Assets.xcassets */,
 			);
 			path = TDFScreenDebuggerExample;
 			sourceTree = "<group>";
@@ -204,7 +207,6 @@
 				18FE4D611F668AAA00ECAA1F /* Sources */,
 				18FE4D621F668AAA00ECAA1F /* Frameworks */,
 				18FE4D631F668AAA00ECAA1F /* Resources */,
-				FD0AFF208E73FFD9FA74F868 /* [CP] Embed Pods Frameworks */,
 				089BE54E183CE7BC531C0B3D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -224,8 +226,6 @@
 				18FE4D7A1F668AAB00ECAA1F /* Sources */,
 				18FE4D7B1F668AAB00ECAA1F /* Frameworks */,
 				18FE4D7C1F668AAB00ECAA1F /* Resources */,
-				9EBE759C747033F7B70D8BC5 /* [CP] Embed Pods Frameworks */,
-				A33E318E18DD4DCC92E9CB8C /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -285,6 +285,7 @@
 			files = (
 				18AAC4CE208DD76800E26A9D /* LaunchScreen.storyboard in Resources */,
 				18AAC4CD208DD76800E26A9D /* Info.plist in Resources */,
+				18D71C92213FB2F10033F18D /* Assets.xcassets in Resources */,
 				18AAC4CF208DD76800E26A9D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -335,21 +336,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9EBE759C747033F7B70D8BC5 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TDFScreenDebuggerExampleTests/Pods-TDFScreenDebuggerExampleTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		A31E3FABAF7F746420936F57 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -366,49 +352,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A33E318E18DD4DCC92E9CB8C /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TDFScreenDebuggerExampleTests/Pods-TDFScreenDebuggerExampleTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		FD0AFF208E73FFD9FA74F868 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-TDFScreenDebuggerExample/Pods-TDFScreenDebuggerExample-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
-				"${BUILT_PRODUCTS_DIR}/ICTextView/ICTextView.framework",
-				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
-				"${BUILT_PRODUCTS_DIR}/ReactiveObjC/ReactiveObjC.framework",
-				"${BUILT_PRODUCTS_DIR}/TDFAPILogger/TDFAPILogger.framework",
-				"${BUILT_PRODUCTS_DIR}/TDFScreenDebugger/TDFScreenDebugger.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ICTextView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactiveObjC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TDFAPILogger.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TDFScreenDebugger.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TDFScreenDebuggerExample/Pods-TDFScreenDebuggerExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -567,12 +510,14 @@
 			baseConfigurationReference = 6DACA1BF3BA3542650404285 /* Pods-TDFScreenDebuggerExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6K3MJR566S;
 				GCC_INPUT_FILETYPE = automatic;
 				INFOPLIST_FILE = "$(SRCROOT)/TDFScreenDebuggerExample/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -583,7 +528,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/TDFAPILogger\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/TDFScreenDebugger\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = szy.independent.TDFScreenDebuggerExample;
+				PRODUCT_BUNDLE_IDENTIFIER = silentcat.independent.TDFScreenDebuggerExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				USER_HEADER_SEARCH_PATHS = "$(PODS_ROOT)/**";
@@ -595,14 +540,16 @@
 			baseConfigurationReference = 743C3EF865C1CA22131DCD3B /* Pods-TDFScreenDebuggerExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6K3MJR566S;
 				GCC_INPUT_FILETYPE = automatic;
 				INFOPLIST_FILE = "$(SRCROOT)/TDFScreenDebuggerExample/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = szy.independent.TDFScreenDebuggerExample;
+				PRODUCT_BUNDLE_IDENTIFIER = silentcat.independent.TDFScreenDebuggerExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				USER_HEADER_SEARCH_PATHS = "$(PODS_ROOT)/**";

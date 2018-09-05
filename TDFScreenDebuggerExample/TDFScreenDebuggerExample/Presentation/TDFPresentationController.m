@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSArray *demoPageVCNames;
 @property (nonatomic, strong) NSArray *demoPageVCTitles;
 @property (nonatomic, strong) UITableView *demoListView;
+@property (nonatomic, strong) UILabel *tipLabel;
 
 @end
 
@@ -53,8 +54,23 @@
         _demoListView.dataSource = self;
         _demoListView.delegate = self;
         _demoListView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+        _demoListView.tableFooterView = self.tipLabel;
     }
     return _demoListView;
+}
+
+- (UILabel *)tipLabel {
+    if (!_tipLabel) {
+        _tipLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 100)];
+        [_tipLabel setBackgroundColor:[UIColor clearColor]];
+        _tipLabel.textAlignment = NSTextAlignmentCenter;
+        _tipLabel.numberOfLines = 1;
+        _tipLabel.textColor = [UIColor grayColor];
+        _tipLabel.font = [UIFont systemFontOfSize:15];
+        _tipLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        _tipLabel.text = @"please try using a shake gesture!";
+    }
+    return _tipLabel;
 }
 
 #pragma mark - UITableViewDataSource & Delegate
