@@ -1,5 +1,10 @@
 
+## Installation
 
+    pod 'TDFScreenDebugger'
+
+## Usage
+Only use cocoapods `podfile` to import 'TDFScreenDebugger', then run `pod install` or `pod update`, everything is ready !
 
 ## 前言
 **Blog Post：**[iOS真机桌面级调试工具 - TDFScreenDebugger](https://summer20140803.github.io/2018/05/20/iOS真机桌面级调试工具/)
