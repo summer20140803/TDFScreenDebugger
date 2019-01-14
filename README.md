@@ -1,4 +1,4 @@
-lxlxlxlxxllxlxlxlx
+
 ## Installation
 
     pod 'TDFScreenDebugger'
