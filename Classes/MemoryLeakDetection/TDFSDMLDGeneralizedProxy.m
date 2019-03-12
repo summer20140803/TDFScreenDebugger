@@ -81,8 +81,8 @@ const CGFloat kSDMLDMemoryLeakDetectionLeakerConfirmingInterval =   1.0f;
     
 - (BOOL)isSingletonClass:(Class)class {
     @autoreleasepool {
-        id obj1 = [[class alloc] init];
-        id obj2 = [[class alloc] init];
+        __autoreleasing id obj1 = [[class alloc] init];
+        __autoreleasing id obj2 = [[class alloc] init];
         if (obj1 == obj2) {
             [[TDFSDMemoryLeakDetector sharedInstance] addSingletonClassNameToCache:NSStringFromClass(class)];
             return YES;

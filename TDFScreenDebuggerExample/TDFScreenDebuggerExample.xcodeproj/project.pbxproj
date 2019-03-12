@@ -14,7 +14,6 @@
 		18523DBE20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DBD20DB5E2D009553CD /* TDFMemoryLeakingDemoPage.m */; };
 		18523DC120DB5E43009553CD /* TDFWildPointerErrorDemoPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 18523DC020DB5E43009553CD /* TDFWildPointerErrorDemoPage.m */; };
 		18AAC4CC208DD76800E26A9D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4C0208DD76700E26A9D /* main.m */; };
-		18AAC4CD208DD76800E26A9D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C1208DD76700E26A9D /* Info.plist */; };
 		18AAC4CE208DD76800E26A9D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C3208DD76700E26A9D /* LaunchScreen.storyboard */; };
 		18AAC4CF208DD76800E26A9D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18AAC4C5208DD76700E26A9D /* Main.storyboard */; };
 		18AAC4D0208DD76800E26A9D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 18AAC4C7208DD76700E26A9D /* AppDelegate.m */; };
@@ -284,7 +283,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				18AAC4CE208DD76800E26A9D /* LaunchScreen.storyboard in Resources */,
-				18AAC4CD208DD76800E26A9D /* Info.plist in Resources */,
 				18D71C92213FB2F10033F18D /* Assets.xcassets in Resources */,
 				18AAC4CF208DD76800E26A9D /* Main.storyboard in Resources */,
 			);
